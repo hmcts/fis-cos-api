@@ -1,16 +1,12 @@
 package uk.gov.hmcts.reform.demo.familycase.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-
-import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.FAMILY_GENERIC;
-import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.CASE_WORKER;
-import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU;
+import uk.gov.hmcts.ccd.sdk.api.HasRole;
 
 @AllArgsConstructor
 @Getter
-public enum UserRole implements UserRoleConstant{
+public enum UserRole implements UserRoleConstant, HasRole {
 
     FAMILY_GENERIC(UserRoleConstant.FAMILY_GENERIC, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU);
     CASE_WORKER(UserRoleConstant.CASE_WORKER, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU),
@@ -24,6 +20,16 @@ public enum UserRole implements UserRoleConstant{
 
 
     UserRole(String role, String caseTypePermissions) {
+    }
+
+    @Override
+    public String getRole() {
+        return null;
+    }
+
+    @Override
+    public String getCaseTypePermissions() {
+        return null;
     }
 
 
