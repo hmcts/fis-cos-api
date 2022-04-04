@@ -6,10 +6,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasAccessControl;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 
-import static uk.gov.hmcts.reform.adoption.adoptioncase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.reform.adoption.adoptioncase.model.UserRole.COURT_ADMIN;
-import static uk.gov.hmcts.reform.adoption.adoptioncase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.reform.adoption.adoptioncase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.COURT_ADMIN;
 
 public class CaseworkerCourtAdminAccess implements HasAccessControl {
 
