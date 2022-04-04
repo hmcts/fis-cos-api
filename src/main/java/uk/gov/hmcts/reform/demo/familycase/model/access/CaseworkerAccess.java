@@ -14,6 +14,12 @@ import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.reform.demo.familycase.model.UserRole.FAMILY_GENERIC;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.CASE_WORKER;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.CITIZEN;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.DISTRICT_JUDGE;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.LEGAL_ADVISOR;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.SOLICITOR;
+import static uk.gov.hmcts.reform.demo.familycase.model.UserRoleConstant.SUPER_USER;
 
 public class CaseworkerAccess implements HasAccessControl {
 
