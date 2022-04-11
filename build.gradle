@@ -307,7 +307,7 @@ def versions = [
   jacksonBom: '2.13.2.20220324',
   reformsJavaLogging: '5.1.7',
   lombok            : '1.18.20',
-  junit             : '5.8.1',
+  junit             : '5.8.2',
   junitPlatform     : '1.8.2',
   awaitility        : '1.7.0',
   springBoot        : '2.6.5',
