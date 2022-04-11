@@ -25,3 +25,4 @@ class GetWelcomeTest {
         assertThat(response.getResponse().getContentAsString()).startsWith("Welcome");
     }
 }
+
