@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
+import uk.gov.hmcts.reform.cosapi.clients.RegisterFeeAPI;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 @SpringBootApplication(exclude = {CoreCaseDataClientAutoConfiguration.class},
@@ -16,6 +17,7 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
     clients = {
         IdamApi.class,
         ServiceAuthorisationApi.class,
+        RegisterFeeAPI.class
     }
 )
 @EnableScheduling
