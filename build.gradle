@@ -54,9 +54,9 @@ sourceSets {
     java {
       compileClasspath += main.output
       runtimeClasspath += main.output
-      srcDir file('src/functionalTest/java')
+      srcDir file('src/smokeTest/java')
     }
-    resources.srcDir file('src/functionalTest/resources')
+    resources.srcDir file('src/smokeTest/resources')
   }
 
   integrationTest {
@@ -81,7 +81,7 @@ sourceSets {
 idea {
   module {
     testSourceDirs += file('src/integrationTest/java')
-    testSourceDirs += file('src/functionalTest/java')
+    testSourceDirs += file('src/smokeTest/java')
   }
 }
 
@@ -122,9 +122,10 @@ test {
 task functional(type: Test) {
   description = "Runs functional tests"
   group = "Verification"
-  testClassesDirs = sourceSets.functionalTest.output.classesDirs
-  classpath = sourceSets.functionalTest.runtimeClasspath
+  testClassesDirs = sourceSets.smokeTest.output.classesDirs
+  classpath = sourceSets.smokeTest.runtimeClasspath
   finalizedBy(aggregate)
+  failFast = true
 }
 
 task integration(type: Test) {
@@ -137,9 +138,10 @@ task integration(type: Test) {
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
-  setTestClassesDirs(sourceSets.functionalTest.output.classesDirs)
-  setClasspath(sourceSets.functionalTest.runtimeClasspath)
+  setTestClassesDirs(sourceSets.smokeTest.output.classesDirs)
+  setClasspath(sourceSets.smokeTest.runtimeClasspath)
   include "uk/gov/hmcts/reform/cosapi/smoke/**"
+  failFast = true
 }
 
 task highLevelDataSetup(type: JavaExec) {
@@ -166,7 +168,7 @@ checkstyle {
 
 pmd {
   toolVersion = "6.41.0"
-  sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
+  sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest, sourceSets.smokeTest]
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876
   ruleSets = []
@@ -463,7 +465,7 @@ bootRun {
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
       // TODO: Uncomment if required later
       //systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-secret-cos-api')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-secret-fis-cos-api')
       //systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
       //systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-system-user-name')
@@ -498,7 +500,7 @@ functional {
 
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
       systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-secret-cos-api')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-secret-fis-cos-api')
       //systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
       //systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-system-user-name')
