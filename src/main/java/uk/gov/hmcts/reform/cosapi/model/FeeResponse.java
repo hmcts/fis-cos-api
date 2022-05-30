@@ -11,9 +11,9 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FeeResponse {
 
-    private String feeCode;
-    private String feeDescription;
-    private Integer feeVersion;
+    private String code;
+    private String description;
+    private Integer version;
     @JsonProperty(value = "fee_amount")
     private BigDecimal feeAmount;
 
