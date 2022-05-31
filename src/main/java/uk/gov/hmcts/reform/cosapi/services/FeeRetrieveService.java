@@ -1,14 +1,14 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
 
-import feign.FeignException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.cosapi.clients.RegisterFeeAPI;
 import uk.gov.hmcts.reform.cosapi.config.FeeRetrieveConfiguration;
-import uk.gov.hmcts.reform.cosapi.model.FeeApplicationType;
+import uk.gov.hmcts.reform.cosapi.exception.FeeCodeNotFoundException;
 import uk.gov.hmcts.reform.cosapi.model.FeeResponse;
 
 @Service
@@ -19,31 +19,27 @@ public class FeeRetrieveService {
     private final RegisterFeeAPI registerFeeApi;
     private final FeeRetrieveConfiguration feeRetrieveConfiguration;
 
-    public FeeResponse retrieveFeeDetails(FeeApplicationType feeType) throws Exception {
+    public FeeResponse retrieveFeeDetails(String caseType) throws FeeCodeNotFoundException {
 
-        FeeRetrieveConfiguration.FeeParameters parameters = feeRetrieveConfiguration.getFeeParametersByFeeType(feeType);
-        try {
-            log.debug("Making request to Fee Register with parameters : {} ", parameters);
-
+        Optional<FeeRetrieveConfiguration.FeeParameters> feeParametersByFeeType = Optional.ofNullable(
+            feeRetrieveConfiguration.getFeeParametersByFeeType(caseType));
+        feeParametersByFeeType.orElseThrow(() -> new FeeCodeNotFoundException("Fee Code is not Valid"));
+        log.debug("Making request to Fee Register with parameters : {} ", feeParametersByFeeType.get());
+        if (feeParametersByFeeType.isPresent()) {
             FeeResponse fee = registerFeeApi.findFee(
-                parameters.getChannel(),
-                parameters.getEvent(),
-                parameters.getJurisdiction1(),
-                parameters.getJurisdiction2(),
-                parameters.getKeyword(),
-                parameters.getService()
-            );
+                feeParametersByFeeType.get().getChannel(),
+                feeParametersByFeeType.get().getEvent(),
+                feeParametersByFeeType.get().getJurisdiction1(),
+                feeParametersByFeeType.get().getJurisdiction2(),
+                feeParametersByFeeType.get().getKeyword(),
+                feeParametersByFeeType.get().getService()
+               );
 
             log.debug("Fee response: {} ", fee);
 
             return fee;
-        } catch (FeignException ex) {
-            log.error("Fee response error for {}\n\tstatus: {} => message: \"{}\"",
-                      parameters, ex.status(), ex.contentUTF8(), ex
-            );
-
-            throw new Exception(ex);
         }
+        return null;
     }
 
 

@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.hmcts.reform.cosapi.model.FeeApplicationType;
 
 @Builder
 @Data
@@ -20,10 +19,10 @@ import uk.gov.hmcts.reform.cosapi.model.FeeApplicationType;
 @ConfigurationProperties("fees-register")
 public class FeeRetrieveConfiguration {
 
-    private Map<FeeApplicationType, FeeParameters> parameters;
+    private Map<String, FeeParameters> parameters;
 
-    public FeeParameters getFeeParametersByFeeType(FeeApplicationType feeType) {
-        return parameters.get(feeType);
+    public FeeParameters getFeeParametersByFeeType(String caseType) {
+        return parameters.get(caseType);
     }
 
     @Builder
