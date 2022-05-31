@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.cosapi.controllers;
 
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +23,9 @@ public class FeeRetrieveController {
     FeeRetrieveService feeRetrieveService;
 
     @PostMapping(path = "/retrieveFeeDetails/{caseType}")
-    @ApiOperation(value = "Call to retrieve fee details ")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Fee received.")})
+        @ApiResponse(code = 200, message = "Fee received."),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public FeeResponse populateFees(@PathVariable String caseType) {
 
         FeeResponse feeResponse = null;
