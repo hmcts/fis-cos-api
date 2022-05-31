@@ -6,20 +6,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
-import uk.gov.hmcts.reform.cosapi.clients.RegisterFeeAPI;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 @SpringBootApplication(exclude = {CoreCaseDataClientAutoConfiguration.class},
-    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.reform.ccd.document", "uk.gov.hmcts.reform.cosapi",
-        "uk.gov.hmcts.reform.cosapi.services", "uk.gov.hmcts.reform.idam","uk.gov.hmcts.reform.cosapi.clients","uk.gov.hmcts.reform.cosapi.config"})
+    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.reform.cosapi", "uk.gov.hmcts.reform.cosapi.services",
+        "uk.gov.hmcts.reform.idam"})
 @EnableFeignClients(
     clients = {
         IdamApi.class,
         ServiceAuthorisationApi.class,
-        RegisterFeeAPI.class
-    },
-    basePackages = {"uk.gov.hmcts.reform.cosapi.clients"}
+        CoreCaseDataApi.class
+    }
 )
 @EnableScheduling
 @SuppressWarnings("HideUtilityClassConstructor")
