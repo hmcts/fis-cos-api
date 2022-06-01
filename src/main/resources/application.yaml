@@ -90,3 +90,46 @@ core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
+
+# To retrieve fees
+fees-register:
+  api:
+    url: ${FEES_REGISTER_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
+  parameters:
+     ApplyAdoption:
+      channel: default
+      event: issue
+      jurisdiction1: family
+      jurisdiction2: family court
+      keyword: ApplyAdoption
+      service: adoption
+     ApplyParent:
+      channel: default
+      event: issue
+      jurisdiction1: family
+      jurisdiction2: family court
+      keyword: ApplyAdoption
+      service: other
+     PQR:
+      channel: default
+      event: miscellaneous
+      jurisdiction1: family
+      jurisdiction2: family court
+      keyword: ApplyAdoption
+      service: private law
+     SpecialGuardian:
+      channel: default
+      event: miscellaneous
+      jurisdiction1: family
+      jurisdiction2: family court
+      keyword: ApplyAdoption
+      service: private law
+     Private:
+      channel: default
+      event: issue
+      jurisdiction1: family
+      jurisdiction2: family court
+      keyword: ApplyAdoption
+      service: others
+
+

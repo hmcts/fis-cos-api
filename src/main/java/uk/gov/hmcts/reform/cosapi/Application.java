@@ -8,16 +8,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
+import uk.gov.hmcts.reform.cosapi.clients.RegisterFeeAPI;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 @SpringBootApplication(exclude = {CoreCaseDataClientAutoConfiguration.class},
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.reform.cosapi", "uk.gov.hmcts.reform.cosapi.services",
-        "uk.gov.hmcts.reform.idam"})
+        "uk.gov.hmcts.reform.idam","uk.gov.hmcts.reform.cosapi.clients","uk.gov.hmcts.reform.cosapi.config"})
 @EnableFeignClients(
     clients = {
         IdamApi.class,
         ServiceAuthorisationApi.class,
-        CoreCaseDataApi.class
+        CoreCaseDataApi.class,
+        RegisterFeeAPI.class
     }
 )
 @EnableScheduling
