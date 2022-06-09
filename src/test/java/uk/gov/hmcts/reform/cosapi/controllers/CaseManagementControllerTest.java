@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.cosapi.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
@@ -21,6 +24,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -42,9 +46,10 @@ public class CaseManagementControllerTest {
     }
 
     @Test
-    public void testCreateCaseData() {
-        CaseData caseData = CaseData.builder()
-            .namedApplicant("Applicant1").build();
+    public void testC100CreateCaseData() throws Exception {
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String caseDataJson = loadJson ("C100CaseData.json");
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         Map<String, Object> caseDataMap = new HashMap<>();
 
@@ -57,26 +62,29 @@ public class CaseManagementControllerTest {
         CaseResponse testResponse = (CaseResponse) aCase.getBody();
 
         assertNotNull(testResponse);
-        assertEquals(HttpStatus.OK, testResponse.getStatus());
+        assertEquals(HttpStatus.OK, aCase.getStatusCode());
     }
 
     @Test
-    public void testUpdateCaseData() {
-        CaseData caseData = CaseData.builder()
-            .namedApplicant("Adetola").build();
+    public void testC100UpdateCaseData() throws Exception {
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String caseDataJson = loadJson ("C100CaseData.json");
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         Map<String, Object> caseDataMap = new HashMap<>();
 
+        caseDataMap.put ("caseData", caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
 
-        when (caseManagementService.updateCase(caseTestAuth, caseData, 123L)).thenReturn(caseResponse);
+        when (caseManagementService.updateCase(caseTestAuth, EventEnum.UPDATE, caseData, 123L)).thenReturn(caseResponse);
 
-        ResponseEntity<?> uCase =  caseManagementController.updateCase(123L, caseTestAuth, caseData);
+        ResponseEntity<?> uCase =  caseManagementController.updateCase(123L, caseTestAuth, EventEnum.UPDATE, caseData);
 
-        HttpStatus testResponse = uCase.getStatusCode();
-        System.out.println(caseResponse.getStatus());
+        CaseResponse testResponse = (CaseResponse) uCase.getBody();
+        CaseData caseData1 = (CaseData) testResponse.getCaseData().get("caseData");
+
         assertNotNull(testResponse);
-        assertEquals(HttpStatus.OK, testResponse);
+        assertEquals(HttpStatus.OK, uCase.getStatusCode());
     }
 }
 

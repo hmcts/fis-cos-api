@@ -1,15 +1,16 @@
 {
-  "applicantAddressPostCode": "TW3 1NN",
-  "applicantLastName": "test Last Name",
-  "applicantAddress1": "test address 1",
-  "applicantEmailAddress": "test@test.com",
-  "applicantHomeNumber": "012345678890",
-  "applicantAddressTown": "London",
+  "namedApplicant": "nameApplicantTest",
   "caseTypeOfApplication": "C100",
   "applicantFirstName": "Test First Name",
-  "applicantAddressCountry": "United Kingdom",
-  "namedApplicant": "Test",
+  "applicantLastName": "Test Last Name",
+  "applicantDateOfBirth": "2010-07-09",
+  "applicantEmailAddress": "test@test.com",
+  "applicantHomeNumber": "012345678890",
+  "applicantAddress1": "test address 1",
   "applicantAddress2": "Test Address2",
-  "applicantPhoneNumber": "01234567890"
+  "applicantPhoneNumber": "01234567890",
+  "applicantAddressTown": "London",
+  "applicantAddressCountry": "United Kingdom",
+  "applicantAddressPostCode": "N8 8PE"
 }
 
