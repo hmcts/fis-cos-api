@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.cosapi.controllers;
+package uk.gov.hmcts.reform.cosapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -14,8 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.cosapi.controllers.DocumentManagementController;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
-import uk.gov.hmcts.reform.cosapi.exception.DocuementUploadOrDeleteException;
+import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
@@ -88,7 +89,6 @@ public class DocumentManagementServiceTest {
 
         ResponseEntity<?> uplCase = documentManagementController.deleteDocument(caseTestAuth, "C100");
         DocumentResponse testDeleteResponse = (DocumentResponse) uplCase.getBody();
-        testDeleteResponse.setStatus(uplCase.getStatusCode()==HttpStatus.OK?"Success": "Error");
 
         assertNotNull(testDeleteResponse);
         assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
@@ -96,7 +96,6 @@ public class DocumentManagementServiceTest {
         assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
         assertEquals(HttpStatus.OK, uplCase.getStatusCode());
     }
-
     @Test
     public void testDeleteC100DocumentFailedWithException () throws Exception {
         DocumentInfo documentInfo = DocumentInfo.builder()
@@ -105,11 +104,12 @@ public class DocumentManagementServiceTest {
             .fileName("C100CaseData.json").build();
 
         when (documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
-            new DocuementUploadOrDeleteException ("Failing while deleting the document. The error message is ", new Throwable()));
+            new DocumentUploadOrDeleteException("Failing while deleting the document. The error message is ", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
         });
         assertTrue (exception.getMessage().contains("Failing while deleting the document. The error message is "));
     }
+
 }
