@@ -1,133 +1,115 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.cosapi.controllers.DocumentManagementController;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
-import uk.gov.hmcts.reform.cosapi.services.cdam.CaseDocumentApiService;
+import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class DocumentManagementServiceTest {
-    private static final String CASE_TEST_AUTHORISATION = "testAuth";
-    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
-    private static final String CASE_DATA_DOCUMENT_ID_C100 = "C100";
-    private static final String TEST_URL = "TestUrl";
-
+public class DocumentManagementServiceTest {
+    private final String caseTestAuth = "testAuth";
 
     @InjectMocks
-    private DocumentManagementService documentManagementService;
+    private DocumentManagementController documentManagementController;
 
     @Mock
-    CaseDocumentApiService caseDocumentApiService;
+    DocumentManagementService documentManagementService;
+
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
     }
 
     @Test
-    void testUploadC100Document() throws Exception {
-        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
+    public void testUploadC100Document () throws Exception {
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String caseDataJson = loadJson ("C100CaseData.json");
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         DocumentInfo documentInfo = DocumentInfo.builder()
-            .documentId(CASE_DATA_DOCUMENT_ID_C100)
-            .url(TEST_URL)
-            .fileName(CASE_DATA_FILE_C100).build();
+            .documentId("C100")
+            .url("TestUrl")
+            .fileName("C100CaseData.json").build();
 
-        MockMultipartFile multipartFile = new MockMultipartFile(
-            "json",
-            CASE_DATA_FILE_C100,
-            "application/json",
-            caseDataJson.getBytes()
-        );
+        DocumentResponse documentUploadResponse = DocumentResponse
+            .builder().document(documentInfo).build();
 
-        when(caseDocumentApiService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile)).thenReturn(documentInfo);
+        MockMultipartFile multipartFile = new MockMultipartFile ("json", "C100CaseData.json", "application/json", caseDataJson.getBytes());
 
-        DocumentResponse testUploadResponse = (DocumentResponse) documentManagementService.uploadDocument(
-            CASE_TEST_AUTHORISATION,
-            multipartFile
-        );
+        when (documentManagementService.uploadDocument(caseTestAuth, multipartFile)).thenReturn(documentUploadResponse);
 
+        ResponseEntity<?> aCase = documentManagementController.uploadDocument(caseTestAuth, multipartFile);
+        DocumentResponse testUploadResponse = (DocumentResponse) aCase.getBody();
+        testUploadResponse.setStatus(aCase.getStatusCode()==HttpStatus.OK?"Success": "Error");
 
-        Assertions.assertNotNull(testUploadResponse);
-        Assertions.assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
-        Assertions.assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
-        Assertions.assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
-        Assertions.assertEquals("Success", testUploadResponse.getStatus());
+        assertNotNull(testUploadResponse);
+        assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
+        assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
+        assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
+        assertEquals(HttpStatus.OK, aCase.getStatusCode());
     }
 
     @Test
-    void testUploadC100DocumentFailedWithException() throws Exception {
-        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
-
-        MockMultipartFile multipartFile = new MockMultipartFile(
-            "json",
-            CASE_DATA_FILE_C100,
-            "application/json",
-            caseDataJson.getBytes()
-        );
-
-        when(caseDocumentApiService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile)).thenThrow(
-            new DocumentUploadOrDeleteException(
-                "Failing while uploading the document. The error message is ",
-                new Throwable()
-            ));
-
-        Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile);
-        });
-
-        assertTrue(exception.getMessage().contains("Failing while uploading the document. The error message is "));
-    }
-
-    @Test
-    void testDeleteC100Document() {
-
-        DocumentResponse testDeleteResponse = (DocumentResponse) documentManagementService.deleteDocument(
-            CASE_TEST_AUTHORISATION,
-            CASE_DATA_DOCUMENT_ID_C100
-        );
-
-        Assertions.assertNotNull(testDeleteResponse);
-        Assertions.assertEquals("Success", testDeleteResponse.getStatus());
-    }
-
-    @Test
-    void testDeleteC100DocumentFailedWithException() throws Exception {
+    public void testDeleteC100Document () throws Exception {
         DocumentInfo documentInfo = DocumentInfo.builder()
-            .documentId(CASE_DATA_DOCUMENT_ID_C100)
-            .url(TEST_URL)
-            .fileName(CASE_DATA_FILE_C100).build();
+            .documentId("C100")
+            .url("TestUrl")
+            .fileName("C100CaseData.json").build();
 
-        when(documentManagementService.deleteDocument(
-            CASE_TEST_AUTHORISATION,
-            documentInfo.getDocumentId()
-        )).thenThrow(
-            new DocumentUploadOrDeleteException(
-                "Failing while deleting the document. The error message is ",
-                new Throwable()
-            ));
+        DocumentResponse documentResponse = DocumentResponse
+            .builder().document(documentInfo).build();
+
+        when (documentManagementService.deleteDocument(caseTestAuth, "C100")).thenReturn(documentResponse);
+
+        ResponseEntity<?> uplCase = documentManagementController.deleteDocument(caseTestAuth, "C100");
+        DocumentResponse testDeleteResponse = (DocumentResponse) uplCase.getBody();
+
+        assertNotNull(testDeleteResponse);
+        assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
+        assertEquals(documentInfo.getFileName(), testDeleteResponse.getDocument().getFileName());
+        assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
+        assertEquals(HttpStatus.OK, uplCase.getStatusCode());
+    }
+    @Test
+    public void testDeleteC100DocumentFailedWithException () throws Exception {
+        DocumentInfo documentInfo = DocumentInfo.builder()
+            .documentId("C100")
+            .url("TestUrl")
+            .fileName("C100CaseData.json").build();
+
+        when (documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
+            new DocumentUploadOrDeleteException("Failing while deleting the document. The error message is ", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "));
+        assertTrue (exception.getMessage().contains("Failing while deleting the document. The error message is "));
     }
+
 }
