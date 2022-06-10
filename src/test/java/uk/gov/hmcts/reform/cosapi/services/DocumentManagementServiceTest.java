@@ -1,135 +1,136 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+<<<<<<<< HEAD:src/test/java/uk/gov/hmcts/reform/cosapi/controllers/DocumentManagementServiceTest.java
+import uk.gov.hmcts.reform.cosapi.edgecase.model.Applicant;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
+========
+import uk.gov.hmcts.reform.cosapi.controllers.DocumentManagementController;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+>>>>>>>> aba50a7 (Merged CaseCreateOrUpdateExceptionTest to unit tests):src/test/java/uk/gov/hmcts/reform/cosapi/services/DocumentManagementServiceTest.java
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
-import uk.gov.hmcts.reform.cosapi.services.cdam.CaseDocumentApiService;
+import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.JSON_FILE_TYPE;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.JSON_CONTENT_TYPE;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class DocumentManagementServiceTest {
+public class DocumentManagementServiceTest {
+    private final String caseTestAuth = "testAuth";
 
     @InjectMocks
-    private DocumentManagementService documentManagementService;
+    private DocumentManagementController documentManagementController;
 
     @Mock
-    CaseDocumentApiService caseDocumentApiService;
+    DocumentManagementService documentManagementService;
+
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+    }
+
+    private CaseData readCaseFromJsonFile (JsonNode node) {
+        CaseData caseData = new CaseData();
+
+        caseData.setNamedApplicant(node.get("namedApplicant").asText());
+        caseData.setCaseTypeOfApplication(node.get("caseTypeOfApplication").asText());
+        Applicant applicant = new Applicant();
+        applicant.setFirstName(node.get("applicant").get("firstName").asText());
+        applicant.setLastName(node.get("applicant").get("lastName").asText());
+
+        DateTimeFormatter dobFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        applicant.setDateOfBirth(LocalDate.parse(node.get("applicant").get("dateOfBirth").asText(), dobFormat));
+        applicant.setEmailAddress(node.get("applicant").get("emailAddress").asText());
+        applicant.setPhoneNumber(node.get("applicant").get("phoneNumber").asText());
+        applicant.setHomeNumber(node.get("applicant").get("homeNumber").asText());
+        applicant.setAddress1(node.get("applicant").get("address1").asText());
+        applicant.setAddress2(node.get("applicant").get("address2").asText());
+        applicant.setAddressTown(node.get("applicant").get("addressTown").asText());
+        applicant.setAddressCountry(node.get("applicant").get("addressCountry").asText());
+        applicant.setAddressPostCode(node.get("applicant").get("addressPostCode").asText());
+        caseData.setApplicant(applicant);
+
+        return caseData;
     }
 
     @Test
-    void testUploadC100Document() throws Exception {
-        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
+    public void testUpdateDocument () throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+         String caseDataJson = loadJson ("C100CaseData.json");
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         DocumentInfo documentInfo = DocumentInfo.builder()
-            .documentId(CASE_DATA_C100_ID)
-            .url(TEST_URL)
-            .fileName(CASE_DATA_FILE_C100).build();
+            .documentId("/C100CaseData.json").build();
 
-        MockMultipartFile multipartFile = new MockMultipartFile(
-            JSON_FILE_TYPE,
-            CASE_DATA_FILE_C100,
-            JSON_CONTENT_TYPE,
-            caseDataJson.getBytes()
-        );
+        Map<String, Object> documentDataMap = new HashMap<>();
 
-        when(caseDocumentApiService.uploadDocument(CASE_TEST_AUTHORIZATION, multipartFile)).thenReturn(documentInfo);
+        DocumentResponse documentResponse = DocumentResponse
+            .builder().document(documentInfo).build();
 
-        DocumentResponse testUploadResponse = documentManagementService.uploadDocument(
-            CASE_TEST_AUTHORIZATION,
-            multipartFile
-        );
-
-
-        Assertions.assertNotNull(testUploadResponse);
-        Assertions.assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
-        Assertions.assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
-        Assertions.assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
-        Assertions.assertEquals(RESPONSE_STATUS_SUCCESS, testUploadResponse.getStatus());
+<<<<<<<< HEAD:src/test/java/uk/gov/hmcts/reform/cosapi/controllers/DocumentManagementServiceTest.java
+//        MockMultipartFile multipartFile = new MockMultipartFile("/C100CaseData.json", updInpStream);
+//
+//
+//        when (documentManagementService.uploadDocument(caseTestAuth, mFile)).thenReturn(documentResponse);
+//
+//        ResponseEntity<?> aCase = documentManagementController.uploadDocument(caseTestAuth, documentInfo);
+//
+//        CaseResponse testResponse = (CaseResponse) aCase.getBody();
+//
+//        assertNotNull(testResponse);
+//        assertEquals(HttpStatus.OK, testResponse.getStatus());
     }
+========
+        when (documentManagementService.deleteDocument(caseTestAuth, "C100")).thenReturn(documentResponse);
 
-    @Test
-    void testUploadC100DocumentFailedWithException() throws Exception {
-        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
+        ResponseEntity<?> uplCase = documentManagementController.deleteDocument(caseTestAuth, "C100");
+        DocumentResponse testDeleteResponse = (DocumentResponse) uplCase.getBody();
 
-        MockMultipartFile multipartFile = new MockMultipartFile(
-            JSON_FILE_TYPE,
-            CASE_DATA_FILE_C100,
-            JSON_CONTENT_TYPE,
-            caseDataJson.getBytes()
-        );
-
-        when(caseDocumentApiService.uploadDocument(CASE_TEST_AUTHORIZATION, multipartFile)).thenThrow(
-            new DocumentUploadOrDeleteException(
-                "Failing while uploading the document. The error message is ",
-                new Throwable()
-            ));
-
-        Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementService.uploadDocument(CASE_TEST_AUTHORIZATION, multipartFile);
-        });
-
-        assertTrue(exception.getMessage().contains("Failing while uploading the document. The error message is "));
+        assertNotNull(testDeleteResponse);
+        assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
+        assertEquals(documentInfo.getFileName(), testDeleteResponse.getDocument().getFileName());
+        assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
+        assertEquals(HttpStatus.OK, uplCase.getStatusCode());
     }
-
     @Test
-    void testDeleteC100Document() {
-
-        DocumentResponse testDeleteResponse = (DocumentResponse) documentManagementService.deleteDocument(
-            CASE_TEST_AUTHORIZATION,
-            CASE_DATA_C100_ID
-        );
-
-        Assertions.assertNotNull(testDeleteResponse);
-        Assertions.assertEquals(RESPONSE_STATUS_SUCCESS, testDeleteResponse.getStatus());
-    }
-
-    @Test
-    void testDeleteC100DocumentFailedWithException() throws Exception {
+    public void testDeleteC100DocumentFailedWithException () throws Exception {
         DocumentInfo documentInfo = DocumentInfo.builder()
-            .documentId(CASE_DATA_C100_ID)
-            .url(TEST_URL)
-            .fileName(CASE_DATA_FILE_C100).build();
+            .documentId("C100")
+            .url("TestUrl")
+            .fileName("C100CaseData.json").build();
 
-        when(documentManagementService.deleteDocument(
-            CASE_TEST_AUTHORIZATION,
-            documentInfo.getDocumentId()
-        )).thenThrow(
-            new DocumentUploadOrDeleteException(
-                "Failing while deleting the document. The error message is ",
-                new Throwable()
-            ));
+        when (documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
+            new DocumentUploadOrDeleteException("Failing while deleting the document. The error message is ", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "));
+        assertTrue (exception.getMessage().contains("Failing while deleting the document. The error message is "));
     }
+>>>>>>>> aba50a7 (Merged CaseCreateOrUpdateExceptionTest to unit tests):src/test/java/uk/gov/hmcts/reform/cosapi/services/DocumentManagementServiceTest.java
+
 }
