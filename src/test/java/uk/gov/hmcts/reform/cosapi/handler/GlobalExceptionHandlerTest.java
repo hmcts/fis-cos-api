@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@SuppressWarnings("PMD")
 public class GlobalExceptionHandlerTest {
 
     @InjectMocks

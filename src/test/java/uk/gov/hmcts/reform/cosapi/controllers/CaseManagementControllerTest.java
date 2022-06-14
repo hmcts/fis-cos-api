@@ -29,6 +29,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@SuppressWarnings("PMD")
 public class CaseManagementControllerTest {
 
     private final String caseTestAuth = "testAuth";
