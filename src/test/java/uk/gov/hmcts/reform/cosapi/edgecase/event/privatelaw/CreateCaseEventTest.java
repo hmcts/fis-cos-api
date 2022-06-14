@@ -38,13 +38,14 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static uk.gov.hmcts.reform.cosapi.edgecase.event.privatelaw.CreateCaseEvent.CITIZEN_CREATE;
 import static uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole.SYSTEMUPDATE;
-import static uk.gov.hmcts.reform.cosapi.testUtil.ConfigTestUtil.createCaseDataConfigBuilder;
-import static uk.gov.hmcts.reform.cosapi.testUtil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@SuppressWarnings("PMD")
 public class CreateCaseEventTest {
 
     @Mock
@@ -72,7 +73,8 @@ public class CreateCaseEventTest {
             .extracting(Event::getId)
             .contains(CITIZEN_CREATE);
 
-        SetMultimap<UserRole, Permission> expectedRolesAndPermissions = ImmutableSetMultimap.<UserRole, Permission>builder()
+        SetMultimap<UserRole, Permission> expectedRolesAndPermissions =
+            ImmutableSetMultimap.<UserRole, Permission>builder()
             .put(CITIZEN, C)
             .put(CITIZEN, R)
             .put(CITIZEN, U)
@@ -96,7 +98,8 @@ public class CreateCaseEventTest {
             .extracting(Event::getId)
             .contains(CITIZEN_CREATE);
 
-        SetMultimap<UserRole, Permission> expectedRolesAndPermissions = ImmutableSetMultimap.<UserRole, Permission>builder()
+        SetMultimap<UserRole, Permission> expectedRolesAndPermissions =
+            ImmutableSetMultimap.<UserRole, Permission>builder()
             .put(CITIZEN, C)
             .put(CITIZEN, R)
             .put(CITIZEN, U)
