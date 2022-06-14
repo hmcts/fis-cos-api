@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.State;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole;
@@ -18,7 +17,7 @@ import static uk.gov.hmcts.reform.cosapi.edgecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class SubmitCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
+public class SubmitCaseEvent implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_SUBMIT = "citizen-submit-event";
 
@@ -26,7 +25,7 @@ public class SubmitCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(CommonConstants.SUBMIT_CASE_EVENT_ID)
+            .event(CITIZEN_SUBMIT)
             .forStates(State.DRAFT)
             .name("Applicant Submitting the case")
             .description("The applicant confirms SOT")
