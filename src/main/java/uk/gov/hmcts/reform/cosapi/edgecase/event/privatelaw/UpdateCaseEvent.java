@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.State;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole;
@@ -17,12 +16,14 @@ import static uk.gov.hmcts.reform.cosapi.edgecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class UpdateCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
+public class UpdateCaseEvent implements CCDConfig<CaseData, State, UserRole> {
+
+    public static final String CITIZEN_UPDATE = "citizen-update-application";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(CommonConstants.UPDATE_CASE_EVENT_ID)
+            .event(CITIZEN_UPDATE)
             .forStates(State.DRAFT, State.SUBMITTED)
             .name("Edge case")
             .description("Edge case application update")
