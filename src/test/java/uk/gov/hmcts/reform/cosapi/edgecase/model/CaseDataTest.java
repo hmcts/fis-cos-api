@@ -38,7 +38,7 @@ class CaseDataTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         caseData.setApplicant(applicant);
     }
 
