@@ -19,11 +19,11 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
-import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
@@ -47,9 +47,9 @@ public class DocumentManagementServiceTest {
     }
 
     @Test
-    public void testUploadC100Document () throws Exception {
+    public void testUploadC100Document() throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String caseDataJson = loadJson ("C100CaseData.json");
+        String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         DocumentInfo documentInfo = DocumentInfo.builder()
@@ -60,23 +60,27 @@ public class DocumentManagementServiceTest {
         DocumentResponse documentUploadResponse = DocumentResponse
             .builder().document(documentInfo).build();
 
-        MockMultipartFile multipartFile = new MockMultipartFile ("json", "C100CaseData.json", "application/json", caseDataJson.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "json",
+            "C100CaseData.json",
+            "application/json",
+            caseDataJson.getBytes()
+        );
 
-        when (documentManagementService.uploadDocument(caseTestAuth, multipartFile)).thenReturn(documentUploadResponse);
+        when(documentManagementService.uploadDocument(caseTestAuth, multipartFile)).thenReturn(documentUploadResponse);
 
-        ResponseEntity<?> aCase = documentManagementController.uploadDocument(caseTestAuth, multipartFile);
-        DocumentResponse testUploadResponse = (DocumentResponse) aCase.getBody();
-        testUploadResponse.setStatus(aCase.getStatusCode()==HttpStatus.OK?"Success": "Error");
+        ResponseEntity<?> uploadCaseResponse = documentManagementController.uploadDocument(caseTestAuth, multipartFile);
+        DocumentResponse testUploadResponse = (DocumentResponse) uploadCaseResponse.getBody();
 
         assertNotNull(testUploadResponse);
         assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
         assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
         assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
-        assertEquals(HttpStatus.OK, aCase.getStatusCode());
+        assertEquals(HttpStatus.OK, uploadCaseResponse.getStatusCode());
     }
 
     @Test
-    public void testDeleteC100Document () throws Exception {
+    public void testDeleteC100Document() throws Exception {
         DocumentInfo documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
@@ -85,31 +89,35 @@ public class DocumentManagementServiceTest {
         DocumentResponse documentResponse = DocumentResponse
             .builder().document(documentInfo).build();
 
-        when (documentManagementService.deleteDocument(caseTestAuth, "C100")).thenReturn(documentResponse);
+        when(documentManagementService.deleteDocument(caseTestAuth, "C100")).thenReturn(documentResponse);
 
-        ResponseEntity<?> uplCase = documentManagementController.deleteDocument(caseTestAuth, "C100");
-        DocumentResponse testDeleteResponse = (DocumentResponse) uplCase.getBody();
+        ResponseEntity<?> deleteCaseResponse = documentManagementController.deleteDocument(caseTestAuth, "C100");
+        DocumentResponse testDeleteResponse = (DocumentResponse) deleteCaseResponse.getBody();
 
         assertNotNull(testDeleteResponse);
         assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
         assertEquals(documentInfo.getFileName(), testDeleteResponse.getDocument().getFileName());
         assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
-        assertEquals(HttpStatus.OK, uplCase.getStatusCode());
+        assertEquals(HttpStatus.OK, deleteCaseResponse.getStatusCode());
     }
+
     @Test
-    public void testDeleteC100DocumentFailedWithException () throws Exception {
+    public void testDeleteC100DocumentFailedWithException() throws Exception {
         DocumentInfo documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
             .fileName("C100CaseData.json").build();
 
-        when (documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
-            new DocumentUploadOrDeleteException("Failing while deleting the document. The error message is ", new Throwable()));
+        when(documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
+            new DocumentUploadOrDeleteException(
+                "Failing while deleting the document. The error message is ",
+                new Throwable()
+            ));
 
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
         });
-        assertTrue (exception.getMessage().contains("Failing while deleting the document. The error message is "));
+        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "));
     }
 
 }
