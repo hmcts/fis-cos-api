@@ -31,8 +31,8 @@ public class CaseData implements MappableObject {
     )
     private String caseTypeOfApplication;
 
-    @CCD(access = {CaseworkerAccess.class})
-    private String hyphenatedCaseRef;
+//    @CCD(access = {CaseworkerAccess.class})
+//    private String hyphenatedCaseRef;
 
     @JsonUnwrapped(prefix = "applicant")
     @Builder.Default
