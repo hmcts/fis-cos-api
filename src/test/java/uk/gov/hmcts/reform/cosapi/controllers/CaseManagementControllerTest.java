@@ -48,43 +48,48 @@ public class CaseManagementControllerTest {
     @Test
     public void testC100CreateCaseData() throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String caseDataJson = loadJson ("C100CaseData.json");
+        String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         Map<String, Object> caseDataMap = new HashMap<>();
 
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
 
-        when (caseManagementService.createCase(caseTestAuth, caseData)).thenReturn(caseResponse);
+        when(caseManagementService.createCase(caseTestAuth, caseData)).thenReturn(caseResponse);
 
-        ResponseEntity<?> aCase = caseManagementController.createCase(caseTestAuth, caseData);
+        ResponseEntity<?> createCaseResponse = caseManagementController.createCase(caseTestAuth, caseData);
 
-        CaseResponse testResponse = (CaseResponse) aCase.getBody();
+        CaseResponse testResponse = (CaseResponse) createCaseResponse.getBody();
 
         assertNotNull(testResponse);
-        assertEquals(HttpStatus.OK, aCase.getStatusCode());
+        assertEquals(HttpStatus.OK, createCaseResponse.getStatusCode());
     }
 
     @Test
     public void testC100UpdateCaseData() throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String caseDataJson = loadJson ("C100CaseData.json");
+        String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         Map<String, Object> caseDataMap = new HashMap<>();
 
-        caseDataMap.put ("C100CaseData", caseData);
+        caseDataMap.put("C100CaseData", caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
 
-        when (caseManagementService.updateCase(caseTestAuth, EventEnum.UPDATE, caseData, 123L)).thenReturn(caseResponse);
+        when(caseManagementService.updateCase(caseTestAuth, EventEnum.UPDATE, caseData, 123L)).thenReturn(caseResponse);
 
-        ResponseEntity<?> uCase =  caseManagementController.updateCase(123L, caseTestAuth, EventEnum.UPDATE, caseData);
+        ResponseEntity<?> updateCaseResponse = caseManagementController.updateCase(
+            123L,
+            caseTestAuth,
+            EventEnum.UPDATE,
+            caseData
+        );
 
-        CaseResponse testResponse = (CaseResponse) uCase.getBody();
+        CaseResponse testResponse = (CaseResponse) updateCaseResponse.getBody();
         CaseData caseData1 = (CaseData) testResponse.getCaseData().get("C100CaseData");
 
         assertNotNull(testResponse);
-        assertEquals(HttpStatus.OK, uCase.getStatusCode());
+        assertEquals(HttpStatus.OK, updateCaseResponse.getStatusCode());
     }
 }
 

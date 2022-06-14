@@ -8,17 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.controllers.CaseManagementController;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
-import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,32 +39,32 @@ public class CaseCreateOrUpdateExceptionTest {
     }
 
     @Test
-    public void testCreateCaseDataCaseCreateUpdateException () throws Exception {
+    public void testCreateCaseDataCaseCreateUpdateException() throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String caseDataJson = loadJson ("C100CaseData.json");
+        String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        when (caseManagementService.createCase(caseTestAuth, caseData))
-            .thenThrow(new CaseCreateOrUpdateException ("Failing while creating the case", new Throwable()));
+        when(caseManagementService.createCase(caseTestAuth, caseData))
+            .thenThrow(new CaseCreateOrUpdateException("Failing while creating the case", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementController.createCase(caseTestAuth, caseData);
         });
-        assertTrue (exception.getMessage().contains("Failing while creating the case"));
+        assertTrue(exception.getMessage().contains("Failing while creating the case"));
     }
 
     @Test
-    public void testUpdateCaseDataCaseCreateUpdateException () throws Exception {
+    public void testUpdateCaseDataCaseCreateUpdateException() throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String caseDataJson = loadJson ("C100CaseData.json");
+        String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        when (caseManagementService.createCase(caseTestAuth, caseData))
-            .thenThrow(new CaseCreateOrUpdateException ("Failing while updating the case", new Throwable()));
+        when(caseManagementService.createCase(caseTestAuth, caseData))
+            .thenThrow(new CaseCreateOrUpdateException("Failing while updating the case", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementController.createCase(caseTestAuth, caseData);
         });
-        assertTrue (exception.getMessage().contains("Failing while updating the case"));
+        assertTrue(exception.getMessage().contains("Failing while updating the case"));
     }
 }
