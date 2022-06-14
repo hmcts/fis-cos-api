@@ -20,6 +20,8 @@ import static uk.gov.hmcts.reform.cosapi.edgecase.model.access.Permissions.READ;
 @Slf4j
 public class SubmitCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
 
+    public static final String CITIZEN_SUBMIT = "citizen-submit-event";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
