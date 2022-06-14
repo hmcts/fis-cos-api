@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.cosapi.testUtil;
+package uk.gov.hmcts.reform.cosapi.util;
 
 import com.google.common.collect.ImmutableSet;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static org.junit.platform.commons.util.ReflectionUtils.findMethod;
 
+@SuppressWarnings("PMD")
 public class ConfigTestUtil {
 
     private ConfigTestUtil() {

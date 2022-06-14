@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 @SuppressWarnings("PMD")
 public class TestFileUtil {
 
+    private TestFileUtil() {
+    }
+
     public static String loadJson(final String filePath) throws Exception {
         return new String(loadResource(filePath), Charset.forName("utf-8"));
     }
@@ -33,17 +36,10 @@ public class TestFileUtil {
     }
 
     public static <T> String objectToJson(T object) {
-
         try {
-
             return new ObjectMapper().writeValueAsString(object);
-
         } catch (Exception e) {
-
             throw new RuntimeException(e);
-
         }
-
     }
-
 }
