@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@SuppressWarnings("PMD")
 public class DocumentUploadOrDeleteExceptionTest {
     private final String caseTestAuth = "testAuth";
 
