@@ -114,7 +114,6 @@ public class CreateCaseEventTest {
 
     @Test
     void shouldSetFormattedCaseReferenceWhenAboutToSubmitCallbackIsTriggered() throws Exception {
-        //final CaseData caseData = caseData();
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
@@ -122,11 +121,9 @@ public class CreateCaseEventTest {
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        //details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = createCaseEvent.aboutToSubmit(details, beforeDetails);
 
-        //assertThat(response.getData().getHyphenatedCaseRef()).isEqualTo(caseData.formatCaseRef(TEST_CASE_ID));
         assertThat(response.getData().getNamedApplicant()).isEqualTo(caseData.getNamedApplicant());
     }
 
