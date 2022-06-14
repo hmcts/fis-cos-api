@@ -15,9 +15,10 @@ import java.util.Map;
 
 import static org.junit.platform.commons.util.ReflectionUtils.findMethod;
 
-public final class ConfigTestUtil {
-    private ConfigTestUtil() {
+@SuppressWarnings("PMD")
+public class ConfigTestUtil {
 
+    private ConfigTestUtil() {
     }
 
     //might need to alter this

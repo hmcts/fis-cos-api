@@ -30,6 +30,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@SuppressWarnings("PMD")
 public class DocumentManagementServiceTest {
     private final String caseTestAuth = "testAuth";
 
@@ -39,11 +40,9 @@ public class DocumentManagementServiceTest {
     @Mock
     DocumentManagementService documentManagementService;
 
-
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-
     }
 
     @Test
