@@ -33,6 +33,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 public class CaseManagementControllerTest {
 
     private final String caseTestAuth = "testAuth";
+    private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @InjectMocks
     private CaseManagementController caseManagementController;
@@ -43,12 +44,10 @@ public class CaseManagementControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-
     }
 
     @Test
     public void testC100CreateCaseData() throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
@@ -68,7 +67,6 @@ public class CaseManagementControllerTest {
 
     @Test
     public void testC100UpdateCaseData() throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
