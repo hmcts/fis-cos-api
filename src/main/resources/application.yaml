@@ -81,7 +81,7 @@ idam:
     secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
     microservice: fis_cos_api
   api:
-    url: ${IDAM_API_BASEURL:http://localhost:5000}
+    url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
   systemupdate:
     username: ${IDAM_SYSTEM_UPDATE_USERNAME:dummysystemupdate@test.com}
     password: ${IDAM_SYSTEM_UPDATE_PASSWORD:dummy}

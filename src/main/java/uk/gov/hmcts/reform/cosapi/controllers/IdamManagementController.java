@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
+import uk.gov.hmcts.reform.cosapi.model.idam.User;
+import uk.gov.hmcts.reform.cosapi.services.idam.IdamManagementService;
 
 @RestController
 @RequestMapping("/idam/dss-orhestration")
 public class IdamManagementController {
 
     @Autowired
-    DocumentManagementService documentManagementService;
+    IdamManagementService idamManagementService;
 
     @RequestMapping(
         value = "/user/details",
         method = RequestMethod.GET,
-        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ApiOperation("Call CDAM to upload document")
@@ -33,8 +33,8 @@ public class IdamManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> getUserDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation) {
-
-        return null;
+    public ResponseEntity<?> getUserDetails(@RequestHeader(value=HttpHeaders.AUTHORIZATION) String authorization) {
+        User user = idamManagementService.getUserDetails(authorization);
+        return ResponseEntity.ok(user);
     }
 }
