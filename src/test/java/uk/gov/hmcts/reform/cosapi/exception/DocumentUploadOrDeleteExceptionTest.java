@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("PMD")
 public class DocumentUploadOrDeleteExceptionTest {
     private final String caseTestAuth = "testAuth";
+    private DocumentInfo documentInfo;
 
     @InjectMocks
     private DocumentManagementController documentManagementController;
@@ -39,7 +40,7 @@ public class DocumentUploadOrDeleteExceptionTest {
 
     @Test
     public void testDeleteDocumentUploadOrDeleteException() throws Exception {
-        DocumentInfo documentInfo = DocumentInfo.builder()
+        documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
             .fileName("C100CaseData.json").build();
@@ -58,7 +59,7 @@ public class DocumentUploadOrDeleteExceptionTest {
 
     @Test
     public void testUpdateDocumentUploadOrDeleteException() throws Exception {
-        DocumentInfo documentInfo = DocumentInfo.builder()
+        documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
             .fileName("C100CaseData.json").build();
