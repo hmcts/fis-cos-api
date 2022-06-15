@@ -16,9 +16,7 @@ public enum UserRole implements HasRole {
     SUPER_USER(UserRoleConstant.SUPER_USER, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU),
     SOLICITOR(UserRoleConstant.SOLICITOR, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU),
     CITIZEN(UserRoleConstant.CITIZEN, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU),
-    CREATOR(UserRoleConstant.CREATOR, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRUD),
-
-    SYSTEMUPDATE(UserRoleConstant.SYSTEMUPDATE, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRU);
+    CREATOR(UserRoleConstant.CREATOR, UserRoleConstant.CASE_TYPE_PERMISSIONS_CRUD);
 
     @JsonValue
     private final String role;

@@ -13,8 +13,6 @@ public final class UserRoleConstant {
     public static final String CREATOR = "[CREATOR]";
     public static final String CASE_TYPE_PERMISSIONS_CRU = "CRU";
     public static final String CASE_TYPE_PERMISSIONS_CRUD = "CRUD";
-    public static final String SYSTEMUPDATE = "event-creation-system-update";
-
 
     private UserRoleConstant() {
         //private constructor
