@@ -26,6 +26,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @SuppressWarnings("PMD")
 public class CaseCreateOrUpdateExceptionTest {
     private final String caseTestAuth = "testAuth";
+    private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @InjectMocks
     private CaseManagementController caseManagementController;
@@ -41,7 +42,6 @@ public class CaseCreateOrUpdateExceptionTest {
 
     @Test
     public void testCreateCaseDataCaseCreateUpdateException() throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
@@ -56,7 +56,6 @@ public class CaseCreateOrUpdateExceptionTest {
 
     @Test
     public void testUpdateCaseDataCaseCreateUpdateException() throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String caseDataJson = loadJson("C100CaseData.json");
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
