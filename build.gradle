@@ -205,15 +205,14 @@ project.tasks['check'].dependsOn integration
 
 def sonarExclusions = [
   '**/uk/gov/hmcts/reform/cosapi/common/**',
+  '**/uk/gov/hmcts/reform/cosapi/document/**',
+  '**/uk/gov/hmcts/reform/cosapi/model/PaymentStatus',
   '**/uk/gov/hmcts/reform/cosapi/constants/**',
-  '**/uk/gov/hmcts/reform/cosapi/document/content/DocmosisTemplateConstants.java',
-  '**/uk/gov/hmcts/reform/cosapi/edgecase/constants/CaseType.java',
+  '**/uk/gov/hmcts/reform/cosapi/edgecase/constants/**',
   '**/uk/gov/hmcts/reform/cosapi/edgecase/model/**',
   '**/uk/gov/hmcts/reform/cosapi/edgecase/search/**',
   '**/uk/gov/hmcts/reform/cosapi/edgecase/task/**',
-  '**/uk/gov/hmcts/reform/cosapi/model/PaymentStatus.java',
-  '**/uk/gov/hmcts/reform/fis/config/OpenAPIConfiguration.java',
-  '**/uk/gov/hmcts/reform/fis/controllers/RootController.java',
+  '**/uk/gov/hmcts/reform/cosapi/model/**',
 ]
 
 sonarqube {
