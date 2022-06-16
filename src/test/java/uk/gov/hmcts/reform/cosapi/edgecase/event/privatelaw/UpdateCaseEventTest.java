@@ -16,8 +16,7 @@ import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.createCaseDataConfi
 import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("PMD")
-public class UpdateCaseEventTest {
+class UpdateCaseEventTest {
 
     @InjectMocks
     private UpdateCaseEvent updateCaseEvent;

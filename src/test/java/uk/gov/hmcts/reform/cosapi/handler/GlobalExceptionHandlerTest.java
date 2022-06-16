@@ -24,20 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("PMD")
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     @InjectMocks
     GlobalExceptionHandler globalExceptionHandler;
 
     @Before
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
     }
 
     @Test
-    public void handleDocumentUploadDeleteThroughHandler() {
+    void handleDocumentUploadDeleteThroughHandler() {
         DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
             "Failing while deleting the document. The error message is ",
             new Throwable()
@@ -45,14 +44,16 @@ public class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
+                     exceptionResponseHandler.getStatusCode());
+
         assertTrue(exceptionResponseHandler.getBody().toString().contains(
             "Failing while deleting the document. The error message is "));
     }
 
 
     @Test
-    public void handleCreateCaseApiExceptionThroughExceptionHandler() {
+    void handleCreateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while creating the case",
             new Throwable()
@@ -60,12 +61,12 @@ public class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
+        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
         assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while creating the case"));
     }
 
     @Test
-    public void handleUpdateCaseApiExceptionThroughExceptionHandler() {
+    void handleUpdateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while updating the case",
             new Throwable()
@@ -73,30 +74,30 @@ public class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
+        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
         assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while updating the case"));
     }
 
     @Test
-    public void handleBadRequestExceptionCausedByIllegalArgumentExceptionThroughExceptionHandler() {
+    void handleBadRequestExceptionCausedByIllegalArgumentExceptionThroughExceptionHandler() {
         IllegalArgumentException illException = new IllegalArgumentException("Illegal Argument Exception Caught");
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(illException);
 
-        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
+        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
     }
 
     @Test
-    public void handleBadRequestExceptionCausedByNullPointerExceptionThroughExceptionHandler() {
+    void handleBadRequestExceptionCausedByNullPointerExceptionThroughExceptionHandler() {
         NullPointerException nullException = new NullPointerException("NullPointer Exception Caught");
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(nullException);
 
-        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
+        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
     }
 
     @Test
-    public void handleFeignExceptionServiceUnavailableExceptionThroughExceptionHandler() {
+    void handleFeignExceptionServiceUnavailableExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
         Request request = Request.create(Request.HttpMethod.GET, "url",
@@ -118,7 +119,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void handleFeignExceptionUnauthorizedExceptionThroughExceptionHandler() {
+    void handleFeignExceptionUnauthorizedExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
         Request request = Request.create(Request.HttpMethod.GET, "url",
