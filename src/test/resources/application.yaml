@@ -41,10 +41,6 @@ spring:
 #      connectionTimeout: 30000
 #  jpa:
 #    properties:
-#      hibernate:
-#        jdbc:
-#          lob:
-#            # silence the 'wall-of-text' - unnecessary exception throw about blob types
 #            non_contextual_creation: true
 
 azure:
@@ -57,10 +53,6 @@ uk:
       api:
         key: ${UK_GOV_NOTIFY_API_KEY:dummy}
         baseUrl: https://api.notifications.service.gov.uk
-      email:
-        templateVars:
-          signInAdoptionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_ADOPTION_URL:https://adoption-web.aat.platform.hmcts.net/}
-          adoptionCourtEmail: some.email@justice.gov.uk
         templates:
           english:
             TEST_EMAIL: 'b60ab1ad-fe9c-4098-81a5-ad6c976b7de3'

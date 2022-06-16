@@ -20,9 +20,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("PMD")
-public class DocumentUploadOrDeleteExceptionTest {
-    private final String caseTestAuth = "testAuth";
+class DocumentUploadOrDeleteExceptionTest {
+    private static final String CASE_TEST_AUTHORISATION = "testAuth";
+    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
     private DocumentInfo documentInfo;
 
     @InjectMocks
@@ -39,41 +39,43 @@ public class DocumentUploadOrDeleteExceptionTest {
     }
 
     @Test
-    public void testDeleteDocumentUploadOrDeleteException() throws Exception {
+    void testDeleteDocumentUploadOrDeleteException() throws Exception {
         documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
-            .fileName("C100CaseData.json").build();
+            .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
                 "Failing while deleting the document. The error message is ",
                 new Throwable()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "));
+        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "),
+            String.valueOf(true));
     }
 
     @Test
-    public void testUpdateDocumentUploadOrDeleteException() throws Exception {
+    void testUpdateDocumentUploadOrDeleteException() throws Exception {
         documentInfo = DocumentInfo.builder()
             .documentId("C100")
             .url("TestUrl")
-            .fileName("C100CaseData.json").build();
+            .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(caseTestAuth, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
                 "Failing while updating the document. The error message is ",
                 new Throwable()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(caseTestAuth, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while updating the document. The error message is "));
+        assertTrue(exception.getMessage().contains("Failing while updating the document. The error message is "),
+            String.valueOf(true));
     }
 
 }

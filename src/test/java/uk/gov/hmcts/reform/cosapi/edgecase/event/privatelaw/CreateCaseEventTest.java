@@ -36,8 +36,7 @@ import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.getEventsFrom;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("PMD")
-public class CreateCaseEventTest {
+class CreateCaseEventTest {
 
     @Mock
     private AddSystemUpdateRole addSystemUpdateRole;
@@ -81,7 +80,7 @@ public class CreateCaseEventTest {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         when(addSystemUpdateRole.addIfConfiguredForEnvironment(anyList()))
-            .thenReturn((List.of(CITIZEN, CASE_WORKER)));
+            .thenReturn(List.of(CITIZEN, CASE_WORKER));
 
         createCaseEvent.configure(configBuilder);
 
