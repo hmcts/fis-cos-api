@@ -1,10 +1,12 @@
 package uk.gov.hmcts.reform.cosapi.controllers;
 
+import com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -14,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.cosapi.model.idam.User;
 import uk.gov.hmcts.reform.cosapi.services.idam.IdamManagementService;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/idam/dss-orhestration")
 public class IdamManagementController {
 
     @Autowired
-    IdamManagementService idamManagementService;
+    private IdamManagementService idamManagementService;
 
     @RequestMapping(
         value = "/user/details",
@@ -34,7 +38,14 @@ public class IdamManagementController {
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public ResponseEntity<?> getUserDetails(@RequestHeader(value=HttpHeaders.AUTHORIZATION) String authorization) {
-        User user = idamManagementService.getUserDetails(authorization);
-        return ResponseEntity.ok(user);
+        if(StringUtils.isEmpty(authorization))
+            return ResponseEntity.badRequest().body("Authorization Access Token Is Empty");
+        else {
+            Optional<User> user = Optional.ofNullable(idamManagementService.getUserDetails(authorization));
+            if(user.isPresent())
+                return ResponseEntity.ok(user.get());
+            else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User details not found for the given user access token");
+        }
     }
 }

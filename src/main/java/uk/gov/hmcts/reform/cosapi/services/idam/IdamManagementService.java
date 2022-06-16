@@ -6,6 +6,8 @@ import uk.gov.hmcts.reform.cosapi.idam.IdamService;
 import uk.gov.hmcts.reform.cosapi.model.idam.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.Optional;
+
 @Service
 public class IdamManagementService {
 
@@ -13,15 +15,23 @@ public class IdamManagementService {
     private IdamService idamService;
 
     public User getUserDetails(String authorization) {
-        uk.gov.hmcts.reform.idam.client.models.User user = idamService.retrieveUser(
-            authorization);
+        Optional<uk.gov.hmcts.reform.idam.client.models.User> userOptional = Optional.ofNullable(idamService.retrieveUser(
+            authorization));
 
-        UserDetails userDetails = user.getUserDetails();
-        return User.builder()
-            .firstName(userDetails.getForename())
-            .lastName(userDetails.getSurname().get())
-            .emailAddress(userDetails.getEmail())
-            .build();
+        Optional<uk.gov.hmcts.reform.idam.client.models.UserDetails> userDetailsOptional = Optional.empty();
+
+        if(userOptional.isPresent())
+            userDetailsOptional = Optional.ofNullable(userOptional.get().getUserDetails());
+
+        if(userOptional.isPresent() && userDetailsOptional.isPresent())
+            return User.builder()
+                .firstName(userDetailsOptional.get().getForename())
+                .lastName(userDetailsOptional.get().getSurname().get())
+                .email(userDetailsOptional.get().getEmail())
+                .build();
+        else
+            return null;
+
     }
 
 }
