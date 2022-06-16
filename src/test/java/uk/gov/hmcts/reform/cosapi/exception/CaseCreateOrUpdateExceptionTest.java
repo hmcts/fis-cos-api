@@ -23,48 +23,51 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("PMD")
-public class CaseCreateOrUpdateExceptionTest {
-    private final String caseTestAuth = "testAuth";
-    private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+class CaseCreateOrUpdateExceptionTest {
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
 
     @InjectMocks
     private CaseManagementController caseManagementController;
 
     @Mock
-    CaseManagementService caseManagementService;
+    private CaseManagementService caseManagementService;
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCreateCaseDataCaseCreateUpdateException() throws Exception {
-        String caseDataJson = loadJson("C100CaseData.json");
+    void testCreateCaseDataCaseCreateUpdateException() throws Exception {
+        String createCaseTestAuth = "testAuth";
+        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        when(caseManagementService.createCase(caseTestAuth, caseData))
+        when(caseManagementService.createCase(createCaseTestAuth, caseData))
             .thenThrow(new CaseCreateOrUpdateException("Failing while creating the case", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            caseManagementController.createCase(caseTestAuth, caseData);
+            caseManagementController.createCase(createCaseTestAuth, caseData);
         });
-        assertTrue(exception.getMessage().contains("Failing while creating the case"));
+
+        assertTrue(exception.getMessage().contains("Failing while creating the case"), String.valueOf(true));
     }
 
     @Test
-    public void testUpdateCaseDataCaseCreateUpdateException() throws Exception {
-        String caseDataJson = loadJson("C100CaseData.json");
+    void testUpdateCaseDataCaseCreateUpdateException() throws Exception {
+        String updateCaseTestAuth = "testAuth";
+        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        when(caseManagementService.createCase(caseTestAuth, caseData))
+        when(caseManagementService.createCase(updateCaseTestAuth, caseData))
             .thenThrow(new CaseCreateOrUpdateException("Failing while updating the case", new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            caseManagementController.createCase(caseTestAuth, caseData);
+            caseManagementController.createCase(updateCaseTestAuth, caseData);
         });
-        assertTrue(exception.getMessage().contains("Failing while updating the case"));
+
+        assertTrue(exception.getMessage().contains("Failing while updating the case"), String.valueOf(true));
     }
 }

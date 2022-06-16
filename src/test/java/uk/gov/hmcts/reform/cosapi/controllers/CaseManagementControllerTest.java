@@ -74,6 +74,8 @@ public class CaseManagementControllerTest {
 
         caseDataMap.put("C100CaseData", caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
+        caseResponse.setId(123L);
+        caseResponse.setStatus(null);
 
         when(caseManagementService.updateCase(caseTestAuth, EventEnum.UPDATE, caseData, 123L)).thenReturn(caseResponse);
 
