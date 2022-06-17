@@ -18,22 +18,22 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@SuppressWarnings("PMD")
-public class CaseManagementControllerTest {
-
-    private final String caseTestAuth = "testAuth";
-    private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+class CaseManagementControllerTest {
+    private static final String CASE_TEST_AUTHORIZATION = "testAuth";
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
+    private static final String CASE_DATA_C100_ID = "C100CaseData";
 
     @InjectMocks
     private CaseManagementController caseManagementController;
@@ -42,22 +42,22 @@ public class CaseManagementControllerTest {
     CaseManagementService caseManagementService;
 
     @Before
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testC100CreateCaseData() throws Exception {
-        String caseDataJson = loadJson("C100CaseData.json");
+    void testC100CreateCaseData() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        Map<String, Object> caseDataMap = new HashMap<>();
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
 
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
 
-        when(caseManagementService.createCase(caseTestAuth, caseData)).thenReturn(caseResponse);
+        when(caseManagementService.createCase(CASE_TEST_AUTHORIZATION, caseData)).thenReturn(caseResponse);
 
-        ResponseEntity<?> createCaseResponse = caseManagementController.createCase(caseTestAuth, caseData);
+        ResponseEntity<?> createCaseResponse = caseManagementController.createCase(CASE_TEST_AUTHORIZATION, caseData);
 
         CaseResponse testResponse = (CaseResponse) createCaseResponse.getBody();
 
@@ -66,31 +66,52 @@ public class CaseManagementControllerTest {
     }
 
     @Test
-    public void testC100UpdateCaseData() throws Exception {
-        String caseDataJson = loadJson("C100CaseData.json");
+    void testC100UpdateCaseData() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        Map<String, Object> caseDataMap = new HashMap<>();
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
 
-        caseDataMap.put("C100CaseData", caseData);
+        caseDataMap.put(CASE_DATA_C100_ID, caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
         caseResponse.setId(123L);
         caseResponse.setStatus(null);
 
-        when(caseManagementService.updateCase(caseTestAuth, EventEnum.UPDATE, caseData, 123L)).thenReturn(caseResponse);
+        when(caseManagementService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
+                                              caseData, 123L)).thenReturn(caseResponse);
 
-        ResponseEntity<?> updateCaseResponse = caseManagementController.updateCase(
+        ResponseEntity<?> preUpdateCaseResponse = caseManagementController.updateCase(
             123L,
-            caseTestAuth,
+            CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
             caseData
         );
 
-        CaseResponse testResponse = (CaseResponse) updateCaseResponse.getBody();
-        CaseData caseData1 = (CaseData) testResponse.getCaseData().get("C100CaseData");
+        CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
+        assertEquals("test@test.com", caseData.getApplicant().getEmailAddress());
 
-        assertNotNull(testResponse);
-        assertEquals(HttpStatus.OK, updateCaseResponse.getStatusCode());
+        CaseData caseDataUpdate = (CaseData) testPreUpdResponse.getCaseData().get(CASE_DATA_C100_ID);
+        caseDataUpdate.getApplicant().setEmailAddress("testUpdate@test.com");
+
+        preUpdateCaseResponse = caseManagementController.updateCase(
+            123L,
+            CASE_TEST_AUTHORIZATION,
+            EventEnum.UPDATE,
+            caseDataUpdate
+        );
+
+        CaseResponse caseDataUpdateResponse = (CaseResponse) (preUpdateCaseResponse.getBody());
+
+        CaseData caseDataUpdatedFromResponse = (CaseData) (caseDataUpdateResponse.getCaseData().get(CASE_DATA_C100_ID));
+
+        assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
+                     caseDataUpdate.getApplicant().getEmailAddress());
+        assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
+                     caseData.getApplicant().getEmailAddress());
+        assertEquals("testUpdate@test.com", caseDataUpdate.getApplicant().getEmailAddress());
+
+        assertNotNull(testPreUpdResponse);
+        assertEquals(HttpStatus.OK, preUpdateCaseResponse.getStatusCode());
     }
 }
 
