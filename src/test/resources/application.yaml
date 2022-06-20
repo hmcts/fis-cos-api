@@ -14,6 +14,7 @@ management:
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.cosapi.controllers
 
+#If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
     import: "optional:configtree:/mnt/secrets/fis/"
@@ -24,6 +25,39 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_OPTIONS:}
+#    username: ${DB_USER_NAME}
+#    password: ${DB_PASSWORD}
+#    properties:
+#      charSet: UTF-8
+#    hikari:
+#      minimumIdle: 2
+#      maximumPoolSize: 10
+#      idleTimeout: 10000
+#      poolName: {to-be-defined}HikariCP
+#      maxLifetime: 7200000
+#      connectionTimeout: 30000
+#  jpa:
+#    properties:
+#            non_contextual_creation: true
+
+azure:
+  application-insights:
+    instrumentation-key: ${AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+uk:
+  gov:
+    notify:
+      api:
+        key: ${UK_GOV_NOTIFY_API_KEY:dummy}
+        baseUrl: https://api.notifications.service.gov.uk
+        templates:
+          english:
+            TEST_EMAIL: 'b60ab1ad-fe9c-4098-81a5-ad6c976b7de3'
+            SAVE_SIGN_OUT: ''
+          welsh:
             TEST_EMAIL: '75f5d6c5-0af6-437c-afe7-623399c11e7b'
             SAVE_SIGN_OUT: ''
             APPLICATION_SUBMITTED: '75f5d6c5-0af6-437c-afe7-623399c11e7b'
