@@ -74,6 +74,30 @@ class DocumentManagementServiceTest {
     }
 
     @Test
+    void testUploadC100DocumentFailedWithException() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_C100);
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "json",
+            CASE_DATA_FILE_C100,
+            "application/json",
+            caseDataJson.getBytes()
+        );
+
+        when(caseDocumentApiService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile)).thenThrow(
+            new DocumentUploadOrDeleteException(
+                "Failing while uploading the document. The error message is ",
+                new Throwable()
+            ));
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            documentManagementService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile);
+        });
+
+        assertTrue(exception.getMessage().contains("Failing while uploading the document. The error message is "));
+    }
+
+    @Test
     void testDeleteC100Document() {
 
         DocumentResponse testDeleteResponse = (DocumentResponse) documentManagementService.deleteDocument(
