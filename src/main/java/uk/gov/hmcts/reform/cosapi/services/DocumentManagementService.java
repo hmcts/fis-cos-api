@@ -25,7 +25,7 @@ public class DocumentManagementService {
         } catch (Exception e) {
             log.error("Error while uploading document ." + e.getMessage());
             throw new DocumentUploadOrDeleteException("Failing while uploading the document. The error message is "
-                                                           + e.getMessage(), e);
+                                                          + e.getMessage(), e);
         }
     }
 
@@ -38,7 +38,7 @@ public class DocumentManagementService {
         } catch (Exception e) {
             log.error("Error while deleting  document ." + e.getMessage());
             throw new DocumentUploadOrDeleteException("Failing while deleting the document. The error message is "
-                                                           + e.getMessage(), e);
+                                                          + e.getMessage(), e);
         }
     }
 }
