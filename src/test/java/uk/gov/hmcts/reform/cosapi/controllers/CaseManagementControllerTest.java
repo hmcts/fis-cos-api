@@ -24,16 +24,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.*;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class CaseManagementControllerTest {
-    private static final String CASE_TEST_AUTHORIZATION = "testAuth";
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
-    private static final String CASE_DATA_C100_ID = "C100CaseData";
 
     @InjectMocks
     private CaseManagementController caseManagementController;
