@@ -16,13 +16,13 @@ import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORISATION;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class DocumentUploadOrDeleteExceptionTest {
-    private static final String CASE_TEST_AUTHORISATION = "testAuth";
-    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
     private DocumentInfo documentInfo;
 
     @InjectMocks
