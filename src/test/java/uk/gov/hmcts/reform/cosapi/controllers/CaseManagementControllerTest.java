@@ -106,8 +106,6 @@ class CaseManagementControllerTest {
 
         assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
                      caseDataUpdate.getApplicant().getEmailAddress());
-        assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
-                     caseData.getApplicant().getEmailAddress());
         assertEquals("testUpdate@test.com", caseDataUpdate.getApplicant().getEmailAddress());
 
         assertNotNull(testPreUpdResponse);

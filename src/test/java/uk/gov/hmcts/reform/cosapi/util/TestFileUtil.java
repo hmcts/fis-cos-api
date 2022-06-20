@@ -10,19 +10,18 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-@SuppressWarnings("PMD")
-public class TestFileUtil {
-
+public final class TestFileUtil {
     private TestFileUtil() {
     }
 
-    public static String loadJson(final String filePath) throws Exception {
+    public static String loadJson(final String filePath) throws IOException {
         return new String(loadResource(filePath), Charset.forName("utf-8"));
     }
 
     public static byte[] loadResource(final String filePath) throws IOException {
         try {
-            URL url = TestFileUtil.class.getClassLoader().getResource(filePath);
+            URL url = Thread.currentThread().getContextClassLoader().getResource(filePath);
+
             if (url == null) {
                 throw new IllegalArgumentException(String.format("Could not find resource in path %s", filePath));
             }
@@ -32,19 +31,19 @@ public class TestFileUtil {
         }
     }
 
-    public static <T> T loadJsonToObject(String filePath, Class<T> type) {
+    public static <T> T loadJsonToObject(String filePath, Class<T> type) throws InvalidResourceException {
         try {
             return new ObjectMapper().readValue(loadJson(filePath), type);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InvalidResourceException("Could not find resource in path " + filePath, e);
         }
     }
 
-    public static <T> String objectToJson(T object) {
+    public static <T> String objectToJson(T object) throws InvalidResourceException {
         try {
             return new ObjectMapper().writeValueAsString(object);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InvalidResourceException("Could not write object to Json ", e);
         }
     }
 }
