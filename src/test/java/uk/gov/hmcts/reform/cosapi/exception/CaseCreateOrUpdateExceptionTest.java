@@ -18,6 +18,7 @@ import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -25,14 +26,12 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ActiveProfiles("test")
 class CaseCreateOrUpdateExceptionTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private static final String CASE_DATA_FILE_C100 = "C100CaseData.json";
 
     @InjectMocks
     private CaseManagementController caseManagementController;
 
     @Mock
     private CaseManagementService caseManagementService;
-
 
     @Before
     void setUp() {
