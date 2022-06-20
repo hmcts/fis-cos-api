@@ -7,37 +7,39 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.reform.cosapi.idam.IdamService;
+import uk.gov.hmcts.reform.cosapi.model.idam.IdamUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 @SpringBootTest
 class IdamManagementServiceTest {
 
+    public static final String AUTHORIZATION = "Authorization";
     @Mock
     private IdamService idamService;
 
     @InjectMocks
-    private IdamManagementService idamManagementService = new IdamManagementService();
+    private final IdamManagementService idamManagementService = new IdamManagementService();
 
     @Test
-    void getUserDetails() {
+    void userDetails() {
         UserDetails userDetails = UserDetails.builder()
             .forename("hmcts")
             .surname("gov")
             .email("gov@hmcts.net")
             .build();
-        uk.gov.hmcts.reform.idam.client.models.User expectedUser = new User("AuthToken", userDetails);
-        Mockito.when(idamService.retrieveUser("Authorization")).thenReturn(expectedUser);
-        uk.gov.hmcts.reform.cosapi.model.idam.User actualUser = idamManagementService.getUserDetails("Authorization");
+        User expectedUser = new User("AuthToken", userDetails);
+        Mockito.when(idamService.retrieveUser(AUTHORIZATION)).thenReturn(expectedUser);
+        IdamUser actualUser = idamManagementService.getUserDetails(AUTHORIZATION);
         Assertions.assertEquals(expectedUser.getUserDetails().getForename(), actualUser.getFirstName());
         Assertions.assertEquals(expectedUser.getUserDetails().getSurname().get(), actualUser.getLastName());
         Assertions.assertEquals(expectedUser.getUserDetails().getEmail(), actualUser.getEmail());
     }
 
     @Test
-    void userNull(){
-        Mockito.when(idamService.retrieveUser("Authorization")).thenReturn(null);
-        uk.gov.hmcts.reform.cosapi.model.idam.User actualUser = idamManagementService.getUserDetails("Authorization");
+    void userNull() {
+        Mockito.when(idamService.retrieveUser(AUTHORIZATION)).thenReturn(null);
+        IdamUser actualUser = idamManagementService.getUserDetails(AUTHORIZATION);
         Assertions.assertEquals(null, actualUser);
     }
 }

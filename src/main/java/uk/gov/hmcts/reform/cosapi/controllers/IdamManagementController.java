@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.reform.cosapi.model.idam.User;
+import uk.gov.hmcts.reform.cosapi.model.idam.IdamUser;
 import uk.gov.hmcts.reform.cosapi.services.idam.IdamManagementService;
 
 import java.util.Optional;
@@ -37,15 +37,17 @@ public class IdamManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> getUserDetails(@RequestHeader(value=HttpHeaders.AUTHORIZATION) String authorization) {
-        if(StringUtils.isEmpty(authorization))
+    public ResponseEntity<?> getUserDetails(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        if (StringUtils.isEmpty(authorization)) {
             return ResponseEntity.badRequest().body("Authorization Access Token Is Empty");
-        else {
-            Optional<User> user = Optional.ofNullable(idamManagementService.getUserDetails(authorization));
-            if(user.isPresent())
+        } else {
+            Optional<IdamUser> user = Optional.ofNullable(idamManagementService.getUserDetails(authorization));
+            if (user.isPresent()) {
                 return ResponseEntity.ok(user.get());
-            else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User details not found for the given user access token");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "User details not found for the given user access token");
+            }
         }
     }
 }

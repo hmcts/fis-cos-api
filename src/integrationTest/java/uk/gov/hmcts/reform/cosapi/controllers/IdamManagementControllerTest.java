@@ -14,7 +14,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import uk.gov.hmcts.reform.cosapi.model.idam.User;
+import uk.gov.hmcts.reform.cosapi.model.idam.IdamUser;
 import uk.gov.hmcts.reform.cosapi.services.idam.IdamManagementService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -48,7 +48,7 @@ class IdamManagementControllerTest {
 
     @Test
     void userFound() throws Exception {
-        User user = User.builder()
+        IdamUser user = IdamUser.builder()
             .firstName("hmcts")
             .lastName("gov")
             .email("gov@htcts.net")

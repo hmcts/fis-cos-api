@@ -9,6 +9,7 @@
   <rule ref="category/java/bestpractices.xml">
     <exclude name="GuardLogStatement"/>
     <exclude name="JUnitTestContainsTooManyAsserts"/>
+    <exclude name="JUnitTestsShouldIncludeAssert"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
@@ -42,15 +43,11 @@
     <exclude name="LoosePackageCoupling"/>
     <exclude name="DataClass"/>
     <exclude name="UseObjectForClearerAPI"/>
+    <exclude name="LawOfDemeter"/>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
       <property name="minimum" value="50"/><!-- should be reduced -->
-    </properties>
-  </rule>
-  <rule ref="category/java/design.xml/LawOfDemeter">
-    <properties>
-      <property name="violationSuppressRegex" value="(.*method chain calls.*|.*object not created locally.*)"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException">
