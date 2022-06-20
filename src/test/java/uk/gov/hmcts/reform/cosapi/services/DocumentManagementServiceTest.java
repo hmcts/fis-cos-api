@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
 import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +18,7 @@ import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -66,19 +66,20 @@ class DocumentManagementServiceTest {
         when(documentManagementService.uploadDocument(CASE_TEST_AUTHORISATION, multipartFile))
             .thenReturn(documentUploadResponse);
 
-        ResponseEntity<?> uploadCaseResponse = documentManagementController
-            .uploadDocument(CASE_TEST_AUTHORISATION, multipartFile);
+        ResponseEntity<?> uploadCaseResponse = assertDoesNotThrow(() -> documentManagementController
+            .uploadDocument(CASE_TEST_AUTHORISATION, multipartFile));
+
         DocumentResponse testUploadResponse = (DocumentResponse) uploadCaseResponse.getBody();
 
-        assertNotNull(testUploadResponse);
-        assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
-        assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
-        assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
-        assertEquals(HttpStatus.OK, uploadCaseResponse.getStatusCode());
+        Assertions.assertNotNull(testUploadResponse);
+        Assertions.assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
+        Assertions.assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
+        Assertions.assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
+        Assertions.assertEquals(HttpStatus.OK, uploadCaseResponse.getStatusCode());
     }
 
     @Test
-    void testDeleteC100Document() throws Exception {
+    void testDeleteC100Document() {
         DocumentInfo documentInfo = DocumentInfo.builder()
             .documentId(CASE_DATA_DOCUMENT_ID_C100)
             .url(TEST_URL)
@@ -89,16 +90,16 @@ class DocumentManagementServiceTest {
 
         when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, "C100")).thenReturn(documentResponse);
 
-        ResponseEntity<?> deleteCaseResponse = documentManagementController
-            .deleteDocument(CASE_TEST_AUTHORISATION, CASE_DATA_DOCUMENT_ID_C100);
+        ResponseEntity<?> deleteCaseResponse = assertDoesNotThrow(() -> documentManagementController
+            .deleteDocument(CASE_TEST_AUTHORISATION, CASE_DATA_DOCUMENT_ID_C100));
 
         DocumentResponse testDeleteResponse = (DocumentResponse) deleteCaseResponse.getBody();
 
-        assertNotNull(testDeleteResponse);
-        assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
-        assertEquals(documentInfo.getFileName(), testDeleteResponse.getDocument().getFileName());
-        assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
-        assertEquals(HttpStatus.OK, deleteCaseResponse.getStatusCode());
+        Assertions.assertNotNull(testDeleteResponse);
+        Assertions.assertEquals(documentInfo.getDocumentId(), testDeleteResponse.getDocument().getDocumentId());
+        Assertions.assertEquals(documentInfo.getFileName(), testDeleteResponse.getDocument().getFileName());
+        Assertions.assertEquals(documentInfo.getUrl(), testDeleteResponse.getDocument().getUrl());
+        Assertions.assertEquals(HttpStatus.OK, deleteCaseResponse.getStatusCode());
     }
 
     @Test
