@@ -41,7 +41,7 @@ public class CaseManagementService {
     public CaseResponse updateCase(String authorization, EventEnum event, CaseData caseData, Long caseId) {
         try {
             // Validate Case Data (CHECKING CASE TYPE ALONE)
-
+            log.info("Passed from UI" + caseData.toString());
             // Submiiting case to CCD..
             CaseDetails caseDetails = caseApiService.updateCase(authorization, event, caseId, caseData);
             log.info("Updated case details: " + caseDetails.toString());
