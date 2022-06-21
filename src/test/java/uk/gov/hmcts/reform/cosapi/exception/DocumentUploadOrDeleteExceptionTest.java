@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORISATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -45,14 +45,14 @@ class DocumentUploadOrDeleteExceptionTest {
             .url("TestUrl")
             .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
                 "Failing while deleting the document. The error message is ",
                 new Throwable()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
         assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "),
             String.valueOf(true));
@@ -65,14 +65,14 @@ class DocumentUploadOrDeleteExceptionTest {
             .url("TestUrl")
             .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
                 "Failing while updating the document. The error message is ",
                 new Throwable()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
         assertTrue(exception.getMessage().contains("Failing while updating the document. The error message is "),
             String.valueOf(true));
