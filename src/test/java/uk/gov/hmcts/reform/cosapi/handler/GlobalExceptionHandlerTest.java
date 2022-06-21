@@ -13,18 +13,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 
+import java.io.IOException;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class GlobalExceptionHandlerTest {
+    private static final String DELETE_DOCUMENT_FAILURE_MSG =
+        "Failing while deleting the document. The error message is ";
 
     @InjectMocks
     GlobalExceptionHandler globalExceptionHandler;
@@ -36,19 +42,45 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleDocumentUploadDeleteThroughHandler() {
+    void handleDocumentUploadDeleteThroughHandlerNonHttpClientErrorException() {
         DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
-            "Failing while deleting the document. The error message is ",
-            new Throwable()
+            DELETE_DOCUMENT_FAILURE_MSG,
+            new IOException()
         );
 
-        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+        ResponseEntity<Object> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-                     exceptionResponseHandler.getStatusCode());
+        assertEquals(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            exceptionResponseHandler.getStatusCode()
+        );
 
+        assertInstanceOf(IOException.class, updException.getCause());
+        assertFalse(updException.getCause() instanceof HttpClientErrorException);
+
+        assertEquals(
+            exceptionResponseHandler.getBody(),
+            DELETE_DOCUMENT_FAILURE_MSG
+        );
+    }
+
+    @Test
+    void handleDocumentUploadDeleteThroughHandlerInstanceOfHttpClientErrorException() {
+        DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
+            DELETE_DOCUMENT_FAILURE_MSG,
+            new HttpClientErrorException(HttpStatus.BAD_REQUEST)
+        );
+
+        ResponseEntity<Object> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+
+        assertEquals(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            exceptionResponseHandler.getStatusCode()
+        );
+
+        assertInstanceOf(HttpClientErrorException.class, updException.getCause());
         assertTrue(exceptionResponseHandler.getBody().toString().contains(
-            "Failing while deleting the document. The error message is "));
+            DELETE_DOCUMENT_FAILURE_MSG));
     }
 
 
@@ -56,25 +88,30 @@ class GlobalExceptionHandlerTest {
     void handleCreateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while creating the case",
-            new Throwable()
+            new RuntimeException()
         );
 
-        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleCaseApiException(updException);
 
-        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
         assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while creating the case"));
     }
 
     @Test
-    void handleUpdateCaseApiExceptionThroughExceptionHandler() {
+    void handleUpdateCaseApiExceptionThroughExceptionHandlerInstanceOfHttpClientErrorException() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while updating the case",
-            new Throwable()
+            new HttpClientErrorException(HttpStatus.BAD_REQUEST)
         );
 
-        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+        ResponseEntity<Object> exceptionResponseHandler = globalExceptionHandler.handleCaseApiException(updException);
 
-        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            exceptionResponseHandler.getStatusCode()
+        );
+
+        assertInstanceOf(HttpClientErrorException.class, updException.getCause());
         assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while updating the case"));
     }
 
@@ -84,7 +121,7 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(illException);
 
-        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
     }
 
     @Test
@@ -93,7 +130,7 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(nullException);
 
-        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
     }
 
     @Test
