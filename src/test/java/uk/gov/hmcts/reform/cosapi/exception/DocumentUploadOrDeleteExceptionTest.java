@@ -77,5 +77,4 @@ class DocumentUploadOrDeleteExceptionTest {
         assertTrue(exception.getMessage().contains("Failing while updating the document. The error message is "),
             String.valueOf(true));
     }
-
 }

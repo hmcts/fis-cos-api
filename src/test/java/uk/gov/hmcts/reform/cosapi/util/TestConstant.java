@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.cosapi.util;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public final class TestConstant {
 
     public static final String ENGLISH_TEMPLATE_ID = "edgecaseapplication";
@@ -11,6 +14,10 @@ public final class TestConstant {
     public static final String JSON_CONTENT_TYPE = "application/json";
     public static final String RESPONSE_STATUS_SUCCESS = "Success";
     public static final String TEST_URL = "TestUrl";
+    public static final String TEST_USER = "TestUser";
+    public static final String TEST_AUTHORIZATION_TOKEN = "TestToken";
+    public static final UUID TEST_CASE_DATA_FILE_UUID = UUID.randomUUID();
+    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2022, 2, 22, 16, 21);
 
     private TestConstant() {
 
