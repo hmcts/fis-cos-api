@@ -24,7 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.*;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_EMAIL_ADDRESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -86,10 +90,10 @@ class CaseManagementControllerTest {
         );
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
-        assertEquals("test@test.com", caseData.getApplicant().getEmailAddress());
+        assertEquals(TEST_CASE_EMAIL_ADDRESS, caseData.getApplicant().getEmailAddress());
 
         CaseData caseDataUpdate = (CaseData) testPreUpdResponse.getCaseData().get(CASE_DATA_C100_ID);
-        caseDataUpdate.getApplicant().setEmailAddress("testUpdate@test.com");
+        caseDataUpdate.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
         preUpdateCaseResponse = caseManagementController.updateCase(
             123L,
@@ -104,7 +108,7 @@ class CaseManagementControllerTest {
 
         assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
                      caseDataUpdate.getApplicant().getEmailAddress());
-        assertEquals("testUpdate@test.com", caseDataUpdate.getApplicant().getEmailAddress());
+        assertEquals(TEST_UPDATE_CASE_EMAIL_ADDRESS, caseDataUpdate.getApplicant().getEmailAddress());
 
         assertNotNull(testPreUpdResponse);
         assertEquals(HttpStatus.OK, preUpdateCaseResponse.getStatusCode());
