@@ -11,7 +11,9 @@ dir=$(dirname ${0})
 
 role=${1}
 userToken=$(${dir}/idam-user-token.sh ${DEFINITION_IMPORTER_USERNAME} ${DEFINITION_IMPORTER_PASSWORD})
-echo "userToken: ${userToken} serviceToken: ${serviceToken}"
+echo "userToken: ${userToken} serviceToken: ${serviceToken} DEFINITION_IMPORTER_USERNAME:
+${DEFINITION_IMPORTER_USERNAME} DEFINITION_IMPORTER_PASSWORD: ${DEFINITION_IMPORTER_PASSWORD}
+DEFINITION_STORE_URL_BASE: ${DEFINITION_STORE_URL_BASE}"
 serviceToken=$(${dir}/s2s-token.sh ccd_gw)
 #echo "add-ccd-role.sh---${DEFINITION_IMPORTER_USERNAME}--${DEFINITION_IMPORTER_USERNAME} ${DEFINITION_IMPORTER_PASSWORD} userToken: ${userToken} serviceToken: ${serviceToken}\n\n"
 echo "Creating CCD role: ${role}"
