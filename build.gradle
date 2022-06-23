@@ -74,7 +74,7 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/contractTest/java')
     }
-   // resources.srcDir file('src/contractTest/resources')
+    resources.srcDir file('src/contractTest/resources')
   }
 
   smokeTest {
@@ -463,7 +463,7 @@ dependencies {
   contractTestCompile sourceSets.test.runtimeClasspath
 
   contractTestCompile group: 'com.google.guava', name: 'guava', version: versions.guava
-  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: versions.pact
   contractTestCompile group: 'au.com.dius.pact.consumer', name: 'java8', version: versions.pact
   contractTestRuntime group: 'com.google.guava', name: 'guava', version: versions.guava
   contractTestRuntime group: 'au.com.dius.pact.consumer', name: 'junit5', version: versions.pact
@@ -675,7 +675,7 @@ task contract(type: Test, description: 'Runs the consumer Pact tests.', group: '
   classpath = sourceSets.contractTest.runtimeClasspath
 
   include "uk/gov/hmcts/reform/cosapi/clients/**"
-  systemProperty 'pact.x', "pacts"
+  systemProperty 'pact.rootDir', "pacts"
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
@@ -697,7 +697,7 @@ project.ext {
 
 pact {
   publish {
-   // pactDirectory = 'pacts'
+   pactDirectory = 'pacts'
    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
     tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
     version = project.pactVersion
