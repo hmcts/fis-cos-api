@@ -287,7 +287,8 @@ dependencyCheck {
     "integrationTest",
     "functionalTest",
     "smokeTest",
-
+    "contractTestRuntimeClasspath",
+    "contractTestCompileClasspath"
   ]
 }
 
