@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.cosapi.handler;
 import feign.FeignException;
 import feign.Request;
 import feign.RequestTemplate;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +15,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_DELETE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_UPLOAD_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
 
 import java.util.HashMap;
 
@@ -29,17 +34,17 @@ class GlobalExceptionHandlerTest {
     @InjectMocks
     GlobalExceptionHandler globalExceptionHandler;
 
-    @Before
+    @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
     }
 
     @Test
-    void handleDocumentUploadDeleteThroughHandler() {
+    void handleDocumentDeleteThroughHandler() {
         DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
-            "Failing while deleting the document. The error message is ",
-            new Throwable()
+            DOCUMENT_DELETE_FAILURE_MSG,
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
@@ -47,35 +52,48 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
                      exceptionResponseHandler.getStatusCode());
 
-        assertTrue(exceptionResponseHandler.getBody().toString().contains(
-            "Failing while deleting the document. The error message is "));
+        assertTrue(exceptionResponseHandler.getBody().toString().contains(DOCUMENT_DELETE_FAILURE_MSG));
     }
 
-
     @Test
-    void handleCreateCaseApiExceptionThroughExceptionHandler() {
-        CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
-            "Failing while creating the case",
-            new Throwable()
+    void handleDocumentUploadThroughHandler() {
+        DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
+            DOCUMENT_UPLOAD_FAILURE_MSG,
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
-        assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while creating the case"));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
+                     exceptionResponseHandler.getStatusCode());
+
+        assertTrue(exceptionResponseHandler.getBody().toString().contains(DOCUMENT_UPLOAD_FAILURE_MSG));
+    }
+
+    @Test
+    void handleCreateCaseApiExceptionThroughExceptionHandler() {
+        CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
+            CASE_CREATE_FAILURE_MSG,
+            new RuntimeException()
+        );
+
+        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
+        assertTrue(exceptionResponseHandler.getBody().toString().contains(CASE_CREATE_FAILURE_MSG));
     }
 
     @Test
     void handleUpdateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
-            "Failing while updating the case",
-            new Throwable()
+            CASE_UPDATE_FAILURE_MSG,
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
 
-        assertEquals(500, exceptionResponseHandler.getStatusCodeValue());
-        assertTrue(exceptionResponseHandler.getBody().toString().contains("Failing while updating the case"));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exceptionResponseHandler.getStatusCode());
+        assertTrue(exceptionResponseHandler.getBody().toString().contains(CASE_UPDATE_FAILURE_MSG));
     }
 
     @Test
@@ -84,7 +102,7 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(illException);
 
-        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
     }
 
     @Test
@@ -93,14 +111,14 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleBadRequestException(nullException);
 
-        assertEquals(400, exceptionResponseHandler.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, exceptionResponseHandler.getStatusCode());
     }
 
     @Test
     void handleFeignExceptionServiceUnavailableExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
-        Request request = Request.create(Request.HttpMethod.GET, "url",
+        Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );
 
@@ -122,7 +140,7 @@ class GlobalExceptionHandlerTest {
     void handleFeignExceptionUnauthorizedExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
-        Request request = Request.create(Request.HttpMethod.GET, "url",
+        Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );
 

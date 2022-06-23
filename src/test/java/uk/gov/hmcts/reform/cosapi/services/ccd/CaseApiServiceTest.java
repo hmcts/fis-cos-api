@@ -113,7 +113,7 @@ class CaseApiServiceTest {
 
         CaseDetails createCaseDetail = caseApiService.createCase(CASE_TEST_AUTHORIZATION, caseData);
 
-        assertEquals(createCaseDetail.getCaseTypeId(), CASE_DATA_C100_ID);
+        assertEquals(CASE_DATA_C100_ID, createCaseDetail.getCaseTypeId());
         assertEquals(createCaseDetail.getId(), caseDetail.getId());
         assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
         assertEquals(createCaseDetail.getData(), caseDetail.getData());
@@ -188,7 +188,7 @@ class CaseApiServiceTest {
             caseData
         );
 
-        assertEquals(createCaseDetail.getCaseTypeId(), CASE_DATA_C100_ID);
+        assertEquals(CASE_DATA_C100_ID, createCaseDetail.getCaseTypeId());
         assertEquals(createCaseDetail.getId(), caseDetail.getId());
         assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
         assertEquals(createCaseDetail.getData(), caseDetail.getData());
