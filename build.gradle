@@ -674,7 +674,7 @@ task contract(type: Test, description: 'Runs the consumer Pact tests.', group: '
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
 
-  include "uk/gov/hmcts/reform/prl/clients/**"
+  include "uk/gov/hmcts/reform/cosapi/clients/**"
   systemProperty 'pact.x', "pacts"
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
