@@ -24,10 +24,10 @@ echo "CLIENT_ID: ${CLIENT_ID}"
 echo "clientSecret: ${clientSecret}"
 echo "redirectUri: ${redirectUri}"``
 
-
+echo $(curl --insecure --fail --show-error --silent -X POST --user "${username}:${password}" "${IDAM_API_URL}/oauth2/authorize?redirect_uri=${redirectUri}&response_type=code&client_id=${CLIENT_ID}" -d "" | docker run --rm --interactive stedolan/jq -r .code)
 
 code=$(curl --insecure --fail --show-error --silent -X POST --user "${username}:${password}" "${IDAM_API_URL}/oauth2/authorize?redirect_uri=${redirectUri}&response_type=code&client_id=${CLIENT_ID}" -d "" | docker run --rm --interactive stedolan/jq -r .code)
 
-echo "code: ${code}"``
+echo "code: ${code}-----afdsfadsf"
 
 curl --insecure --fail --show-error --silent -X POST -H "Content-Type: application/x-www-form-urlencoded" --user "${CLIENT_ID}:${clientSecret}" "${IDAM_API_URL}/oauth2/token?code=${code}&redirect_uri=${redirectUri}&grant_type=authorization_code" -d "" | docker run --rm --interactive stedolan/jq -r .access_token
