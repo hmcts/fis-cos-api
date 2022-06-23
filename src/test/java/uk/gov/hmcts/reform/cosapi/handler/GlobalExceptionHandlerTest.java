@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
 
 import java.util.HashMap;
 
@@ -39,7 +40,7 @@ class GlobalExceptionHandlerTest {
     void handleDocumentUploadDeleteThroughHandler() {
         DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
             "Failing while deleting the document. The error message is ",
-            new Throwable()
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
@@ -56,7 +57,7 @@ class GlobalExceptionHandlerTest {
     void handleCreateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while creating the case",
-            new Throwable()
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
@@ -69,7 +70,7 @@ class GlobalExceptionHandlerTest {
     void handleUpdateCaseApiExceptionThroughExceptionHandler() {
         CaseCreateOrUpdateException updException = new CaseCreateOrUpdateException(
             "Failing while updating the case",
-            new Throwable()
+            new RuntimeException()
         );
 
         ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
@@ -100,7 +101,7 @@ class GlobalExceptionHandlerTest {
     void handleFeignExceptionServiceUnavailableExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
-        Request request = Request.create(Request.HttpMethod.GET, "url",
+        Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );
 
@@ -122,7 +123,7 @@ class GlobalExceptionHandlerTest {
     void handleFeignExceptionUnauthorizedExceptionThroughExceptionHandler() {
 
         final byte[] emptyBody = {};
-        Request request = Request.create(Request.HttpMethod.GET, "url",
+        Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );
 

@@ -32,6 +32,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_USER;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -70,7 +71,7 @@ class CaseApiServiceTest {
 
         caseDataMap.put(TEST_CASE_REFERENCE, caseData);
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_C100_ID)
-            .id(123L)
+            .id(TEST_CASE_ID)
             .data(caseDataMap)
             .jurisdiction(CommonConstants.JURISDICTION)
             .build();
@@ -129,7 +130,7 @@ class CaseApiServiceTest {
 
         caseDataMap.put(TEST_CASE_REFERENCE, caseData);
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_C100_ID)
-            .id(123L)
+            .id(TEST_CASE_ID)
             .data(caseDataMap)
             .jurisdiction(CommonConstants.JURISDICTION)
             .build();
@@ -146,7 +147,7 @@ class CaseApiServiceTest {
             userId,
             CommonConstants.JURISDICTION,
             CommonConstants.CASE_TYPE,
-            String.valueOf(123L),
+            String.valueOf(TEST_CASE_ID),
             CommonConstants.UPDATE_CASE_EVENT_ID
         )).thenReturn(eventRes);
 
@@ -184,7 +185,7 @@ class CaseApiServiceTest {
         CaseDetails createCaseDetail = caseApiService.updateCase(
             CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
-            123L,
+            TEST_CASE_ID,
             caseData
         );
 

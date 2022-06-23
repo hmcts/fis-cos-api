@@ -86,7 +86,7 @@ class CaseDocumentApiServiceTest {
             .originalDocumentName(CASE_DATA_FILE_C100)
             .hashToken("SomeToken")
             .size(caseDataJson.getBytes().length)
-            .mimeType("application/json")
+            .mimeType(JSON_CONTENT_TYPE)
             .build();
 
         document.links = links;

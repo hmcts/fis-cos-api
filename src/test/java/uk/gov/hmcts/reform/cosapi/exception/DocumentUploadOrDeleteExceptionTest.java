@@ -20,15 +20,13 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_DELETE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_UPLOAD_FAILURE_MSG;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class DocumentUploadOrDeleteExceptionTest {
-    private static final String DELETE_DOCUMENT_FAILURE_MSG =
-        "Failing while deleting the document. The error message is ";
-    private static final String UPLOAD_DOCUMENT_FAILURE_MSG =
-        "Failing while uploading the document. The error message is ";
     private DocumentInfo documentInfo;
 
     @InjectMocks
@@ -53,14 +51,14 @@ class DocumentUploadOrDeleteExceptionTest {
 
         when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
-                DELETE_DOCUMENT_FAILURE_MSG,
+                DOCUMENT_DELETE_FAILURE_MSG,
                 new RuntimeException()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains(DELETE_DOCUMENT_FAILURE_MSG),
+        assertTrue(exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG),
             String.valueOf(true));
     }
 
@@ -73,14 +71,14 @@ class DocumentUploadOrDeleteExceptionTest {
 
         when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
-                UPLOAD_DOCUMENT_FAILURE_MSG,
+                DOCUMENT_UPLOAD_FAILURE_MSG,
                 new RuntimeException()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains(UPLOAD_DOCUMENT_FAILURE_MSG),
+        assertTrue(exception.getMessage().contains(DOCUMENT_UPLOAD_FAILURE_MSG),
             String.valueOf(true));
     }
 }
