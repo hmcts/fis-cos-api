@@ -20,6 +20,8 @@ clientSecret=${OAUTH2_CLIENT_SECRET}
 redirectUri=http://localhost:3000/receiver
 #redirectUri=http://localhost:3000/oauth2/callback
 
-curl --location --request POST 'https://idam-api.aat.platform.hmcts.net/o/token?grant_type=password&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Freceiver&client_id=ds-ui&client_secret=RB4B4JLQYZUXYO5U&scope=openid%20profile%20roles&username=TEST_SYSTEM_USER%40mailinator.com&password=genericPassword123&' \
+curl --location --request POST 'https://idam-api.aat.platform.hmcts
+.net/o/token?grant_type=password&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Freceiver&client_id=ds-ui&client_secret
+=RB4B4JLQYZUXYO5U&scope=openid%20profile%20roles&username=${username}&password=${password}&' \
 --header 'accept: application/json' \
 --header 'Content-Type: application/x-www-form-urlencoded' | docker run --rm --interactive stedolan/jq -r .access_token
