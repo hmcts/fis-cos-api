@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.cosapi.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -33,25 +36,25 @@ class CaseCreateOrUpdateExceptionTest {
     @Mock
     private CaseManagementService caseManagementService;
 
-    @Before
+    @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testCreateCaseDataCaseCreateUpdateException() throws Exception {
-        String createCaseTestAuth = "testAuth";
+        String createCaseTestAuth = CASE_TEST_AUTHORIZATION;
         String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         when(caseManagementService.createCase(createCaseTestAuth, caseData))
-            .thenThrow(new CaseCreateOrUpdateException("Failing while creating the case", new Throwable()));
+            .thenThrow(new CaseCreateOrUpdateException(CASE_CREATE_FAILURE_MSG, new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementController.createCase(createCaseTestAuth, caseData);
         });
 
-        assertTrue(exception.getMessage().contains("Failing while creating the case"), String.valueOf(true));
+        assertTrue(exception.getMessage().contains(CASE_CREATE_FAILURE_MSG), String.valueOf(true));
     }
 
     @Test
@@ -61,12 +64,12 @@ class CaseCreateOrUpdateExceptionTest {
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         when(caseManagementService.createCase(updateCaseTestAuth, caseData))
-            .thenThrow(new CaseCreateOrUpdateException("Failing while updating the case", new Throwable()));
+            .thenThrow(new CaseCreateOrUpdateException(CASE_UPDATE_FAILURE_MSG, new Throwable()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementController.createCase(updateCaseTestAuth, caseData);
         });
 
-        assertTrue(exception.getMessage().contains("Failing while updating the case"), String.valueOf(true));
+        assertTrue(exception.getMessage().contains(CASE_UPDATE_FAILURE_MSG), String.valueOf(true));
     }
 }

@@ -42,17 +42,17 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleDocumentDeleteThroughHandler() {
-        DocumentUploadOrDeleteException updException = new DocumentUploadOrDeleteException(
+        DocumentUploadOrDeleteException delException = new DocumentUploadOrDeleteException(
             DOCUMENT_DELETE_FAILURE_MSG,
             new RuntimeException()
         );
 
-        ResponseEntity<?> exceptionResponseHandler = globalExceptionHandler.handleDocumentException(updException);
+        ResponseEntity<?> responseDeleteHandler = globalExceptionHandler.handleDocumentException(delException);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-                     exceptionResponseHandler.getStatusCode());
+                     responseDeleteHandler.getStatusCode());
 
-        assertTrue(exceptionResponseHandler.getBody().toString().contains(DOCUMENT_DELETE_FAILURE_MSG));
+        assertTrue(responseDeleteHandler.getBody().toString().contains(DOCUMENT_DELETE_FAILURE_MSG));
     }
 
     @Test
