@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.controllers;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class DocumentManagementControllerTest {
     @Mock
     DocumentManagementService documentManagementService;
 
-    @Before
+    @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }

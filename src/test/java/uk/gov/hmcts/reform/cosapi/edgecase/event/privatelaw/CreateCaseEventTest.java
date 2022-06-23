@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.cosapi.edgecase.event.privatelaw;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +44,7 @@ class CreateCaseEventTest {
     @InjectMocks
     private CreateCaseEvent createCaseEvent;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
