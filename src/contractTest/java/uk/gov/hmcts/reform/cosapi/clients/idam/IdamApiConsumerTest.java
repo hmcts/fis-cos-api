@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class IdamApiConsumerTest {
 
     public static final String TOKEN_REGEXP = "[a-zA-Z0-9._-]+";
-    public static final String BEARER_TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJiL082T3ZWdeRre";
+    public static final String BEARER_TOKEN = "Bearer UserAuthToken";
 
     @Autowired
     private IdamClient idamClient;
@@ -59,7 +59,7 @@ public class IdamApiConsumerTest {
         params.put("client_id", "pact");
         params.put("client_secret", "pactsecret");
         params.put("scope", "openid profile roles");
-        params.put("username", "prl_aat_solicitor@mailinator.com");
+        params.put("username", "fis_cos@mailinator.com");
         params.put("password", "generic");
 
         return builder.given("I have obtained an access_token as a user", params)
@@ -83,8 +83,8 @@ public class IdamApiConsumerTest {
             .familyName("Smith")
             .givenName("John")
             .name("John Smith")
-            .roles(Lists.newArrayList("caseworker-privatelaw-solicitor"))
-            .sub("prl_aat_solicitor@mailinator.com")
+            .roles(Lists.newArrayList("citizen_journey"))
+            .sub("fis_cos@mailinator.com")
             .uid("33dff5a7-3b6f-45f1-b5e7-5f9be1ede355")
             .build();
 
@@ -111,9 +111,9 @@ public class IdamApiConsumerTest {
 
     private PactDslJsonBody createUserInfoResponse() {
         return new PactDslJsonBody()
-            .stringType("sub", "prl_aat_solicitor@mailinator.com")
+            .stringType("sub", "fis_cos@mailinator.com")
             .stringType("uid", "33dff5a7-3b6f-45f1-b5e7-5f9be1ede355")
-            .minArrayLike("roles", 1, PactDslJsonRootValue.stringType("caseworker-privatelaw-solicitor"), 1)
+            .minArrayLike("roles", 1, PactDslJsonRootValue.stringType("citizen_journey"), 1)
             .stringType("name", "John Smith")
             .stringType("given_name", "John")
             .stringType("family_name", "Smith");
