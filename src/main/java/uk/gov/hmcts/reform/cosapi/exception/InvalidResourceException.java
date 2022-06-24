@@ -1,14 +1,11 @@
 package uk.gov.hmcts.reform.cosapi.exception;
 
-public class InvalidResourceException extends RuntimeException {
+import java.io.IOException;
 
-    private static final long serialVersionUID = 7442994120484411077L;
+public class InvalidResourceException extends IOException {
+    private static final long serialVersionUID = 7442120412671078L;
 
-    public InvalidResourceException(String message) {
-        super(message);
-    }
-
-    public InvalidResourceException(String message, Exception cause) {
+    public InvalidResourceException(String message, Throwable cause) {
         super(message, cause);
     }
 }
