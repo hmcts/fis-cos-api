@@ -59,7 +59,7 @@ class CaseCreateOrUpdateExceptionTest {
 
     @Test
     void testUpdateCaseDataCaseCreateUpdateException() throws Exception {
-        String updateCaseTestAuth = "testAuth";
+        String updateCaseTestAuth = CASE_TEST_AUTHORIZATION;
         String caseDataJson = loadJson(CASE_DATA_FILE_C100);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
