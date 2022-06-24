@@ -23,13 +23,12 @@ public final class TestConstant {
     public static final String RESPONSE_STATUS_SUCCESS = "Success";
     public static final String TEST_AUTHORIZATION_TOKEN = "TestToken";
     public static final String TEST_CASE_EMAIL_ADDRESS = "test@test.com";
+    public static final String TEST_RESOURCE_NOT_FOUND = "Could not find resource in path";
     public static final String TEST_UPDATE_CASE_EMAIL_ADDRESS = "testUpdate@test.com";
     public static final String TEST_URL = "TestUrl";
     public static final String TEST_USER = "TestUser";
     public static final String WELSH_TEMPLATE_ID = "EDG-C100-WEL-00001.docx";
     public static final UUID TEST_CASE_DATA_FILE_UUID = UUID.randomUUID();
-    public static final String TEST_RESOURCE_NOT_FOUND = "Could not find resource in path";
-
 
     private TestConstant() {
 

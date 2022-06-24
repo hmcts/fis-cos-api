@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.exception;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ class DocumentUploadOrDeleteExceptionTest {
     DocumentManagementService documentManagementService;
 
 
-    @BeforeEach
+    @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
@@ -58,10 +58,8 @@ class DocumentUploadOrDeleteExceptionTest {
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(
-            exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG),
-            String.valueOf(true)
-        );
+        assertTrue(exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG),
+            String.valueOf(true));
     }
 
     @Test

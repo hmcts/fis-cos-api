@@ -90,5 +90,4 @@ class SubmitCaseEventTest {
         Assertions.assertNotEquals(submitResponseBuilder.getData(), beforeCaseDetails.getData());
         Assertions.assertEquals(submitResponseBuilder.getState(), caseDetails.getState());
     }
-
 }

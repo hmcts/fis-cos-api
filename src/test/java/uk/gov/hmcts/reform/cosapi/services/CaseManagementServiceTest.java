@@ -30,6 +30,10 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
@@ -38,8 +42,6 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ActiveProfiles("test")
 class CaseManagementServiceTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private static final String TEST_CASE_EMAIL_UPDATE = "testUpdate@test.com";
-    private static final String CREATE_CASE_FAILURE_MSG = "Failing while creating the case ";
 
     @InjectMocks
     private CaseManagementService caseManagementService;
@@ -61,7 +63,7 @@ class CaseManagementServiceTest {
         caseDataMap.put(CASE_DATA_C100_ID, caseData);
 
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_C100_ID)
-            .id(123L)
+            .id(TEST_CASE_ID)
             .data(caseDataMap)
             .build();
 
@@ -97,7 +99,7 @@ class CaseManagementServiceTest {
 
         when(caseApiService.createCase(CASE_TEST_AUTHORIZATION, caseData)).thenThrow(
             new CaseCreateOrUpdateException(
-                CREATE_CASE_FAILURE_MSG,
+                CASE_CREATE_FAILURE_MSG,
                 new RuntimeException()
             ));
 
@@ -105,7 +107,7 @@ class CaseManagementServiceTest {
             caseManagementService.createCase(CASE_TEST_AUTHORIZATION, caseData);
         });
 
-        assertTrue(exception.getMessage().contains("Failing while creating the case "));
+        assertTrue(exception.getMessage().contains(CASE_CREATE_FAILURE_MSG));
     }
 
     @Test
@@ -117,18 +119,18 @@ class CaseManagementServiceTest {
         caseDataMap.put(CASE_DATA_C100_ID, caseData);
 
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_C100_ID)
-            .id(123L)
+            .id(TEST_CASE_ID)
             .data(caseDataMap)
             .build();
 
         String origEmailAddress = caseData.getApplicant().getEmailAddress();
-        caseData.getApplicant().setEmailAddress(TEST_CASE_EMAIL_UPDATE);
+        caseData.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
         assertNotEquals(caseData.getApplicant().getEmailAddress(), origEmailAddress);
 
         when(caseApiService.updateCase(
             CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
-            123L,
+            TEST_CASE_ID,
             caseData
         )).thenReturn(caseDetail);
 
@@ -136,7 +138,7 @@ class CaseManagementServiceTest {
             CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
             caseData,
-            123L
+            TEST_CASE_ID
         );
         assertEquals(updateCaseResponse.getId(), caseDetail.getId());
         assertTrue(updateCaseResponse.getCaseData().containsKey(CASE_DATA_C100_ID));
@@ -167,17 +169,16 @@ class CaseManagementServiceTest {
 
         caseDataMap.put(CASE_DATA_C100_ID, caseData);
 
-        when(caseApiService.createCase(CASE_TEST_AUTHORIZATION, caseData)).thenThrow(
+        when(caseApiService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE, TEST_CASE_ID, caseData)).thenThrow(
             new CaseCreateOrUpdateException(
-                CREATE_CASE_FAILURE_MSG,
+                CASE_UPDATE_FAILURE_MSG,
                 new RuntimeException()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            caseManagementService.createCase(CASE_TEST_AUTHORIZATION, caseData);
+            caseManagementService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE, caseData, TEST_CASE_ID);
         });
 
-        assertTrue(exception.getMessage().contains(CREATE_CASE_FAILURE_MSG));
+        assertTrue(exception.getMessage().contains(CASE_UPDATE_FAILURE_MSG));
     }
-
 }
