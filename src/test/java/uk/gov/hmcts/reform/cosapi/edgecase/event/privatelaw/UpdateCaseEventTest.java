@@ -30,5 +30,11 @@ class UpdateCaseEventTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(UPDATE_CASE_EVENT_ID);
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getDescription)
+            .contains("Edge case application update");
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getName)
+            .contains("Edge case");
     }
 }

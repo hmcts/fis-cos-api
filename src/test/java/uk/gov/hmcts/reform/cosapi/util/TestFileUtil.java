@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.cosapi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.reform.cosapi.exception.InvalidResourceException;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_RESOURCE_NOT_FOUND;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,11 +24,11 @@ public final class TestFileUtil {
             URL url = Thread.currentThread().getContextClassLoader().getResource(filePath);
 
             if (url == null) {
-                throw new IllegalArgumentException(String.format("Could not find resource in path %s", filePath));
+                throw new IllegalArgumentException(String.format(TEST_RESOURCE_NOT_FOUND + "%s", filePath));
             }
             return Files.readAllBytes(Paths.get(url.toURI()));
         } catch (IOException | URISyntaxException | IllegalArgumentException ioException) {
-            throw new InvalidResourceException("Could not find resource in path " + filePath, ioException);
+            throw new InvalidResourceException(TEST_RESOURCE_NOT_FOUND + filePath, ioException);
         }
     }
 
@@ -35,7 +36,7 @@ public final class TestFileUtil {
         try {
             return new ObjectMapper().readValue(loadJson(filePath), type);
         } catch (Exception e) {
-            throw new InvalidResourceException("Could not find resource in path " + filePath, e);
+            throw new InvalidResourceException(TEST_RESOURCE_NOT_FOUND + filePath, e);
         }
     }
 

@@ -24,7 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.*;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_EMAIL_ADDRESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -72,42 +77,41 @@ class CaseManagementControllerTest {
 
         caseDataMap.put(CASE_DATA_C100_ID, caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
-        caseResponse.setId(123L);
+        caseResponse.setId(TEST_CASE_ID);
         caseResponse.setStatus(null);
 
         when(caseManagementService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
-                                              caseData, 123L)).thenReturn(caseResponse);
+                                              caseData, TEST_CASE_ID)).thenReturn(caseResponse);
 
         ResponseEntity<?> preUpdateCaseResponse = caseManagementController.updateCase(
-            123L,
+            TEST_CASE_ID,
             CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
             caseData
         );
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
-        assertEquals("test@test.com", caseData.getApplicant().getEmailAddress());
+        assertEquals(TEST_CASE_EMAIL_ADDRESS, caseData.getApplicant().getEmailAddress());
 
         CaseData caseDataUpdate = (CaseData) testPreUpdResponse.getCaseData().get(CASE_DATA_C100_ID);
-        caseDataUpdate.getApplicant().setEmailAddress("testUpdate@test.com");
+        caseDataUpdate.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
-        preUpdateCaseResponse = caseManagementController.updateCase(
-            123L,
+        ResponseEntity<?> postUpdateCaseResponse = caseManagementController.updateCase(
+            TEST_CASE_ID,
             CASE_TEST_AUTHORIZATION,
             EventEnum.UPDATE,
             caseDataUpdate
         );
 
-        CaseResponse caseDataUpdateResponse = (CaseResponse) (preUpdateCaseResponse.getBody());
+        CaseResponse caseDataUpdateResponse = (CaseResponse) (postUpdateCaseResponse.getBody());
 
         CaseData caseDataUpdatedFromResponse = (CaseData) (caseDataUpdateResponse.getCaseData().get(CASE_DATA_C100_ID));
 
         assertEquals(caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
                      caseDataUpdate.getApplicant().getEmailAddress());
-        assertEquals("testUpdate@test.com", caseDataUpdate.getApplicant().getEmailAddress());
+        assertEquals(TEST_UPDATE_CASE_EMAIL_ADDRESS, caseDataUpdate.getApplicant().getEmailAddress());
 
         assertNotNull(testPreUpdResponse);
-        assertEquals(HttpStatus.OK, preUpdateCaseResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, postUpdateCaseResponse.getStatusCode());
     }
 }
-

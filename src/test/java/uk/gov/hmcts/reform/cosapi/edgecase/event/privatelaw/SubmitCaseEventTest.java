@@ -27,6 +27,8 @@ import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.createCaseDataConfi
 import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.LOCAL_DATE_TIME;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -62,17 +64,17 @@ class SubmitCaseEventTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         beforeCaseDetails.setData(caseBeforeData);
         beforeCaseDetails.setState(State.SUBMITTED);
-        beforeCaseDetails.setId(123_987L);
+        beforeCaseDetails.setId(TEST_CASE_ID);
         beforeCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
         caseDetails.setData(caseData);
         caseDetails.setState(State.SUBMITTED);
-        caseDetails.setId(123_987L);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        caseDetails.getData().getApplicant().setEmailAddress("testUpdate@test.com");
+        caseDetails.getData().getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
         AboutToStartOrSubmitResponse<Object, Object> submitResponseBuilder
             = AboutToStartOrSubmitResponse.builder().data(caseData).state(State.SUBMITTED).build();

@@ -17,7 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_C100;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORISATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_C100_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_DELETE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_UPLOAD_FAILURE_MSG;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -41,40 +45,47 @@ class DocumentUploadOrDeleteExceptionTest {
     @Test
     void testDeleteDocumentUploadOrDeleteException() throws Exception {
         documentInfo = DocumentInfo.builder()
-            .documentId("C100")
-            .url("TestUrl")
+            .documentId(CASE_DATA_C100_ID)
+            .url(TEST_URL)
             .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
-                "Failing while deleting the document. The error message is ",
-                new Throwable()
+                DOCUMENT_DELETE_FAILURE_MSG,
+                new RuntimeException()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while deleting the document. The error message is "),
-            String.valueOf(true));
+        assertTrue(
+            exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG),
+            String.valueOf(true)
+        );
     }
 
     @Test
     void testUpdateDocumentUploadOrDeleteException() throws Exception {
         documentInfo = DocumentInfo.builder()
-            .documentId("C100")
-            .url("TestUrl")
+            .documentId(CASE_DATA_C100_ID)
+            .url(TEST_URL)
             .fileName(CASE_DATA_FILE_C100).build();
 
-        when(documentManagementService.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId())).thenThrow(
+        when(documentManagementService.deleteDocument(
+            CASE_TEST_AUTHORIZATION,
+            documentInfo.getDocumentId()
+        )).thenThrow(
             new DocumentUploadOrDeleteException(
-                "Failing while updating the document. The error message is ",
-                new Throwable()
+                DOCUMENT_UPLOAD_FAILURE_MSG,
+                new RuntimeException()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.deleteDocument(CASE_TEST_AUTHORISATION, documentInfo.getDocumentId());
+            documentManagementController.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains("Failing while updating the document. The error message is "),
-            String.valueOf(true));
+        assertTrue(
+            exception.getMessage().contains(DOCUMENT_UPLOAD_FAILURE_MSG),
+            String.valueOf(true)
+        );
     }
 }

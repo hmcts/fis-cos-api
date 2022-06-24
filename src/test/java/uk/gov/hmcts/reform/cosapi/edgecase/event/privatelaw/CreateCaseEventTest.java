@@ -88,6 +88,10 @@ class CreateCaseEventTest {
             .extracting(Event::getId)
             .contains(CREATE_CASE_EVENT_ID);
 
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getDescription)
+            .contains("Apply for edge case");
+
         SetMultimap<UserRole, Permission> expectedRolesAndPermissions =
             ImmutableSetMultimap.<UserRole, Permission>builder()
             .put(CITIZEN, C)

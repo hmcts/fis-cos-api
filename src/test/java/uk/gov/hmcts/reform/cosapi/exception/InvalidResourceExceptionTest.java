@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_RESOURCE_NOT_FOUND;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadResource;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,7 +18,7 @@ class InvalidResourceExceptionTest {
             assertNull(caseDataJson);
         });
 
-        assertTrue(exception.getMessage().contains("Could not find resource in path"), String.valueOf(true));
+        assertTrue(exception.getMessage().contains(TEST_RESOURCE_NOT_FOUND), String.valueOf(true));
 
     }
 }

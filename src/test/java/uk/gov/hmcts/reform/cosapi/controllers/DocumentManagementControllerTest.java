@@ -27,6 +27,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.JSON_CONTENT_TYPE;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.JSON_FILE_TYPE;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_DELETE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 import static org.mockito.Mockito.when;
 
@@ -34,8 +35,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 class DocumentManagementControllerTest {
-    private static final String DELETE_DOCUMENT_FAILURE_MSG =
-        "Failing while deleting the document. The error message is ";
 
     @InjectMocks
     private DocumentManagementController documentManagementController;
@@ -97,13 +96,13 @@ class DocumentManagementControllerTest {
             documentInfo.getDocumentId()
         )).thenThrow(
             new DocumentUploadOrDeleteException(
-                DELETE_DOCUMENT_FAILURE_MSG,
+                DOCUMENT_DELETE_FAILURE_MSG,
                 new Throwable()
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {
             documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
-        assertTrue(exception.getMessage().contains(DELETE_DOCUMENT_FAILURE_MSG));
+        assertTrue(exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG));
     }
 }
