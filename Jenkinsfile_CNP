@@ -208,6 +208,7 @@ withPipeline(type, product, component) {
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
     enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
 
       setCommonEnvVariables()
