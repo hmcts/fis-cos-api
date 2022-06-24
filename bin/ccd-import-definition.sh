@@ -12,7 +12,7 @@ filepath=${1}
 filename=$(basename ${filepath})
 uploadFilename="$(date +"%Y%m%d-%H%M%S")-${filename}"
 
-userToken=$(${dir}/idam-user-token.sh ${DEFINITION_IMPORTER_USERNAME:-ccd.docker.default@hmcts.net} ${DEFINITION_IMPORTER_PASSWORD:-Password12!})
+userToken=$(${dir}/idam-ccd-user-token.sh)
 echo "ccd-import-definition.sh => got the userToken => "
 serviceToken=$(${dir}/s2s-token.sh ccd_gw)
 echo "ccd-import-definition.sh => got the serviceToken => "

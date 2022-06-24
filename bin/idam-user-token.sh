@@ -20,10 +20,6 @@ clientSecret=${OAUTH2_CLIENT_SECRET}
 redirectUri=http://localhost:3000/receiver
 #redirectUri=http://localhost:3000/oauth2/callback
 
-if [ -z "$IDAM_STUB_LOCALHOST" ]; then
-  code=$(curl --insecure --fail --show-error --silent -X POST --user "${username}:${password}" "${IDAM_URL}/oauth2/authorize?redirect_uri=${redirectUri}&response_type=code&client_id=${CLIENT_ID}" -d "" | docker run --rm --interactive stedolan/jq -r .code)
-else
-  code=stubbed-value
-fi
-
-curl --insecure --fail --show-error --silent -X POST -H "Content-Type: application/x-www-form-urlencoded" --user "${CLIENT_ID}:${clientSecret}" "${IDAM_URL}/oauth2/token?code=${code}&redirect_uri=${redirectUri}&grant_type=authorization_code" -d "" | docker run --rm --interactive stedolan/jq -r .access_token
+curl --location --request POST 'https://idam-api.aat.platform.hmcts.net/o/token?grant_type=password&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Freceiver&client_id=ds-ui&client_secret=RB4B4JLQYZUXYO5U&scope=openid%20profile%20roles&username=TEST_SYSTEM_USER%40mailinator.com&password=genericPassword123&' \
+--header 'accept: application/json' \
+--header 'Content-Type: application/x-www-form-urlencoded' | docker run --rm --interactive stedolan/jq -r .access_token
