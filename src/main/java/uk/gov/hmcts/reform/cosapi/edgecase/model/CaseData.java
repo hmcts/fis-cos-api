@@ -44,11 +44,19 @@ public class CaseData implements MappableObject {
 
 
     @CCD(
-            label = "Applicant uploaded documents",
+            label = "Applicant application form uploaded documents",
             typeOverride = Collection,
             typeParameterOverride = "EdgeCaseDocument",
             access = {DefaultAccess.class}
     )
-    private List<ListValue<EdgeCaseDocument>> applicantDocumentsUploaded;
+    private List<ListValue<EdgeCaseDocument>> applicantApplicationFormDocuments;
+
+    @CCD(
+            label = "Applicant additional uploaded documents",
+            typeOverride = Collection,
+            typeParameterOverride = "EdgeCaseDocument",
+            access = {DefaultAccess.class}
+    )
+    private List<ListValue<EdgeCaseDocument>> applicantAdditionalDocuments;
 
 }
