@@ -321,6 +321,7 @@ def versions = [
   ccdCaseDocumentAmClient      : '1.7.3',
   pact                         : '4.1.7',
   guava                        : '30.1-jre',
+  httpComponents: '4.5.13',
 
 
 ]
@@ -456,7 +457,7 @@ dependencies {
   testImplementation (group: 'net.serenity-bdd', name: 'serenity-junit', version: versions.serenityCoreVersion)
   testImplementation (group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenityCoreVersion)
   testImplementation (group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenityCoreVersion)
-  
+
   smokeTestCompile sourceSets.main.runtimeClasspath
   smokeTestCompile sourceSets.test.runtimeClasspath
 
