@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.State;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole;
 import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
 
+import static uk.gov.hmcts.reform.cosapi.edgecase.model.State.SUBMITTED;
 import static uk.gov.hmcts.reform.cosapi.edgecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.reform.cosapi.edgecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -44,7 +45,7 @@ public class SubmitCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
         //TODO logic needs to be updated separately as per edge-case application requirement
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(details.getState())
+            .state(SUBMITTED)
             .build();
     }
 

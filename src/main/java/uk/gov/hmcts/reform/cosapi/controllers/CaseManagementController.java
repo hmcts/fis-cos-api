@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.cosapi.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 
 @RestController
 @RequestMapping("/case/dss-orchestration")
+@Slf4j
 public class CaseManagementController {
 
     @Autowired
@@ -53,6 +55,8 @@ public class CaseManagementController {
                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
                                         @RequestParam final EventEnum event,
                                         @RequestBody final CaseData caseData) {
+
+        log.info("Event Received from UI: " + event);
 
         CaseResponse updatedCase = caseManagementService.updateCase(authorisation, event, caseData, caseId);
         return ResponseEntity.ok(updatedCase);
