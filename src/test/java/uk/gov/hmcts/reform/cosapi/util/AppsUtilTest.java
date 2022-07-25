@@ -17,7 +17,8 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource("classpath:application.yaml")
-class AppsUtilTest {
+@SuppressWarnings("PMD")
+public class AppsUtilTest {
 
     @Autowired
     AppsConfig appsConfig;
