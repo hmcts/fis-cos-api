@@ -3,7 +3,7 @@ appVersion: "1.0"
 description: A Helm chart for fis-cos-api App
 name: fis-cos-api
 home: https://github.com/hmcts/fis-cos-api
-version: 0.0.18
+version: 0.0.9
 maintainers:
   - name: HMCTS fis team
 dependencies:
@@ -11,23 +11,11 @@ dependencies:
     version: 4.0.1
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
   - name: ccd
-    version: 8.0.17
+    version: v8.0.5
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     tags:
       - ccd-pr
   - name: xui-webapp
-    version: ~0.2.13
+    version: ~0.2.1
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
     condition: xui-webapp.enabled
-  - name: idam-pr
-    version: 2.2.6
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: idam-pr.enabled
-  - name: ccd-case-document-am-api
-    version: 1.7.6
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: ccd-case-document-am-api.enabled
-  - name: aac-manage-case-assignment
-    version: ~0.2.0
-    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
-    condition: aac-manage-case-assignment.enabled
