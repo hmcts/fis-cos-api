@@ -44,10 +44,6 @@ ccd:
     ccdApiGatewayIngress: gateway-${SERVICE_FQDN}
     postgresUsername: hmcts
     postgresPassword: hmcts
-    postgresql:
-      auth:
-        postgresUsername: hmcts
-        postgresPassword: hmcts
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
   ccd-api-gateway-web:
