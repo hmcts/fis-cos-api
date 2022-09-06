@@ -254,7 +254,7 @@ withPipeline(type, product, component) {
 
   before('functionalTest:preview') {
       // Only for preview upload the definitions via script as high level data set up relies on an existing environment
-      uploadCoreCaseDataDefinitions()
+      //uploadCoreCaseDataDefinitions()
     }
 }
 
