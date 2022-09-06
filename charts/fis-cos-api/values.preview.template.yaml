@@ -1,5 +1,5 @@
 tags:
-  ccd-idam-pr: true
+  ccd-pr: true
 
 java:
   image: ${IMAGE_NAME}
@@ -42,6 +42,7 @@ ccd:
     dmStoreUrl: http://dm-store-aat.service.core-compute-aat.internal
     ccdAdminWebIngress: admin-web-${SERVICE_FQDN}
     ccdApiGatewayIngress: gateway-${SERVICE_FQDN}
+    ccdCaseManagementWebIngress: case-management-web-${SERVICE_FQDN}
     postgresUsername: hmcts
     postgresPassword: hmcts
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
@@ -62,6 +63,7 @@ ccd:
     java:
       imagePullPolicy: Always
       environment:
+        NODE_TLS_REJECT_UNAUTHORIZED: 0
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DATA_STORE_IDAM_KEY: ${DATA_STORE_S2S_KEY}
         DATA_STORE_DEFAULT_LOG_LEVEL: info
@@ -86,6 +88,7 @@ ccd:
         am:
           secrets:
             - role-assignment-service-LD-SDK-KEY
+
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
@@ -120,14 +123,14 @@ ccd:
     userprofile:
       enabled: true
       jurisdictions:
-        - FIS
+        - PRIVATELAW
       users:
-        - fis_caseworker_solicitor@mailinator.com|FIS|A58|Draft
-        - FisCaseWorkerUser@AAT.com|FIS|A58|Draft
-        - TEST_CASE_WORKER_USER@mailinator.com|FIS|A58|Draft
-        - TEST_SOLICITOR@mailinator.com|FIS|A58|Draft
-        - fis_as_caseworker_admin@mailinator.com|FIS|A58|Draft
-        - civil_unspecified@mailinator.com|FIS|A58|Draft
+        - fis_caseworker_solicitor@mailinator.com|PRIVATELAW|PRLAPPS|Created
+        - FisCaseWorkerUser@AAT.com|PRIVATELAW|PRLAPPS|Created
+        - TEST_CASE_WORKER_USER@mailinator.com|PRIVATELAW|PRLAPPS|Created
+        - TEST_SOLICITOR@mailinator.com|PRIVATELAW|PRLAPPS|Created
+        - fis_as_caseworker_admin@mailinator.com|PRIVATELAW|PRLAPPS|Created
+        - civil_unspecified@mailinator.com|PRIVATELAW|PRLAPPS|Created
       userProfileDatabaseHost: ${SERVICE_NAME}-ccd-postgres
       userProfileDatabasePort: 5432
       userProfileDatabaseUser: hmcts
