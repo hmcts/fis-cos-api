@@ -201,10 +201,10 @@ withPipeline(type, product, component) {
 
   onPR {
       env.ENVIRONMENT="preview"
-      env.CASE_API_URL = "http://fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CASE_API_URL = "http://fis-cos-api-pr-${CHANGE_ID}-java"
       env.CCD_DEF_NAME = "preview"
-      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-      env.CASE_DATA_STORE_BASEURL = "https://ccd-data-store-api-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.DEFINITION_STORE_URL_BASE = "http://fis-cos-api-pr-${CHANGE_ID}-ccd-definition-store"
+      env.CASE_DATA_STORE_BASEURL = "http://fis-cos-api-pr-${CHANGE_ID}-ccd-data-store-api"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
