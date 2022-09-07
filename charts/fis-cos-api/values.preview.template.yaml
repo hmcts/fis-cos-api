@@ -5,7 +5,7 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    CASE_DATA_STORE_BASEURL: https://ccd-data-store-api-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal
+    CASE_DATA_STORE_BASEURL: http://ccd-data-store-api-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
     APP_INSIGHTS_KEY: 40c4ab72-faeb-4a79-b7ef-554038d0542f
 
