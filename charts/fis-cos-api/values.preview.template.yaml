@@ -92,6 +92,7 @@ ccd:
     java:
       imagePullPolicy: Always
       environment:
+        NODE_TLS_REJECT_UNAUTHORIZED: 0
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DEFINITION_STORE_IDAM_KEY: ${DEFINITION_STORE_S2S_KEY}
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
