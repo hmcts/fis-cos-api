@@ -14,8 +14,10 @@ def component = "cos-api"
 GradleBuilder builder = new GradleBuilder(this, product)
 
 static Map<String, Object> secret(String secretName, String envVariable) {
-  println ${secretName}
-  println ${envVariable}
+
+  println("testing secert")
+
+
   [$class     : 'AzureKeyVaultSecret',
    secretType : 'Secret',
    name       : secretName,
