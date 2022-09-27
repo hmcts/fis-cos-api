@@ -15,8 +15,8 @@ GradleBuilder builder = new GradleBuilder(this, product)
 
 static Map<String, Object> secret(String secretName, String envVariable) {
 
-  println("testing secert")
-
+  echo "seceret name ${secretName}"
+  echo "seceret name ${envVariable}"
 
   [$class     : 'AzureKeyVaultSecret',
    secretType : 'Secret',
