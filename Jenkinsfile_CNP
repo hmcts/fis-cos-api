@@ -59,7 +59,7 @@ def vaultOverrides = [
   'prod': 'aat',
 ]
 
-withPipeline(type, product+ '-kv', component) {
+withPipeline(type, product, component) {
     enableAksStagingDeployment()
     disableLegacyDeployment()
     overrideVaultEnvironments(vaultOverrides)
