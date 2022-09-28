@@ -157,6 +157,8 @@ task smoke(type: Test) {
 
 task highLevelDataSetup(type: JavaExec) {
   if (System.getenv("ENVIRONMENT") != "prod") {
+    // key vault name changed from fis to fis-kv
+    environment("product", "fis-kv")
     mainClass.set("uk.gov.hmcts.reform.cosapi.common.ccd.HighLevelDataSetupApp")
     classpath += sourceSets.main.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
