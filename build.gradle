@@ -252,6 +252,8 @@ dependencyUpdates {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    //CVE-2022-38752
+    dependency group: 'org.yaml',name: 'snakeyaml', version: '1.32'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.1-jre') {
       entry 'guava'
