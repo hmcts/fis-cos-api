@@ -10,7 +10,7 @@ java:
     APP_INSIGHTS_KEY: 40c4ab72-faeb-4a79-b7ef-554038d0542f
 
   keyVaults:
-    fis:
+    fis-kv:
       secrets:
         - name: uk-gov-notify-api-key
           alias: UK_GOV_NOTIFY_API_KEY
