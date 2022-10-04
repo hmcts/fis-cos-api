@@ -115,7 +115,7 @@ ccd:
     userprofile:
       enabled: true
       jurisdictions:
-        - FIS
+        - PRIVATELAW
       users:
         - fis_caseworker_solicitor@mailinator.com|FIS|A58|Draft
         - FisCaseWorkerUser@AAT.com|FIS|A58|Draft
