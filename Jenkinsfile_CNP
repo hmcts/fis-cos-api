@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure@DTSPO-10459")
+@Library("Infrastructure")
 
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
