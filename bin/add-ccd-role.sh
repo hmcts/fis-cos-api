@@ -12,8 +12,9 @@ dir=$(dirname ${0})
 role=${1}
 userToken=$(${dir}/idam-user-token.sh ${DEFINITION_IMPORTER_USERNAME} ${DEFINITION_IMPORTER_PASSWORD})
 serviceToken=$(${dir}/s2s-token.sh ccd_gw)
-#echo "add-ccd-role.sh---${DEFINITION_IMPORTER_USERNAME}--${DEFINITION_IMPORTER_USERNAME} ${DEFINITION_IMPORTER_PASSWORD} userToken: ${userToken} serviceToken: ${serviceToken}\n\n"
+echo "add-ccd-role.sh---${DEFINITION_IMPORTER_USERNAME}--${DEFINITION_IMPORTER_USERNAME} ${DEFINITION_IMPORTER_PASSWORD} userToken: ${userToken} serviceToken: ${serviceToken}\n\n"
 echo "Creating CCD role: ${role}"
+echo ${DEFINITION_STORE_URL_BASE}
 curl --insecure --fail --show-error --silent --output /dev/null -X PUT \
   ${DEFINITION_STORE_URL_BASE:-http://localhost:4451}/api/user-role \
   -H "Authorization: Bearer ${userToken}" \
