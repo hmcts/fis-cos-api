@@ -218,7 +218,8 @@ withPipeline(type, product, component) {
       env.ENVIRONMENT="aat"
       env.CASE_API_URL="http://fis-cos-api-aat.service.core-compute-aat.internal"
       env.CCD_DEF_NAME="aat"
-      env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+//      env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+      env.DEFINITION_STORE_URL_BASE="http://prl-ccd-definitions-pr-578-ccd-data-store-api"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
       env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
       enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
@@ -272,8 +273,8 @@ def setCommonEnvVariables() {
 
 def uploadCoreCaseDataDefinitions() {
     dir("${WORKSPACE}/bin"){
-        sh "./add-roles.sh"
-        sh "./process-and-import-ccd-definition.sh"
+//        sh "./add-roles.sh"
+//        sh "./process-and-import-ccd-definition.sh"
     }
     dir("${WORKSPACE}") {
         steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
