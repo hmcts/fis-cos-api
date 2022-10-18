@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 
+@Slf4j
 @Configuration
 public class S2sAuthConfiguration {
 
@@ -23,6 +25,9 @@ public class S2sAuthConfiguration {
         @Value("${idam.s2s-auth.microservice}") final String microService,
         final ServiceAuthorisationApi serviceAuthorisationApi
     ) {
+        log.info("fis cos api secret ---> {}", secret);
+        log.info("microService ---> {}", microService);
+        log.info("serviceAuthorisationApi ---> {}", serviceAuthorisationApi);
         return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
     }
 }
