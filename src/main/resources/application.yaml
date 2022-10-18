@@ -82,7 +82,7 @@ uk:
 idam:
   s2s-auth:
     url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
-    secret: ${S2S_SECRET:XXXXXXXX}
+    secret: ${FIS_S2S_SECRET:XXXXXXXX}
     microservice: fis_cos_api
   api:
     url: ${IDAM_API_BASEURL:http://localhost:5000}
