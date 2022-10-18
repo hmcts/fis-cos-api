@@ -15,7 +15,7 @@ java:
         - name: uk-gov-notify-api-key
           alias: UK_GOV_NOTIFY_API_KEY
         - name: s2s-secret-fis-cos-api
-          alias: FIS_S2S_SECRET
+          alias: S2S_SECRET
         - name: idam-secret
           alias: IDAM_CLIENT_SECRET
         - name: idam-system-user-name
