@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 
 @RestController
@@ -74,5 +75,18 @@ public class CaseManagementController {
                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         CaseResponse caseResponse = caseManagementService.fetchCaseDetails(authorization,caseId);
         return ResponseEntity.ok(caseResponse);
+    }
+
+    @GetMapping("/{caseId}")
+    @ApiOperation("Call CCD to fetch the dss case details")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "updated"),
+        @ApiResponse(code = 401, message = "Provided Authorization token is missing or invalid"),
+        @ApiResponse(code = 404, message = "Case Not found")
+    })
+    public ResponseEntity<?> fetchDssQuestionAnswerDetails(@PathVariable final Long caseId,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        DssCaseResponse dssCaseResponse = caseManagementService.fetchDssQuestionAnswerDetails(authorization,caseId);
+        return ResponseEntity.ok(dssCaseResponse);
     }
 }

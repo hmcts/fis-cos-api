@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.cosapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,20 +16,22 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_EMAIL_ADDRESS;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -143,6 +144,24 @@ class CaseManagementControllerTest {
         assertEquals(caseDataFetchResponse.getId(),caseResponse.getId());
         assertEquals(postFetchCaseResponse.getStatusCode(),HttpStatus.OK);
 
+    }
+
+    @Test
+    void testFetchDssQuestionAnswerDetails() {
+
+        DssCaseResponse expectedDssCaseResponse = DssCaseResponse.builder().build();
+        when(caseManagementService.fetchDssQuestionAnswerDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
+                .thenReturn(expectedDssCaseResponse);
+
+        ResponseEntity<?> postFetchCaseResponse = caseManagementController.fetchDssQuestionAnswerDetails(
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION
+        );
+
+        DssCaseResponse actualDssCaseResponse = (DssCaseResponse) postFetchCaseResponse.getBody();
+
+        assertEquals(expectedDssCaseResponse, actualDssCaseResponse);
+        assertEquals(postFetchCaseResponse.getStatusCode(),HttpStatus.OK);
     }
 
 }

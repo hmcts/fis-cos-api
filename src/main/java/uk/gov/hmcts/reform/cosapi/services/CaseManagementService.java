@@ -9,8 +9,15 @@ import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerDatePair;
+import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerPair;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
 import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -79,5 +86,56 @@ public class CaseManagementService {
 
     }
 
+    public DssCaseResponse fetchDssQuestionAnswerDetails(String authorization, Long caseId) {
+        try {
+            CaseDetails caseDetails = caseApiService.getCaseDetails(authorization, caseId);
+            log.info("Case Details for CaseID :{} and CaseDetails:{}", caseId, caseDetails);
+            return DssCaseResponse.builder().dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
+                    .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData())).build();
+        } catch (Exception e) {
+            log.error("Error while fetching Case Details" + e);
+            throw new CaseCreateOrUpdateException("Failing while fetching the case details" + e.getMessage(), e);
+        }
+    }
+
+    private List<DssQuestionAnswerDatePair> buildDssQuestionAnswerDatePairs(Map<String, Object> data) {
+        DssQuestionAnswerDatePair dssQuestionAnswerPair1 = DssQuestionAnswerDatePair
+                .builder()
+                .question((String) data.get("dssQuestion3"))
+                .answer(LocalDate.parse(retrieveCaseDataValue((String) data.get("dssAnswer3"), data)))
+                .build();
+        return List.of(dssQuestionAnswerPair1);
+    }
+
+    private List<DssQuestionAnswerPair> buildDssQuestionAnswerPairs(Map<String, Object> data) {
+        DssQuestionAnswerPair dssQuestionAnswerPair1 = DssQuestionAnswerPair
+                .builder()
+                .question((String) data.get("dssQuestion1"))
+                .answer(retrieveCaseDataValue((String) data.get("dssAnswer1"), data))
+                .build();
+
+        DssQuestionAnswerPair dssQuestionAnswerPair2 = DssQuestionAnswerPair
+                .builder()
+                .question((String) data.get("dssQuestion2"))
+                .answer(retrieveCaseDataValue((String) data.get("dssAnswer2"), data))
+                .build();
+        return List.of(dssQuestionAnswerPair1, dssQuestionAnswerPair2);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private String retrieveCaseDataValue(String answerField, Map<String, Object> data) {
+        String[] fieldList = answerField.split("[.]", 0);
+        Map<String, Object> caseData = data;
+        String value = null;
+
+        for (int id = 1; id < fieldList.length; id++) {
+            if (id == fieldList.length - 1) {
+                value = (String) caseData.get(fieldList[id]);
+                break;
+            }
+            caseData = (Map<String, Object>) caseData.get(fieldList[id]);
+        }
+        return value;
+    }
 
 }
