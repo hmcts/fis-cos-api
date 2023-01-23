@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerDatePair;
 import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerPair;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
@@ -22,6 +24,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class CaseManagementService {
+
+    private static final String SUCCESS = "Success";
 
     @Autowired
     CaseApiService caseApiService;
@@ -42,7 +46,7 @@ public class CaseManagementService {
                                                                 AppsUtil.getExactAppsDetails(appsConfig, caseData));
             log.info("Created case details: " + caseDetails.toString());
             return CaseResponse.builder().caseData(caseDetails.getData())
-                .id(caseDetails.getId()).status("Success").build();
+                .id(caseDetails.getId()).status(SUCCESS).build();
 
 
         } catch (Exception e) {
@@ -71,6 +75,25 @@ public class CaseManagementService {
         }
     }
 
+    public CaseResponse updateDssCase(String authorisation, EventEnum event,
+                                      List<DssDocumentInfo> dssDocumentInfoList, Long caseId) {
+        try {
+            CaseDetails retrievedCaseDetails = caseApiService.getCaseDetails(authorisation, caseId);
+            Map<String, Object> caseData = retrievedCaseDetails.getData();
+            caseData.put("dssDocuments", dssDocumentInfoList);
+            CaseDetails caseDetails = caseApiService.updateCase(authorisation, event, caseId,
+                    caseData,
+                    AppsUtil.getExactAppsDetails(appsConfig,
+                            new ObjectMapper().convertValue(caseData, CaseData.class)));
+            return CaseResponse.builder().caseData(caseDetails.getData())
+                    .id(caseDetails.getId()).status(SUCCESS).build();
+        } catch (Exception e) {
+            log.error("Error while updating case." + e);
+            throw new CaseCreateOrUpdateException("Failing while updating the dss case" + e.getMessage(), e);
+        }
+
+    }
+
     public CaseResponse fetchCaseDetails(String authorization,Long caseId) {
 
         try {
@@ -89,12 +112,11 @@ public class CaseManagementService {
     public DssCaseResponse fetchDssQuestionAnswerDetails(String authorization, Long caseId) {
         try {
             CaseDetails caseDetails = caseApiService.getCaseDetails(authorization, caseId);
-            log.info("Case Details for CaseID :{} and CaseDetails:{}", caseId, caseDetails);
             return DssCaseResponse.builder().dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
                     .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData())).build();
         } catch (Exception e) {
-            log.error("Error while fetching Case Details" + e);
-            throw new CaseCreateOrUpdateException("Failing while fetching the case details" + e.getMessage(), e);
+            log.error("Error while fetching Dss Case Details" + e);
+            throw new CaseCreateOrUpdateException("Failing while fetching the dss case details" + e.getMessage(), e);
         }
     }
 
@@ -137,5 +159,4 @@ public class CaseManagementService {
         }
         return value;
     }
-
 }

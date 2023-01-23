@@ -20,7 +20,10 @@ import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/case/dss-orchestration")
@@ -60,6 +63,25 @@ public class CaseManagementController {
         log.info("Event Received from UI: " + event);
 
         CaseResponse updatedCase = caseManagementService.updateCase(authorisation, event, caseData, caseId);
+        return ResponseEntity.ok(updatedCase);
+    }
+
+    @PutMapping("/dss/{caseId}/update")
+    @ApiOperation("Call CCD to create case")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Dss case updated"),
+        @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
+        @ApiResponse(code = 404, message = "Dss Case Not found")
+    })
+    public ResponseEntity<?> updateDssCase(@PathVariable final Long caseId,
+                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+                                        @RequestParam final EventEnum event,
+                                        @RequestBody final List<DssDocumentInfo> dssDocumentInfoList) {
+
+        log.info("Event Received from UI: " + event);
+
+        CaseResponse updatedCase = caseManagementService
+                .updateDssCase(authorisation, event, dssDocumentInfoList, caseId);
         return ResponseEntity.ok(updatedCase);
     }
 

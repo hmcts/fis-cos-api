@@ -17,9 +17,11 @@ import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -116,6 +118,43 @@ class CaseManagementControllerTest {
         assertEquals(TEST_UPDATE_CASE_EMAIL_ADDRESS, caseDataUpdate.getApplicant().getEmailAddress());
 
         assertNotNull(testPreUpdResponse);
+        assertEquals(HttpStatus.OK, postUpdateCaseResponse.getStatusCode());
+    }
+
+    @Test
+    void testDssUpdateCaseData() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
+
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+
+        caseDataMap.put(CASE_DATA_FGM_ID, caseData);
+        CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
+        List<DssDocumentInfo> dssDocumentInfos = List.of(DssDocumentInfo.builder().build());
+        caseResponse.setId(TEST_CASE_ID);
+
+        when(caseManagementService.updateDssCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
+                dssDocumentInfos, TEST_CASE_ID)).thenReturn(caseResponse);
+
+        ResponseEntity<?> preUpdateCaseResponse = caseManagementController.updateDssCase(
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssDocumentInfos
+        );
+
+        CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
+        assertEquals(TEST_CASE_EMAIL_ADDRESS, caseData.getApplicant().getEmailAddress());
+
+        ResponseEntity<?> postUpdateCaseResponse = caseManagementController.updateDssCase(
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssDocumentInfos
+        );
+
+        assertNotNull(postUpdateCaseResponse);
+        assertEquals(testPreUpdResponse, postUpdateCaseResponse.getBody());
         assertEquals(HttpStatus.OK, postUpdateCaseResponse.getStatusCode());
     }
 

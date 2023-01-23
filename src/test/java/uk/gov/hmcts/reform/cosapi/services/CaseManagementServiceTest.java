@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
 
 import java.util.Arrays;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
@@ -212,6 +215,54 @@ class CaseManagementServiceTest {
         assertEquals(caseResponseData.getNamedApplicant(), caseData.getNamedApplicant());
         assertEquals(caseResponseData.getCaseTypeOfApplication(), caseData.getCaseTypeOfApplication());
         assertEquals(caseResponseData.getApplicant().getEmailAddress(), caseData.getApplicant().getEmailAddress());
+        assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
+    }
+
+    @Test
+    void testDssUpdateCaseData() {
+        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
+        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+
+        fgmAppDetail.setEventIds(eventsConfig);
+
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
+
+        assertNotNull(fgmAppDetail);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
+
+        List<DssDocumentInfo> dssDocumentInfoList = List.of(DssDocumentInfo.builder().build());
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+        caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
+        caseDataMap.put("dssDocuments", dssDocumentInfoList);
+
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
+
+        when(caseApiService.getCaseDetails(
+                CASE_TEST_AUTHORIZATION,
+                TEST_CASE_ID
+        )).thenReturn(caseDetail);
+
+        when(caseApiService.updateCase(
+                eq(CASE_TEST_AUTHORIZATION),
+                eq(EventEnum.UPDATE),
+                eq(TEST_CASE_ID),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.any()
+        )).thenReturn(caseDetail);
+
+        CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssDocumentInfoList,
+                TEST_CASE_ID
+        );
+
+        assertEquals(updateCaseResponse.getId(), caseDetail.getId());
+        assertEquals(caseDataMap, updateCaseResponse.getCaseData());
         assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
     }
 

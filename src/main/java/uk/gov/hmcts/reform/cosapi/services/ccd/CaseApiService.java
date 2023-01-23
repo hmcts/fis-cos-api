@@ -47,7 +47,7 @@ public class CaseApiService {
     }
 
     public CaseDetails updateCase(String authorization, EventEnum eventEnum, Long caseId,
-                                  CaseData caseData, AppsConfig.AppsDetails appsDetails) {
+                                  Object caseData, AppsConfig.AppsDetails appsDetails) {
 
         String userId = systemUserService.getUserId(authorization);
 
@@ -73,7 +73,7 @@ public class CaseApiService {
             .build();
     }
 
-    private CaseDataContent getCaseDataContent(String authorization, CaseData caseData, EventEnum eventEnum,
+    private CaseDataContent getCaseDataContent(String authorization, Object caseData, EventEnum eventEnum,
                                                String userId, String caseId, AppsConfig.AppsDetails appsDetails) {
         CaseDataContent.CaseDataContentBuilder builder = CaseDataContent.builder().data(caseData);
         if (eventEnum.getEventType().equalsIgnoreCase(EventEnum.UPDATE.getEventType())) {
