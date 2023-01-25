@@ -1,11 +1,11 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
@@ -14,8 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationServiceTest {
 
     @InjectMocks
     AuthorisationService authorisationService;
@@ -23,13 +23,13 @@ public class AuthorisationServiceTest {
     @Mock
     ServiceAuthorisationApi serviceAuthorisationApi;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         ReflectionTestUtils.setField(authorisationService, "s2sAuthorisedServices", "payment_api");
     }
 
     @Test
-    public void authoriseWhenTheServiceIsCalledFromPayment() {
+    void authoriseWhenTheServiceIsCalledFromPayment() {
 
         when(serviceAuthorisationApi.getServiceName(any())).thenReturn("payment_api");
         assertTrue(authorisationService.authoriseService("Bearer abcasda"));
@@ -37,14 +37,14 @@ public class AuthorisationServiceTest {
     }
 
     @Test
-    public void doNotAuthoriseWhenTheServiceIsCalledFromUnknownApi() {
+    void doNotAuthoriseWhenTheServiceIsCalledFromUnknownApi() {
         when(serviceAuthorisationApi.getServiceName(any())).thenReturn("unknown_api");
         assertFalse(authorisationService.authoriseService("Bearer abc"));
 
     }
 
     @Test
-    public void throwUnAuthorisedExceptionWhenS2sTokenIsMalformed() {
+    void throwUnAuthorisedExceptionWhenS2sTokenIsMalformed() {
         assertFalse(authorisationService.authoriseService("Bearer malformed"));
     }
 }
