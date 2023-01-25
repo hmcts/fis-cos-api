@@ -85,3 +85,6 @@ caseinfo:
         submitEvent: citizen-adop-submit-dss-application
       caseTypeOfApplication:
         - RELADOP
+
+fis:
+  authorised-services: fis-ds-update-web

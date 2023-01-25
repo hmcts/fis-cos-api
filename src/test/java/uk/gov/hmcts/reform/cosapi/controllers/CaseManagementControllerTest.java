@@ -13,14 +13,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
+import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
+import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,6 +51,12 @@ class CaseManagementControllerTest {
 
     @Mock
     CaseManagementService caseManagementService;
+
+    @Mock
+    AuthorisationService authorisationService;
+
+    @Mock
+    SystemUserService systemUserService;
 
     @BeforeEach
     void setUp() {
@@ -130,17 +140,19 @@ class CaseManagementControllerTest {
 
         caseDataMap.put(CASE_DATA_FGM_ID, caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
-        List<DssDocumentInfo> dssDocumentInfos = List.of(DssDocumentInfo.builder().build());
+        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
         caseResponse.setId(TEST_CASE_ID);
 
         when(caseManagementService.updateDssCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
-                dssDocumentInfos, TEST_CASE_ID)).thenReturn(caseResponse);
+                dssDocumentInfoList, TEST_CASE_ID)).thenReturn(caseResponse);
+        when(authorisationService.authoriseService(CASE_TEST_AUTHORIZATION)).thenReturn(true);
+        when(systemUserService.getSysUserToken()).thenReturn(CASE_TEST_AUTHORIZATION);
 
         ResponseEntity<?> preUpdateCaseResponse = caseManagementController.updateDssCase(
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssDocumentInfos
+                dssDocumentInfoList
         );
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
@@ -150,7 +162,7 @@ class CaseManagementControllerTest {
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssDocumentInfos
+                dssDocumentInfoList
         );
 
         assertNotNull(postUpdateCaseResponse);
@@ -191,6 +203,8 @@ class CaseManagementControllerTest {
         DssCaseResponse expectedDssCaseResponse = DssCaseResponse.builder().build();
         when(caseManagementService.fetchDssQuestionAnswerDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
                 .thenReturn(expectedDssCaseResponse);
+        when(authorisationService.authoriseService(CASE_TEST_AUTHORIZATION)).thenReturn(true);
+        when(systemUserService.getSysUserToken()).thenReturn(CASE_TEST_AUTHORIZATION);
 
         ResponseEntity<?> postFetchCaseResponse = caseManagementController.fetchDssQuestionAnswerDetails(
                 TEST_CASE_ID,

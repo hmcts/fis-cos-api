@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
@@ -63,8 +64,8 @@ public class CaseManagementService {
             }
 
             // Updating or Submitting case to CCD..
-            CaseDetails caseDetails = caseApiService.updateCase(authorization, event, caseId, caseData,
-                                                                AppsUtil.getExactAppsDetails(appsConfig, caseData));
+            CaseDetails caseDetails = caseApiService.updateCase(authorization, event,
+                    caseId, caseData, AppsUtil.getExactAppsDetails(appsConfig, caseData), true);
             log.info("Updated case details: " + caseDetails.toString());
             return CaseResponse.builder().caseData(caseDetails.getData())
                 .id(caseDetails.getId()).status("Success").build();
@@ -76,7 +77,7 @@ public class CaseManagementService {
     }
 
     public CaseResponse updateDssCase(String authorisation, EventEnum event,
-                                      List<DssDocumentInfo> dssDocumentInfoList, Long caseId) {
+                                      List<ListValue<DssDocumentInfo>> dssDocumentInfoList, Long caseId) {
         try {
             CaseDetails retrievedCaseDetails = caseApiService.getCaseDetails(authorisation, caseId);
             Map<String, Object> caseData = retrievedCaseDetails.getData();
@@ -84,7 +85,7 @@ public class CaseManagementService {
             CaseDetails caseDetails = caseApiService.updateCase(authorisation, event, caseId,
                     caseData,
                     AppsUtil.getExactAppsDetails(appsConfig,
-                            new ObjectMapper().convertValue(caseData, CaseData.class)));
+                            new ObjectMapper().convertValue(caseData, CaseData.class)), false);
             return CaseResponse.builder().caseData(caseDetails.getData())
                     .id(caseDetails.getId()).status(SUCCESS).build();
         } catch (Exception e) {

@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
+import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
+import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
+import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
 
 import java.util.List;
 
@@ -30,8 +34,16 @@ import java.util.List;
 @Slf4j
 public class CaseManagementController {
 
+    public static final String SERVICE_AUTHORISATION = "ServiceAuthorization";
+
     @Autowired
     CaseManagementService caseManagementService;
+
+    @Autowired
+    SystemUserService systemUserService;
+
+    @Autowired
+    AuthorisationService authorisationService;
 
     @PostMapping("/create")
     @ApiOperation("Call CCD to create case")
@@ -74,15 +86,16 @@ public class CaseManagementController {
         @ApiResponse(code = 404, message = "Dss Case Not found")
     })
     public ResponseEntity<?> updateDssCase(@PathVariable final Long caseId,
-                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+                                        @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
                                         @RequestParam final EventEnum event,
-                                        @RequestBody final List<DssDocumentInfo> dssDocumentInfoList) {
-
-        log.info("Event Received from UI: " + event);
-
-        CaseResponse updatedCase = caseManagementService
-                .updateDssCase(authorisation, event, dssDocumentInfoList, caseId);
-        return ResponseEntity.ok(updatedCase);
+                                        @RequestBody final List<ListValue<DssDocumentInfo>> dssDocumentInfoList) {
+        if (isAuthorized(s2sToken)) {
+            CaseResponse updatedCase = caseManagementService
+                    .updateDssCase(systemUserService.getSysUserToken(), event, dssDocumentInfoList, caseId);
+            return ResponseEntity.ok(updatedCase);
+        } else {
+            throw new CaseCreateOrUpdateException("Invalid Client");
+        }
     }
 
     @GetMapping("/fetchCaseDetails/{caseId}")
@@ -107,8 +120,17 @@ public class CaseManagementController {
         @ApiResponse(code = 404, message = "Case Not found")
     })
     public ResponseEntity<?> fetchDssQuestionAnswerDetails(@PathVariable final Long caseId,
-                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        DssCaseResponse dssCaseResponse = caseManagementService.fetchDssQuestionAnswerDetails(authorization,caseId);
-        return ResponseEntity.ok(dssCaseResponse);
+                         @RequestHeader(SERVICE_AUTHORISATION) String s2sToken) {
+        if (isAuthorized(s2sToken)) {
+            DssCaseResponse dssCaseResponse = caseManagementService
+                    .fetchDssQuestionAnswerDetails(systemUserService.getSysUserToken(), caseId);
+            return ResponseEntity.ok(dssCaseResponse);
+        }  else {
+            throw new CaseCreateOrUpdateException("Invalid Client");
+        }
+    }
+
+    private boolean isAuthorized(String s2sToken) {
+        return authorisationService.authoriseService(s2sToken);
     }
 }

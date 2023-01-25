@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +191,8 @@ class CaseManagementServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetail
+            fgmAppDetail,
+                true
         )).thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateCase(
@@ -231,7 +234,7 @@ class CaseManagementServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
 
-        List<DssDocumentInfo> dssDocumentInfoList = List.of(DssDocumentInfo.builder().build());
+        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
         Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
         caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
         caseDataMap.put("dssDocuments", dssDocumentInfoList);
@@ -251,7 +254,8 @@ class CaseManagementServiceTest {
                 eq(EventEnum.UPDATE),
                 eq(TEST_CASE_ID),
                 ArgumentMatchers.any(),
-                ArgumentMatchers.any()
+                ArgumentMatchers.any(),
+                eq(false)
         )).thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
@@ -286,7 +290,8 @@ class CaseManagementServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetail
+            fgmAppDetail,
+                true
         )).thenThrow(
             new CaseCreateOrUpdateException(
                 CASE_UPDATE_FAILURE_MSG,

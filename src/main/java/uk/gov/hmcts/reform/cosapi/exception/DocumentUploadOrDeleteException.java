@@ -6,4 +6,8 @@ public class DocumentUploadOrDeleteException extends RuntimeException {
     public DocumentUploadOrDeleteException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public DocumentUploadOrDeleteException(String message) {
+        super(message);
+    }
 }
