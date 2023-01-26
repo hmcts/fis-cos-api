@@ -16,7 +16,7 @@ springdoc:
 
 spring:
   config:
-    import: "optional:configtree:/mnt/secrets/fis/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Cos API
   main:

@@ -16,12 +16,12 @@ java:
           alias: UK_GOV_NOTIFY_API_KEY
         - name: s2s-secret-fis-cos-api
           alias: S2S_SECRET
-        - name: idam-secret
-          alias: IDAM_CLIENT_SECRET
         - name: idam-system-user-name
           alias: IDAM_SYSTEM_UPDATE_USERNAME
         - name: idam-system-user-password
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
+        - name: idam-ui-secret
+          alias: OAUTH2_CLIENT_SECRET
 
 ccd:
   ccd:

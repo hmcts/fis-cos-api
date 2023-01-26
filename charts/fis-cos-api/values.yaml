@@ -37,3 +37,5 @@ java:
         - name: s2s-secret-fis-cos-api
           alias: S2S_SECRET
         - name: AppInsightsInstrumentationKey
+        - name: idam-ui-secret
+          alias: OAUTH2_CLIENT_SECRET

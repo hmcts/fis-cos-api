@@ -29,7 +29,7 @@ runs-locally: ${RUNS_LOCALLY:true}
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
-    import: "optional:configtree:/mnt/secrets/fis/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Cos API
   main:
