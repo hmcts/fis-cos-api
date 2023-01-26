@@ -20,6 +20,7 @@ public class SystemUserService {
     }
 
     public String getSysUserToken() {
+        log.info("test3 {}", userConfig.getUserName());
         return idamClient.getAccessToken(userConfig.getUserName(), userConfig.getPassword());
     }
 }

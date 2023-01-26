@@ -11,8 +11,8 @@ public class SystemUserConfiguration {
     private final String userName;
     private final String password;
 
-    public SystemUserConfiguration(@Value("${idam.system-update.username}") String userName,
-                                   @Value("${idam.system-update.password}") String password) {
+    public SystemUserConfiguration(@Value("${idam.systemupdate.username}") String userName,
+                                   @Value("${idam.systemupdate.password}") String password) {
         this.userName = userName;
         this.password = password;
     }
