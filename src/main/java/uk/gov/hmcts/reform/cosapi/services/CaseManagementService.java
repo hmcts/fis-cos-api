@@ -84,7 +84,7 @@ public class CaseManagementService {
             caseData.put("dssDocuments", dssDocumentInfoList);
             CaseDetails caseDetails = caseApiService.updateCase(authorisation, event, caseId,
                     caseData,
-                    AppsUtil.getExactAppsDetails(appsConfig,
+                    AppsUtil.getDssExactAppsDetails(appsConfig,
                             new ObjectMapper().convertValue(caseData, CaseData.class)), false);
             return CaseResponse.builder().caseData(caseDetails.getData())
                     .id(caseDetails.getId()).status(SUCCESS).build();

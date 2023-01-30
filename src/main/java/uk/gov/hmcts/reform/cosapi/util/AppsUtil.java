@@ -30,4 +30,10 @@ public class AppsUtil {
             .filter(eachApps -> eachApps.getCaseType().equalsIgnoreCase(caseType))
             .findFirst().orElse(null);
     }
+
+    public static AppsConfig.AppsDetails getDssExactAppsDetails(AppsConfig appsConfig, CaseData caseData) {
+        return appsConfig.getApps().stream()
+                .filter(eachApps -> eachApps.getCaseTypeOfApplication().contains("RELADOP"))
+                .findFirst().orElse(null);
+    }
 }
