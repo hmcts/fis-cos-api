@@ -17,8 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 import uk.gov.hmcts.reform.cosapi.util.IdamTokenGenerator;
+import uk.gov.hmcts.reform.cosapi.util.ServiceAuthenticationGenerator;
 
 import java.io.File;
 
@@ -36,6 +38,9 @@ public class DocumentManagementControllerFunctionalTest {
 
     @Autowired
     protected IdamTokenGenerator idamTokenGenerator;
+
+    @Autowired
+    protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
     private final String targetInstance =
         StringUtils.defaultIfBlank(
@@ -90,4 +95,48 @@ public class DocumentManagementControllerFunctionalTest {
 
         Assert.assertEquals("Success", delRes.getStatus());
     }
+
+
+    @Test
+    public void shouldSuccessfullyUploadDssDocument() throws Exception {
+        Response response = request
+            .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
+            .multiPart("file", new File("src/functionalTest/resources/Test.pdf"))
+            .param("caseTypeOfApplication", "FMPO")
+            .when()
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .post("/doc/dss-orhestration/dss/upload");
+
+        response.then().assertThat().statusCode(200);
+        DocumentResponse res = objectMapper.readValue(response.getBody().asString(), DocumentResponse.class);
+
+        Assert.assertEquals("Success", res.getStatus());
+        Assert.assertNotNull(res.getDocument());
+        Assert.assertEquals("Test.pdf", res.getDocument().getFileName());
+    }
+
+    @Test
+    public void shouldSuccessfullyDssDeleteDocument() throws Exception {
+        Response response = request
+            .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
+            .multiPart("file", new File("src/functionalTest/resources/Test.pdf"))
+            .param("caseTypeOfApplication", "FMPO")
+            .when()
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .post("/doc/dss-orhestration/dss/upload");
+
+        DocumentResponse res = objectMapper.readValue(response.getBody().asString(), DocumentResponse.class);
+
+        Response deleteResponse = RestAssured.given().relaxedHTTPSValidation().baseUri(targetInstance)
+            .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
+            .when()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .delete(String.format("/doc/dss-orhestration/dss/%s/delete", res.getDocument().getDocumentId()));
+
+        deleteResponse.then().assertThat().statusCode(200);
+        DocumentResponse delRes = objectMapper.readValue(deleteResponse.getBody().asString(), DocumentResponse.class);
+
+        Assert.assertEquals("Success", delRes.getStatus());
+    }
+
 }

@@ -28,6 +28,8 @@ public final class TestConstant {
     public static final String TEST_URL = "TestUrl";
     public static final String TEST_USER = "TestUser";
     public static final UUID TEST_CASE_DATA_FILE_UUID = UUID.randomUUID();
+    public static final String S2S_TOKEN = "s2sToken";
+    public static final String INVALID_CLIENT = "Invalid Client";
 
     private TestConstant() {
 
