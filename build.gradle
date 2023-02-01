@@ -501,7 +501,7 @@ ext.getVaultSecret = { String secretName ->
 
 bootRun {
   doFirst() {
-    if (System.getenv("IDAM_API_BASEURL") == null) {
+    if (System.getenv("IDAM_API_BASEURL") == null || System.getenv("OAUTH2_CLIENT_SECRET") == null) {
       println("Loading secrets from vault")
 
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
@@ -515,6 +515,7 @@ bootRun {
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
       systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-ui-secret')
+      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-ui-secret')
       systemProperty 'APP_INSIGHTS_KEY', getVaultSecret('AppInsightsInstrumentationKey')
 
       if (System.getenv("BOOT_RUN_DOCKER")) {
