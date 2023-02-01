@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -195,7 +194,7 @@ class DocumentManagementControllerTest {
 
 
     @Test
-    void testDeleteDssDocument(){
+    void testDeleteDssDocument() {
 
         final DocumentResponse documentResponse = DocumentResponse.builder().status("Success").build();
 
