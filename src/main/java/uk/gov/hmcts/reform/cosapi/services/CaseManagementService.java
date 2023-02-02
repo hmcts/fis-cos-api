@@ -113,6 +113,7 @@ public class CaseManagementService {
     public DssCaseResponse fetchDssQuestionAnswerDetails(String authorization, Long caseId) {
         try {
             CaseDetails caseDetails = caseApiService.getCaseDetails(authorization, caseId);
+            log.info("Data retrieved {}", caseDetails.getId());
             return DssCaseResponse.builder().dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
                     .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData())).build();
         } catch (Exception e) {
