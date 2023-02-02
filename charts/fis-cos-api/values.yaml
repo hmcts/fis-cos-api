@@ -1,12 +1,12 @@
-nodejs:
-  applicationPort: 3000
-idam-pr:
-  enabled: false
-xui-webapp:
-  enabled: false
-tags:
-  ccd-pr: false
-  ccd-idam-pr: false
+#nodejs:
+#  applicationPort: 3000
+#idam-pr:
+#  enabled: false
+#xui-webapp:
+#  enabled: false
+#tags:
+#  ccd-pr: false
+#  ccd-idam-pr: false
 
 java:
   applicationPort: 8099
