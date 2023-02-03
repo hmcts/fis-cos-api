@@ -2,9 +2,10 @@ package uk.gov.hmcts.reform.cosapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
@@ -20,29 +22,34 @@ import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_FETCH_FAILURE_MSG;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_USER;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_USER;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -184,7 +191,8 @@ class CaseManagementServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetail
+            fgmAppDetail,
+                true
         )).thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateCase(
@@ -214,6 +222,55 @@ class CaseManagementServiceTest {
     }
 
     @Test
+    void testDssUpdateCaseData() {
+        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
+        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+
+        fgmAppDetail.setEventIds(eventsConfig);
+
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
+
+        assertNotNull(fgmAppDetail);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
+
+        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+        caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
+        caseDataMap.put("dssDocuments", dssDocumentInfoList);
+
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
+
+        when(caseApiService.getCaseDetails(
+                CASE_TEST_AUTHORIZATION,
+                TEST_CASE_ID
+        )).thenReturn(caseDetail);
+
+        when(caseApiService.updateCase(
+                eq(CASE_TEST_AUTHORIZATION),
+                eq(EventEnum.UPDATE),
+                eq(TEST_CASE_ID),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.any(),
+                eq(false)
+        )).thenReturn(caseDetail);
+
+        CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssDocumentInfoList,
+                TEST_CASE_ID
+        );
+
+        assertEquals(updateCaseResponse.getId(), caseDetail.getId());
+        assertEquals(caseDataMap, updateCaseResponse.getCaseData());
+        assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
+    }
+
+    @Test
     void testUpdateCaseFgmFailedWithCaseCreateUpdateException() throws Exception {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
         eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
@@ -233,7 +290,8 @@ class CaseManagementServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetail
+            fgmAppDetail,
+                true
         )).thenThrow(
             new CaseCreateOrUpdateException(
                 CASE_UPDATE_FAILURE_MSG,
@@ -293,6 +351,39 @@ class CaseManagementServiceTest {
 
         assertTrue(ex.getMessage().contains(CASE_FETCH_FAILURE_MSG));
 
+    }
+
+    @Test
+    void testFetchDssQuestionAnswerDetails() throws Exception {
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
+
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+        caseDataMap.put("dssQuestion1", "First Name");
+        caseDataMap.put("dssAnswer1", "case_data.childrenFirstName");
+        caseDataMap.put("dssQuestion2", "Last Name");
+        caseDataMap.put("dssAnswer2", "case_data.childrenLastName");
+        caseDataMap.put("dssQuestion3", "First Name");
+        caseDataMap.put("dssAnswer3", "case_data.childrenDateOfBirth");
+        caseDataMap.put("childrenFirstName", "TestFirstName");
+        caseDataMap.put("childrenLastName", "TestLastName");
+        caseDataMap.put("childrenDateOfBirth", "2001-12-12");
+
+        CaseDetails caseDetail = CaseDetails.builder()
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
+
+        when(caseApiService.getCaseDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
+                .thenReturn(caseDetail);
+
+        DssCaseResponse dssCaseResponse = caseManagementService.fetchDssQuestionAnswerDetails(
+                CASE_TEST_AUTHORIZATION,
+                TEST_CASE_ID);
+
+        assertNotNull(dssCaseResponse);
+        assertThat(dssCaseResponse.getDssQuestionAnswerPairs().size()).isEqualTo(2);
+        assertThat(dssCaseResponse.getDssQuestionAnswerDatePairs().size()).isEqualTo(1);
     }
 
 }

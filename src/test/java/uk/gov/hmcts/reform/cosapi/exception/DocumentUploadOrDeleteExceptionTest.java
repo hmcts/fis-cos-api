@@ -51,8 +51,7 @@ class DocumentUploadOrDeleteExceptionTest {
 
         when(documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId())).thenThrow(
             new DocumentUploadOrDeleteException(
-                DOCUMENT_DELETE_FAILURE_MSG,
-                new RuntimeException()
+                DOCUMENT_DELETE_FAILURE_MSG
             ));
 
         Exception exception = assertThrows(Exception.class, () -> {

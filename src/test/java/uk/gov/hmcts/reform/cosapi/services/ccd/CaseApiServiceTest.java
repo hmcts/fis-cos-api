@@ -216,7 +216,8 @@ class CaseApiServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetails
+            fgmAppDetails,
+                true
         );
 
         assertEquals(CASE_DATA_FGM_ID, createCaseDetail.getCaseTypeId());
