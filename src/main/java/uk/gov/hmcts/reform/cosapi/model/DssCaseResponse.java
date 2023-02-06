@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DssCaseResponse {
+    private Long caseId;
     private List<DssQuestionAnswerPair> dssQuestionAnswerPairs;
     private List<DssQuestionAnswerDatePair> dssQuestionAnswerDatePairs;
 }

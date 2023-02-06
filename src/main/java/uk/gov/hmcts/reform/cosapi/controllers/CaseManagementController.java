@@ -115,7 +115,7 @@ public class CaseManagementController {
     @GetMapping("/{caseId}")
     @ApiOperation("Call CCD to fetch the dss case details")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "updated"),
+        @ApiResponse(code = 200, message = "case found"),
         @ApiResponse(code = 401, message = "Provided Authorization token is missing or invalid"),
         @ApiResponse(code = 404, message = "Case Not found")
     })
