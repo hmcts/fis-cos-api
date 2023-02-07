@@ -227,7 +227,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/cosapi/model/PaymentStatus.java',
   '**/uk/gov/hmcts/reform/fis/config/OpenAPIConfiguration.java',
   '**/uk/gov/hmcts/reform/cosapi/controllers/DocumentManagementController.java',
-  '**/uk/gov/hmcts/reform/cosapi/services/ccd/CaseApiService.java'
+  '**/uk/gov/hmcts/reform/cosapi/services/ccd/CaseApiService.java',
+  '**/uk/gov/hmcts/reform/cosapi/handler/GlobalExceptionHandler.java'
 ]
 
 sonarqube {
