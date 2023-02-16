@@ -255,7 +255,7 @@ class CaseManagementServiceTest {
                 eq(TEST_CASE_ID),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
-                eq(false)
+                eq(true)
         )).thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(

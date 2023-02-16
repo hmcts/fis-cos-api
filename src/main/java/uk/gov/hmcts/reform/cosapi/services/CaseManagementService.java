@@ -85,7 +85,7 @@ public class CaseManagementService {
             CaseDetails caseDetails = caseApiService.updateCase(authorisation, event, caseId,
                     caseData,
                     AppsUtil.getDssExactAppsDetails(appsConfig,
-                            new ObjectMapper().convertValue(caseData, CaseData.class)), false);
+                            new ObjectMapper().convertValue(caseData, CaseData.class)), true);
             return CaseResponse.builder().caseData(caseDetails.getData())
                     .id(caseDetails.getId()).status(SUCCESS).build();
         } catch (Exception e) {

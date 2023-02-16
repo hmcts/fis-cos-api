@@ -117,7 +117,7 @@ caseinfo:
       jurisdiction: Adoption
       eventIds:
         createEvent: citizen-adop-create-dss-application
-        updateEvent: system-user-update-application
+        updateEvent: citizen-update-application
         submitEvent: citizen-adop-submit-dss-application
       caseTypeOfApplication:
         - RELADOP
