@@ -39,8 +39,8 @@ spring:
       matching-strategy: ANT_PATH_MATCHER
   servlet:
     multipart:
-      max-file-size: 30MB
-      max-request-size: 30MB
+      max-file-size: 500MB
+      max-request-size: 500MB
 azure:
   application-insights:
     instrumentation-key: ${AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
