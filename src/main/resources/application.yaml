@@ -1,5 +1,15 @@
 server:
   port: 8099
+  tomcat: 
+    connectionUploadTimeout: 30000
+    connectionTimeout: 30000
+    connection-timeout: 30000
+    max-swallow-size: 500MB
+    max-http-form-post-size: 500MB
+    background-processor-delay: 30000
+    keep-alive-timeout: 30000
+
+
 
 management:
   endpoint:
