@@ -3,11 +3,11 @@ server:
   tomcat: 
     connectionUploadTimeout: 90000
     connectionTimeout: 90000
-    connection-timeout: 90s
+    connection-timeout: 90000
     max-swallow-size: 500MB
     max-http-form-post-size: 500MB
-    background-processor-delay: 90s
-    keep-alive-timeout: 90s
+    background-processor-delay: 90000
+    keep-alive-timeout: 90000
     disableUploadTimeout: false
 
 
