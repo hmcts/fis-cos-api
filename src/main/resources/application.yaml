@@ -1,13 +1,13 @@
 server:
   port: 8099
   tomcat: 
-    connectionUploadTimeout: 30000
-    connectionTimeout: 30000
-    connection-timeout: 30000
+    connectionUploadTimeout: 90000
+    connectionTimeout: 90000
+    connection-timeout: 90000
     max-swallow-size: 500MB
     max-http-form-post-size: 500MB
-    background-processor-delay: 30000
-    keep-alive-timeout: 30000
+    background-processor-delay: 90000
+    keep-alive-timeout: 90000
 
 
 
