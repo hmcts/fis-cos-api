@@ -10,6 +10,12 @@ server:
     keep-alive-timeout: 90000
     disableUploadTimeout: false
 
+http:
+  client:
+    connection:
+      timeout: 90000
+    read:
+      timeout: 90000
 
 
 management:
@@ -39,6 +45,7 @@ spring:
       matching-strategy: ANT_PATH_MATCHER
   servlet:
     multipart:
+      enabled: true
       max-file-size: 500MB
       max-request-size: 500MB
 
