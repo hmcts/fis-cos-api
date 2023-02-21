@@ -4,6 +4,10 @@ tags:
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  devmemoryRequests: 2048Mi
+  devcpuRequests: 1000m
+  devmemoryLimits: 4096Mi
+  devcpuLimits: 2000m
   environment:
     CASE_DATA_STORE_BASEURL: http://fis-cos-api-pr-${CHANGE_ID}-ccd-data-store-api
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true

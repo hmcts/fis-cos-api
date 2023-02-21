@@ -13,6 +13,10 @@ java:
   image: 'hmctspublic.azurecr.io/fis/cos-api:latest'
   ingressHost: fis-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fis
+  devmemoryRequests: 2048Mi
+  devcpuRequests: 1000m
+  devmemoryLimits: 4096Mi
+  devcpuLimits: 2000m
 
   environment:
     NODE_ENV: production
