@@ -81,7 +81,7 @@ public class CaseManagementService {
             newApplicants.add(newApplicant);
 
 
-            Map updatedCaseData = new HashMap<>();
+            Map<String, Object> updatedCaseData = new HashMap<>();
             updatedCaseData.put("applicantCaseName", caseData.getNamedApplicant());
             updatedCaseData.put("caseTypeOfApplication", caseData.getCaseTypeOfApplication());
             updatedCaseData.put("applicants", newApplicants);
