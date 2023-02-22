@@ -39,8 +39,8 @@ public class CaseApiService {
             authorization,
             authTokenGenerator.generate(),
             userId,
-            appsDetails.getJurisdiction(),
-            appsDetails.getCaseType(),
+            "PRIVATELAW",
+            "PRLAPPS",
             true,
             getCaseDataContent(authorization, caseData, userId, appsDetails)
         );
@@ -56,8 +56,8 @@ public class CaseApiService {
                     authorization,
                     authTokenGenerator.generate(),
                     userId,
-                    appsDetails.getJurisdiction(),
-                    appsDetails.getCaseType(),
+                    "PRIVATELAW",
+                    "PRLAPPS",
                     String.valueOf(caseId),
                     true,
                     getCaseDataContent(authorization, caseData, eventEnum, userId,
@@ -81,8 +81,8 @@ public class CaseApiService {
                                                AppsConfig.AppsDetails appsDetails) {
         return CaseDataContent.builder()
             .data(caseData)
-            .event(Event.builder().id(appsDetails.getEventIds().getCreateEvent()).build())
-            .eventToken(getEventToken(authorization, userId, appsDetails.getEventIds().getCreateEvent(), appsDetails))
+            .event(Event.builder().id("citizenCreate").build())
+            .eventToken(getEventToken(authorization, userId, "citizenCreate", appsDetails))
             .build();
     }
 
@@ -90,15 +90,11 @@ public class CaseApiService {
                                                String userId, String caseId, AppsConfig.AppsDetails appsDetails,
                                                boolean isCitizen) {
         CaseDataContent.CaseDataContentBuilder builder = CaseDataContent.builder().data(caseData);
-        if (eventEnum.getEventType().equalsIgnoreCase(EventEnum.UPDATE.getEventType())) {
-            builder.event(Event.builder().id(appsDetails.getEventIds().getUpdateEvent()).build())
-                .eventToken(getEventTokenForUpdate(authorization, userId, appsDetails.getEventIds().getUpdateEvent(),
+        
+            builder.event(Event.builder().id("citizen-case-submit").build())
+                .eventToken(getEventTokenForUpdate(authorization, userId, "citizen-case-submit",
                                                    caseId, appsDetails, isCitizen));
-        } else if (eventEnum.getEventType().equalsIgnoreCase(EventEnum.SUBMIT.getEventType())) {
-            builder.event(Event.builder().id(appsDetails.getEventIds().getSubmitEvent()).build())
-                .eventToken(getEventTokenForUpdate(authorization, userId, appsDetails.getEventIds().getSubmitEvent(),
-                                                   caseId, appsDetails, isCitizen));
-        }
+        
 
         return builder.build();
     }
@@ -108,8 +104,8 @@ public class CaseApiService {
         StartEventResponse res = coreCaseDataApi.startForCitizen(authorization,
                                                                  authTokenGenerator.generate(),
                                                                  userId,
-                                                                 appsDetails.getJurisdiction(),
-                                                                 appsDetails.getCaseType(),
+                                                                 "PRIVATELAW",
+                                                                "PRLAPPS",
                                                                  eventId);
 
         //This has to be removed
@@ -125,8 +121,8 @@ public class CaseApiService {
             res = coreCaseDataApi.startEventForCitizen(authorization,
                     authTokenGenerator.generate(),
                     userId,
-                    appsDetails.getJurisdiction(),
-                    appsDetails.getCaseType(),
+                    "PRIVATELAW",
+                    "PRLAPPS",
                     caseId,
                     eventId);
         } else {

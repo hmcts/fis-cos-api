@@ -8,7 +8,9 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.Applicant;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.NewApplicant;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
@@ -19,6 +21,8 @@ import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
 import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,10 +66,29 @@ public class CaseManagementService {
             if (!AppsUtil.isValidCaseTypeOfApplication(appsConfig, caseData)) {
                 throw new CaseCreateOrUpdateException("Invalid Case type application. Please check the request.");
             }
+            Applicant applicant = caseData.getApplicant();
 
+            NewApplicant newApplicant = new NewApplicant();
+            newApplicant.setFirstName(applicant.getFirstName());
+            newApplicant.setLastName(applicant.getLastName());
+            newApplicant.setAddress1(applicant.getAddress1());
+            newApplicant.setAddress2(applicant.getAddress2());
+            newApplicant.setAddressCountry(applicant.getAddressCountry());
+            newApplicant.setAddressPostCode(applicant.getAddressPostCode());
+            newApplicant.setEmailAddress(applicant.getEmailAddress());
+
+            List<NewApplicant> newApplicants = new ArrayList<NewApplicant>();
+            newApplicants.add(newApplicant);
+
+
+            Map updatedCaseData = new HashMap<>();
+            updatedCaseData.put("applicantCaseName", caseData.getNamedApplicant());
+            updatedCaseData.put("caseTypeOfApplication", caseData.getCaseTypeOfApplication());
+            updatedCaseData.put("applicants", newApplicants);
+            
             // Updating or Submitting case to CCD..
             CaseDetails caseDetails = caseApiService.updateCase(authorization, event,
-                    caseId, caseData, AppsUtil.getExactAppsDetails(appsConfig, caseData), true);
+                    caseId, updatedCaseData, AppsUtil.getExactAppsDetails(appsConfig, caseData), true);
             log.info("Updated case details: " + caseDetails.toString());
             return CaseResponse.builder().caseData(caseDetails.getData())
                 .id(caseDetails.getId()).status("Success").build();
