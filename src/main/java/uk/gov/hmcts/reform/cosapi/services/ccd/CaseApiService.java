@@ -91,8 +91,8 @@ public class CaseApiService {
                                                boolean isCitizen) {
         CaseDataContent.CaseDataContentBuilder builder = CaseDataContent.builder().data(caseData);
         
-            builder.event(Event.builder().id("citizen-case-submit").build())
-                .eventToken(getEventTokenForUpdate(authorization, userId, "citizen-case-submit",
+        builder.event(Event.builder().id("citizen-case-submit").build())
+            .eventToken(getEventTokenForUpdate(authorization, userId, "citizen-case-submit",
                                                    caseId, appsDetails, isCitizen));
         
 
