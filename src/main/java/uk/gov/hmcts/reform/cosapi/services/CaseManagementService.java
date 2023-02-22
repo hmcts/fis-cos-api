@@ -22,9 +22,9 @@ import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -77,11 +77,11 @@ public class CaseManagementService {
             newApplicant.setAddressPostCode(applicant.getAddressPostCode());
             newApplicant.setEmailAddress(applicant.getEmailAddress());
 
-            List<NewApplicant> newApplicants = new ArrayList<NewApplicant>();
+            List<NewApplicant> newApplicants = new ArrayList<>();
             newApplicants.add(newApplicant);
 
 
-            Map<String, Object> updatedCaseData = new HashMap<>();
+            Map<String, Object> updatedCaseData = new ConcurrentHashMap<>();
             updatedCaseData.put("applicantCaseName", caseData.getNamedApplicant());
             updatedCaseData.put("caseTypeOfApplication", caseData.getCaseTypeOfApplication());
             updatedCaseData.put("applicants", newApplicants);
