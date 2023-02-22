@@ -126,3 +126,10 @@ caseinfo:
 
 fis:
   authorised-services: fis_ds_update_web
+
+http:
+  client:
+    connection:
+      timeout: 300000
+    read:
+      timeout: 300000
