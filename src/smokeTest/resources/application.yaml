@@ -47,3 +47,10 @@ azure:
 
 fis:
   authorised-services: fis-ds-update-web
+
+http:
+  client:
+    connection:
+      timeout: 300000
+    read:
+      timeout: 300000

@@ -1,5 +1,7 @@
 server:
   port: 8099
+  tomcat:
+    connection-timeout: 300000
 
 management:
   endpoint:
