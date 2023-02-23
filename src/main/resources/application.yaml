@@ -113,6 +113,7 @@ caseinfo:
       caseTypeOfApplication:
         - FMPO
         - FGM
+        - C100
     - caseType: A58
       jurisdiction: Adoption
       eventIds:
