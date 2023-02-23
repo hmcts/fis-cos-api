@@ -216,7 +216,8 @@ class CaseApiServiceTest {
             EventEnum.UPDATE,
             TEST_CASE_ID,
             caseData,
-            fgmAppDetails
+            fgmAppDetails,
+                true
         );
 
         assertEquals(CASE_DATA_FGM_ID, createCaseDetail.getCaseTypeId());
@@ -254,5 +255,94 @@ class CaseApiServiceTest {
         assertEquals(caseDetails.getId(),caseDetail.getId());
         assertEquals(caseDetails.getData(),caseDetails.getData());
 
+    }
+
+    @Test
+    void testDssUpdateCaseData() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
+
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+
+        caseDataMap.put(TEST_CASE_REFERENCE, caseData);
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .jurisdiction(PRL_JURISDICTION)
+                .build();
+
+        String userId = TEST_USER;
+        eventRes = StartEventResponse.builder()
+                .eventId(String.valueOf(Event.builder().id(AppsUtil.getExactAppsDetailsByCaseType(
+                        appsConfig,
+                        PRL_CASE_TYPE
+                ).getEventIds().getUpdateEvent())))
+                .caseDetails(caseDetail)
+                .token(TEST_AUTHORIZATION_TOKEN)
+                .build();
+        when(coreCaseDataApi.startEventForCaseWorker(
+                CASE_TEST_AUTHORIZATION,
+                authTokenGenerator.generate(),
+                userId,
+                PRL_JURISDICTION,
+                PRL_CASE_TYPE,
+                String.valueOf(TEST_CASE_ID),
+                AppsUtil.getExactAppsDetailsByCaseType(
+                        appsConfig,
+                        PRL_CASE_TYPE
+                ).getEventIds().getUpdateEvent()
+        )).thenReturn(eventRes);
+
+        when(systemUserService.getUserId(CASE_TEST_AUTHORIZATION)).thenReturn(userId);
+
+        when(authTokenGenerator.generate()).thenReturn(userId);
+
+        when(coreCaseDataApi.startEventForCaseWorker(
+                CASE_TEST_AUTHORIZATION,
+                authTokenGenerator.generate(),
+                userId,
+                PRL_JURISDICTION,
+                PRL_CASE_TYPE,
+                TEST_CASE_REFERENCE,
+                AppsUtil.getExactAppsDetailsByCaseType(
+                        appsConfig,
+                        PRL_CASE_TYPE
+                ).getEventIds().getUpdateEvent()
+        )).thenReturn(eventRes);
+
+        CaseDataContent caseDataContent = CaseDataContent.builder()
+                .data(caseData)
+                .event(Event.builder().id(AppsUtil.getExactAppsDetailsByCaseType(
+                        appsConfig,
+                        PRL_CASE_TYPE
+                ).getEventIds().getUpdateEvent()).build())
+                .eventToken(TEST_AUTHORIZATION_TOKEN)
+                .build();
+
+        when(coreCaseDataApi.submitEventForCaseWorker(
+                CASE_TEST_AUTHORIZATION,
+                authTokenGenerator.generate(),
+                userId,
+                PRL_JURISDICTION,
+                PRL_CASE_TYPE,
+                TEST_CASE_REFERENCE,
+                true,
+                caseDataContent
+        )).thenReturn(caseDetail);
+
+        CaseDetails createCaseDetail = caseApiService.updateCase(
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                TEST_CASE_ID,
+                caseData,
+                fgmAppDetails,
+                false
+        );
+
+        assertEquals(CASE_DATA_FGM_ID, createCaseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getId(), caseDetail.getId());
+        assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getData(), caseDetail.getData());
+        assertEquals(createCaseDetail.getData().get(TEST_CASE_REFERENCE), caseDataMap.get(TEST_CASE_REFERENCE));
     }
 }

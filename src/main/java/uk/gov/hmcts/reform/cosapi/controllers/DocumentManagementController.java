@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
+import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
+
+import static uk.gov.hmcts.reform.cosapi.controllers.CaseManagementController.SERVICE_AUTHORISATION;
 
 @RestController
 @RequestMapping("/doc/dss-orhestration")
@@ -23,6 +28,12 @@ public class DocumentManagementController {
 
     @Autowired
     DocumentManagementService documentManagementService;
+
+    @Autowired
+    SystemUserService systemUserService;
+
+    @Autowired
+    AuthorisationService authorisationService;
 
     @RequestMapping(
         value = "/upload",
@@ -57,5 +68,52 @@ public class DocumentManagementController {
                                         @PathVariable("documentId") String documentId) {
 
         return ResponseEntity.ok(documentManagementService.deleteDocument(authorisation, documentId));
+    }
+
+    @RequestMapping(
+            value = "/dss/upload",
+            method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ApiOperation("Call CDAM to dss upload document")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Uploaded Successfully"),
+        @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
+        @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
+        @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public ResponseEntity<?> uploadDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
+                                            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
+                                            @RequestParam("file") MultipartFile file) {
+
+        if (isAuthorized(s2sToken)) {
+            return ResponseEntity.ok(documentManagementService
+                    .uploadDocument(systemUserService.getSysUserToken(), caseTypeOfApplication, file));
+        } else {
+            throw new DocumentUploadOrDeleteException("Invalid Client");
+        }
+    }
+
+    @DeleteMapping("/dss/{documentId}/delete")
+    @ApiOperation("Call CDAM to dss delete document")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Deleted document successfully"),
+        @ApiResponse(code = 400, message = "Bad Request while deleting the document"),
+        @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
+        @ApiResponse(code = 404, message = "Document Not found")
+    })
+    public ResponseEntity<?> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
+                                            @PathVariable("documentId") String documentId) {
+        if (isAuthorized(s2sToken)) {
+            return ResponseEntity.ok(documentManagementService
+                    .deleteDocument(systemUserService.getSysUserToken(), documentId));
+        } else {
+            throw new DocumentUploadOrDeleteException("Invalid Client");
+        }
+    }
+
+    private boolean isAuthorized(String s2sToken) {
+        return authorisationService.authoriseService(s2sToken);
     }
 }

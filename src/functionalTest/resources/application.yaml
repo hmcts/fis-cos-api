@@ -28,7 +28,7 @@ springdoc:
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
-    import: "optional:configtree:/mnt/secrets/fis/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Cos API
   main:
@@ -45,7 +45,7 @@ idam:
   s2s-auth:
     url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:XXXXXXXX}
-    microservice: fis_cos_api
+    microservice: fis_ds_update_web
   api:
     url: https://idam-api.aat.platform.hmcts.net
   client:
@@ -85,3 +85,6 @@ caseinfo:
         submitEvent: citizen-adop-submit-dss-application
       caseTypeOfApplication:
         - RELADOP
+
+fis:
+  authorised-services: fis-ds-update-web

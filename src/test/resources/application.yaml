@@ -16,7 +16,7 @@ springdoc:
 
 spring:
   config:
-    import: "optional:configtree:/mnt/secrets/fis/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Cos API
   main:
@@ -79,3 +79,6 @@ caseinfo:
         submitEvent: citizen-adop-submit-dss-application
       caseTypeOfApplication:
         - RELADOP
+
+fis:
+  authorised-services: fis-ds-update-web

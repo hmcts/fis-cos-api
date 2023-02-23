@@ -30,14 +30,6 @@ def secrets = [
     secret('microservicekey-ccd-data', 'CCD_DATA_STORE_S2S_SECRET'),
     secret('microservicekey-ccd-definition', 'CCD_DEFINITION_STORE_S2S_SECRET')
   ],
-  'ccd-${env}'      : [
-    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
-    secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
-    secret('postcode-info-address-lookup-token', 'ADDRESS_LOOKUP_TOKEN'),
-    secret('idam-data-store-client-secret','IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET'),
-    secret('idam-data-store-system-user-username','IDAM_DATA_STORE_SYSTEM_USER_USERNAME'),
-    secret('idam-data-store-system-user-password','IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
-  ],
   'fis-kv-${env}'    :[
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
@@ -69,12 +61,9 @@ withPipeline(type, product, component) {
 
     MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component )
     approvedEnvironmentRepository(params.environment, metricsPublisher) {
-      if(params.environment != 'prod') {
-          enableHighLevelDataSetup("fis-kv")
-      }
     }
 
-  after('test') {
+    afterAlways('test') {
       builder.gradle('integration')
       builder.gradle('jacocoTestReport')
 
@@ -124,7 +113,7 @@ withPipeline(type, product, component) {
       ]
     }
 
-  after('functionalTest:preview') {
+    afterAlways('functionalTest:preview') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -148,7 +137,7 @@ withPipeline(type, product, component) {
       }
     }
 
-  after('functionalTest:aat') {
+    afterAlways('functionalTest:aat') {
     publishHTML target: [
       allowMissing         : true,
       alwaysLinkToLastBuild: true,
@@ -172,7 +161,7 @@ withPipeline(type, product, component) {
     }
   }
 
-  after('smokeTest:preview') {
+    afterAlways('smokeTest:preview') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -183,7 +172,7 @@ withPipeline(type, product, component) {
       ]
     }
 
-  after('smokeTest:aat') {
+    afterAlways('smokeTest:aat') {
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
@@ -192,19 +181,13 @@ withPipeline(type, product, component) {
         reportFiles          : "index.html",
         reportName           : "Smoke Test Report"
       ]
-    }
-
-  after('checkout') {
-      builder.gradle('generateCCDConfig')
-      generateDefinitions()
     }
 
   onPR {
       env.ENVIRONMENT="preview"
       env.CASE_API_URL = "http://fis-cos-api-pr-${CHANGE_ID}-java"
       env.CCD_DEF_NAME = "preview"
-      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-      env.CASE_DATA_STORE_BASEURL = "http://ccd-data-store-api-fis-cos-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CASE_DATA_STORE_BASEURL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
       env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
@@ -218,7 +201,6 @@ withPipeline(type, product, component) {
       env.ENVIRONMENT="aat"
       env.CASE_API_URL="http://fis-cos-api-aat.service.core-compute-aat.internal"
       env.CCD_DEF_NAME="aat"
-//      env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
       env.DEFINITION_STORE_URL_BASE="http://prl-ccd-definitions-pr-578-ccd-data-store-api"
       env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
       env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
@@ -252,11 +234,6 @@ withPipeline(type, product, component) {
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-ithc.internal"
       env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-ithc.service.core-compute-ithc.internal"
     }
-
-  before('functionalTest:preview') {
-      // Only for preview upload the definitions via script as high level data set up relies on an existing environment
-      uploadCoreCaseDataDefinitions()
-    }
 }
 
 env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
@@ -269,23 +246,4 @@ def setCommonEnvVariables() {
     env.BEFTA_S2S_CLIENT_ID = "ccd_data"
     env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
     env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-}
-
-def uploadCoreCaseDataDefinitions() {
-    dir("${WORKSPACE}/bin"){
-//        sh "./add-roles.sh"
-//        sh "./process-and-import-ccd-definition.sh"
-    }
-    dir("${WORKSPACE}") {
-        steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
-    }
-}
-
-def generateDefinitions() {
-  dir("${WORKSPACE}/bin") {
-    sh "./ccd-build-definition.sh"
-  }
-  dir("${WORKSPACE}") {
-    steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
-  }
 }
