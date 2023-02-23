@@ -15,6 +15,7 @@ springdoc:
   packagesToScan: uk.gov.hmcts.reform.cosapi.controllers
 
 #If you use a database then uncomment below lines and update db properties accordingly
+
 spring:
   config:
     import: "optional:configtree:/mnt/secrets/fis-kv/"
