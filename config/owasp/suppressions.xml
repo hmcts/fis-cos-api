@@ -44,4 +44,9 @@
       <cve>CVE-2022-42003</cve>
       <cve>CVE-2022-42004</cve>
     </suppress>
+  <suppress>
+    <notes><![CDATA[
+      snakeyaml_project:snakeyaml ]]></notes>
+    <cve>CVE-2022-45688</cve>
+  </suppress>
 </suppressions>
