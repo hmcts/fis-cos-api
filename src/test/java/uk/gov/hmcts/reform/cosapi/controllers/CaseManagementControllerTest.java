@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
@@ -141,10 +142,11 @@ class CaseManagementControllerTest {
         caseDataMap.put(CASE_DATA_FGM_ID, caseData);
         CaseResponse caseResponse = CaseResponse.builder().caseData(caseDataMap).build();
         List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
+        DssCaseRequest dssCaseRequest = DssCaseRequest.builder().dssDocumentInfoList(dssDocumentInfoList).build();
         caseResponse.setId(TEST_CASE_ID);
 
         when(caseManagementService.updateDssCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
-                dssDocumentInfoList, TEST_CASE_ID)).thenReturn(caseResponse);
+                dssCaseRequest, TEST_CASE_ID)).thenReturn(caseResponse);
         when(authorisationService.authoriseService(CASE_TEST_AUTHORIZATION)).thenReturn(true);
         when(systemUserService.getSysUserToken()).thenReturn(CASE_TEST_AUTHORIZATION);
 
@@ -152,7 +154,7 @@ class CaseManagementControllerTest {
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssDocumentInfoList
+                dssCaseRequest
         );
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
@@ -162,7 +164,7 @@ class CaseManagementControllerTest {
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssDocumentInfoList
+                dssCaseRequest
         );
 
         assertNotNull(postUpdateCaseResponse);

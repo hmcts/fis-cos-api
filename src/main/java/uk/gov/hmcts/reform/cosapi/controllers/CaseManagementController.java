@@ -16,18 +16,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
-import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/case/dss-orchestration")
@@ -86,12 +83,12 @@ public class CaseManagementController {
         @ApiResponse(code = 404, message = "Dss Case Not found")
     })
     public ResponseEntity<?> updateDssCase(@PathVariable final Long caseId,
-                                        @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
-                                        @RequestParam final EventEnum event,
-                                        @RequestBody final List<ListValue<DssDocumentInfo>> dssDocumentInfoList) {
+                                           @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
+                                           @RequestParam final EventEnum event,
+                                           @RequestBody final DssCaseRequest dssCaseRequest) {
         if (isAuthorized(s2sToken)) {
             CaseResponse updatedCase = caseManagementService
-                    .updateDssCase(systemUserService.getSysUserToken(), event, dssDocumentInfoList, caseId);
+                    .updateDssCase(systemUserService.getSysUserToken(), event, dssCaseRequest, caseId);
             return ResponseEntity.ok(updatedCase);
         } else {
             throw new CaseCreateOrUpdateException("Invalid Client");
