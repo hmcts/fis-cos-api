@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
@@ -49,7 +50,6 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_M
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_USER;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -58,6 +58,9 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ActiveProfiles("test")
 class CaseManagementServiceTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final String TEST_USER = "TestUser";
+    private static final String CITIZEN = "Citizen";
+    private static final String DSS_ADDITIONAL_INFO = "Additional Information";
 
     @InjectMocks
     private CaseManagementService caseManagementService;
@@ -238,6 +241,15 @@ class CaseManagementServiceTest {
         Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
         caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
         caseDataMap.put("dssDocuments", dssDocumentInfoList);
+        caseDataMap.put("dssAdditionalCaseInformation", DSS_ADDITIONAL_INFO);
+        caseDataMap.put("dssCaseUpdatedBy", CITIZEN);
+
+        DssCaseRequest dssCaseRequest = DssCaseRequest
+                .builder()
+                .dssCaseUpdatedBy(CITIZEN)
+                .dssAdditionalCaseInformation(DSS_ADDITIONAL_INFO)
+                .dssDocumentInfoList(dssDocumentInfoList)
+                .build();
 
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
                 .id(TEST_CASE_ID)
@@ -261,7 +273,7 @@ class CaseManagementServiceTest {
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssDocumentInfoList,
+                dssCaseRequest,
                 TEST_CASE_ID
         );
 

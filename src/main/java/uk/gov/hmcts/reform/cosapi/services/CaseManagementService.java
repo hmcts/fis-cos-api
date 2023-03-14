@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
+import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseResponse;
-import uk.gov.hmcts.reform.cosapi.model.DssDocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerDatePair;
 import uk.gov.hmcts.reform.cosapi.model.DssQuestionAnswerPair;
 import uk.gov.hmcts.reform.cosapi.services.ccd.CaseApiService;
@@ -77,11 +76,13 @@ public class CaseManagementService {
     }
 
     public CaseResponse updateDssCase(String authorisation, EventEnum event,
-                                      List<ListValue<DssDocumentInfo>> dssDocumentInfoList, Long caseId) {
+                                      DssCaseRequest dssCaseRequest, Long caseId) {
         try {
             CaseDetails retrievedCaseDetails = caseApiService.getCaseDetails(authorisation, caseId);
             Map<String, Object> caseData = retrievedCaseDetails.getData();
-            caseData.put("dssDocuments", dssDocumentInfoList);
+            caseData.put("dssAdditionalCaseInformation", dssCaseRequest.getDssAdditionalCaseInformation());
+            caseData.put("dssCaseUpdatedBy", dssCaseRequest.getDssCaseUpdatedBy());
+            caseData.put("dssDocuments", dssCaseRequest.getDssDocumentInfoList());
             CaseDetails caseDetails = caseApiService.updateCase(authorisation, event, caseId,
                     caseData,
                     AppsUtil.getDssExactAppsDetails(appsConfig,
@@ -114,6 +115,7 @@ public class CaseManagementService {
         try {
             CaseDetails caseDetails = caseApiService.getCaseDetails(authorization, caseId);
             return DssCaseResponse.builder().caseId(caseId)
+                    .dssHeaderDetails((String) caseDetails.getData().get("dssHeaderDetails"))
                     .dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
                     .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData())).build();
         } catch (Exception e) {

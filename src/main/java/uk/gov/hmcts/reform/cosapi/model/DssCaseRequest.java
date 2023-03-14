@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.util.List;
 
@@ -11,9 +12,8 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class DssCaseResponse {
-    private Long caseId;
-    private String dssHeaderDetails;
-    private List<DssQuestionAnswerPair> dssQuestionAnswerPairs;
-    private List<DssQuestionAnswerDatePair> dssQuestionAnswerDatePairs;
+public class DssCaseRequest {
+    private String dssAdditionalCaseInformation;
+    private String dssCaseUpdatedBy;
+    private List<ListValue<DssDocumentInfo>> dssDocumentInfoList;
 }
