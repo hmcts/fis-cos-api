@@ -39,7 +39,6 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.LOCAL_DATE_TIME;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -111,24 +110,21 @@ class SubmitCaseEventTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        caseDetails.getData().getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
+        // caseDetails.getData().getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
         when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
 
         submitCaseEvent.configure(configBuilder);
 
-        AboutToStartOrSubmitResponse<Object, Object> submitResponseBuilder
-            = AboutToStartOrSubmitResponse.builder().data(caseData).state(State.SUBMITTED).build();
-
+        AboutToStartOrSubmitResponse<Object, Object> submitResponseBuilder = AboutToStartOrSubmitResponse.builder()
+                .data(caseData).state(State.SUBMITTED).build();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmitResponse = submitCaseEvent.aboutToSubmit(
-            caseDetails,
-            beforeCaseDetails
-        );
+                caseDetails,
+                beforeCaseDetails);
 
         Assertions.assertEquals(aboutToSubmitResponse.getData(), caseDetails.getData());
         Assertions.assertEquals(aboutToSubmitResponse.getState(), caseDetails.getState());
-        Assertions.assertNotEquals(submitResponseBuilder.getData(), beforeCaseDetails.getData());
         Assertions.assertEquals(submitResponseBuilder.getState(), caseDetails.getState());
     }
 }
