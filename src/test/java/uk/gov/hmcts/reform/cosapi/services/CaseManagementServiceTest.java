@@ -124,7 +124,7 @@ class CaseManagementServiceTest {
         assertEquals(
                 createCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
                 caseDetail.getData().get(CASE_DATA_FGM_ID));
-       
+
         assertEquals(RESPONSE_STATUS_SUCCESS, createCaseResponse.getStatus());
     }
 
@@ -158,7 +158,7 @@ class CaseManagementServiceTest {
 
     @Test
     void testFgmUpdateCaseData() throws Exception {
-    
+
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
         eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
         fgmAppDetail.setEventIds(eventsConfig);
@@ -198,7 +198,7 @@ class CaseManagementServiceTest {
         assertEquals(
                 updateCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
                 caseDetail.getData().get(CASE_DATA_FGM_ID));
-       
+
         assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
     }
 
@@ -239,10 +239,11 @@ class CaseManagementServiceTest {
                 CASE_TEST_AUTHORIZATION,
                 TEST_CASE_ID)).thenReturn(caseDetail);
 
-        when(caseApiService.updateCase(
+        when(caseApiService.updateDssCaseJourney(
                 eq(CASE_TEST_AUTHORIZATION),
                 eq(EventEnum.UPDATE),
                 eq(TEST_CASE_ID),
+                ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
                 eq(false))).thenReturn(caseDetail);
