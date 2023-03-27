@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
 
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.reform.cosapi.constants.CommonConstants.DSS_UPDATE_CASE_CCD_EVENT;
 
 @Service
 @Slf4j
@@ -29,8 +30,6 @@ public class CaseApiService {
 
     @Autowired
     SystemUserService systemUserService;
-
-    private static String DSS_UPDATE_CASE_CCD_EVENT = "caseworker-update-dss-application";
 
     public CaseDetails createCase(String authorization, CaseData caseData,
             AppsConfig.AppsDetails appsDetails) {
@@ -78,33 +77,20 @@ public class CaseApiService {
     }
 
     public CaseDetails updateDssCaseJourney(String authorization, EventEnum eventEnum, Long caseId,
-            Object caseData, String caseTypeId, String jurisdiction, boolean isCitizen) {
+            Object caseData, String caseTypeId, String jurisdiction) {
 
         String userId = systemUserService.getUserId(authorization);
 
-        if (isCitizen) {
-            return coreCaseDataApi.submitEventForCitizen(
-                    authorization,
-                    authTokenGenerator.generate(),
-                    userId,
-                    jurisdiction,
-                    caseTypeId,
-                    String.valueOf(caseId),
-                    true,
-                    getCaseDataContentForDssUpdateCaseJourney(authorization, caseData, eventEnum, userId,
-                            String.valueOf(caseId), caseTypeId, jurisdiction, isCitizen));
-        } else {
-            return coreCaseDataApi.submitEventForCaseWorker(
-                    authorization,
-                    authTokenGenerator.generate(),
-                    userId,
-                    jurisdiction,
-                    caseTypeId,
-                    String.valueOf(caseId),
-                    true,
-                    getCaseDataContentForDssUpdateCaseJourney(authorization, caseData, eventEnum, userId,
-                            String.valueOf(caseId), caseTypeId, jurisdiction, isCitizen));
-        }
+        return coreCaseDataApi.submitEventForCaseWorker(
+                authorization,
+                authTokenGenerator.generate(),
+                userId,
+                jurisdiction,
+                caseTypeId,
+                String.valueOf(caseId),
+                true,
+                getCaseDataContentForDssUpdateCaseJourney(authorization, caseData, eventEnum, userId,
+                        String.valueOf(caseId), caseTypeId, jurisdiction));
     }
 
     private CaseDataContent getCaseDataContent(String authorization, CaseData caseData, String userId,
@@ -138,13 +124,12 @@ public class CaseApiService {
 
     private CaseDataContent getCaseDataContentForDssUpdateCaseJourney(String authorization, Object caseData,
             EventEnum eventEnum,
-            String userId, String caseId, String caseTypeId, String jurisdiction,
-            boolean isCitizen) {
+            String userId, String caseId, String caseTypeId, String jurisdiction) {
         CaseDataContent.CaseDataContentBuilder builder = CaseDataContent.builder().data(caseData);
         if (eventEnum.getEventType().equalsIgnoreCase(EventEnum.UPDATE.getEventType())) {
             builder.event(Event.builder().id(DSS_UPDATE_CASE_CCD_EVENT).build())
                     .eventToken(generateEventToken(authorization, userId, DSS_UPDATE_CASE_CCD_EVENT,
-                            caseId, caseTypeId, jurisdiction, isCitizen));
+                            caseId, caseTypeId, jurisdiction, false));
         }
 
         return builder.build();
