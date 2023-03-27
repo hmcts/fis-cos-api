@@ -42,6 +42,10 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 class DocumentManagementControllerTest {
 
+    private static final String CASE_TYPE_ID = "A58";
+
+    private static final String JURISDICTION = "Adoption";
+
     @InjectMocks
     private DocumentManagementController documentManagementController;
 
@@ -144,19 +148,20 @@ class DocumentManagementControllerTest {
             caseDataJson.getBytes()
         );
 
-        when(documentManagementService.uploadDocument(
+        when(documentManagementService.uploadDocumentForDssUpdate(
             systemUserService.getSysUserToken(),
-            CASE_DATA_FGM_ID,
+            CASE_TYPE_ID,
+            JURISDICTION,
             multipartFile
         )).thenReturn(
             documentResponse);
 
         when(authorisationService.authoriseService(S2S_TOKEN)).thenReturn(true);
 
-        ResponseEntity<?> uploadDocumentResponse = documentManagementController.uploadDssDocument(
+        ResponseEntity<?> uploadDocumentResponse = documentManagementController.uploadDocumentForDssUpdateCase(
             S2S_TOKEN,
-            CASE_DATA_FGM_ID,
-            multipartFile
+            CASE_TYPE_ID,
+            JURISDICTION, multipartFile
         );
 
         DocumentResponse testResponse = (DocumentResponse) uploadDocumentResponse.getBody();
@@ -183,10 +188,10 @@ class DocumentManagementControllerTest {
         when(authorisationService.authoriseService(S2S_TOKEN)).thenReturn(false);
 
         Exception exception = assertThrows(Exception.class, () -> {
-            documentManagementController.uploadDssDocument(
+            documentManagementController.uploadDocumentForDssUpdateCase(
                 S2S_TOKEN,
-                CASE_DATA_FGM_ID,
-                multipartFile);
+                CASE_TYPE_ID,
+                JURISDICTION, multipartFile);
         });
 
         assertTrue(exception.getMessage().contains(INVALID_CLIENT));
