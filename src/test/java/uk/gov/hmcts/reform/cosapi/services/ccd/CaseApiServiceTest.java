@@ -46,6 +46,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @ActiveProfiles("test")
 @SuppressWarnings("PMD")
 class CaseApiServiceTest {
+    public static final String CASEWORKER_UPDATE_DSS_APPLICATION = "caseworker-update-dss-application";
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final String TEST_CASE_REFERENCE = "123";
     private AppsConfig.AppsDetails fgmAppDetails;
@@ -344,5 +345,147 @@ class CaseApiServiceTest {
         assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
         assertEquals(createCaseDetail.getData(), caseDetail.getData());
         assertEquals(createCaseDetail.getData().get(TEST_CASE_REFERENCE), caseDataMap.get(TEST_CASE_REFERENCE));
+    }
+
+    @Test
+    void testDssupdateDssCaseJourney() throws Exception {
+
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
+
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+
+        caseDataMap.put(TEST_CASE_REFERENCE, caseData);
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+            .id(TEST_CASE_ID)
+            .data(caseDataMap)
+            .jurisdiction(PRL_JURISDICTION)
+            .build();
+
+        String userId = TEST_USER;
+        eventRes = StartEventResponse.builder()
+            .eventId(String.valueOf(Event.builder().id(CASEWORKER_UPDATE_DSS_APPLICATION)))
+            .caseDetails(caseDetail)
+            .token(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(systemUserService.getUserId(CASE_TEST_AUTHORIZATION)).thenReturn(userId);
+
+        when(authTokenGenerator.generate()).thenReturn(userId);
+
+        when(coreCaseDataApi.startEventForCaseWorker(
+            CASE_TEST_AUTHORIZATION,
+            authTokenGenerator.generate(),
+            userId,
+            PRL_JURISDICTION,
+            PRL_CASE_TYPE,
+            TEST_CASE_REFERENCE,
+            CASEWORKER_UPDATE_DSS_APPLICATION
+        )).thenReturn(eventRes);
+
+        CaseDataContent caseDataContent = CaseDataContent.builder()
+            .data(caseData)
+            .event(Event.builder().id(CASEWORKER_UPDATE_DSS_APPLICATION).build())
+            .eventToken(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(coreCaseDataApi.submitEventForCaseWorker(
+            CASE_TEST_AUTHORIZATION,
+            authTokenGenerator.generate(),
+            userId,
+            PRL_JURISDICTION,
+            PRL_CASE_TYPE,
+            TEST_CASE_REFERENCE,
+            true,
+            caseDataContent
+        )).thenReturn(caseDetail);
+
+        CaseDetails createCaseDetail = caseApiService.updateDssCaseJourney(
+            CASE_TEST_AUTHORIZATION,
+            EventEnum.UPDATE,
+            TEST_CASE_ID,
+            caseData,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION,
+            false
+        );
+
+        assertEquals(CASE_DATA_FGM_ID, createCaseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getId(), caseDetail.getId());
+        assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getData(), caseDetail.getData());
+        assertEquals(createCaseDetail.getData().get(TEST_CASE_REFERENCE), caseDataMap.get(TEST_CASE_REFERENCE));
+
+    }
+
+    @Test
+    void testDssupdateDssCaseJourneyForCitizen() throws Exception {
+
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
+
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+
+        caseDataMap.put(TEST_CASE_REFERENCE, caseData);
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+            .id(TEST_CASE_ID)
+            .data(caseDataMap)
+            .jurisdiction(PRL_JURISDICTION)
+            .build();
+
+        String userId = TEST_USER;
+        eventRes = StartEventResponse.builder()
+            .eventId(String.valueOf(Event.builder().id(CASEWORKER_UPDATE_DSS_APPLICATION)))
+            .caseDetails(caseDetail)
+            .token(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(systemUserService.getUserId(CASE_TEST_AUTHORIZATION)).thenReturn(userId);
+
+        when(authTokenGenerator.generate()).thenReturn(userId);
+
+        when(coreCaseDataApi.startEventForCitizen(
+            CASE_TEST_AUTHORIZATION,
+            authTokenGenerator.generate(),
+            userId,
+            PRL_JURISDICTION,
+            PRL_CASE_TYPE,
+            TEST_CASE_REFERENCE,
+            CASEWORKER_UPDATE_DSS_APPLICATION
+        )).thenReturn(eventRes);
+
+        CaseDataContent caseDataContent = CaseDataContent.builder()
+            .data(caseData)
+            .event(Event.builder().id(CASEWORKER_UPDATE_DSS_APPLICATION).build())
+            .eventToken(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(coreCaseDataApi.submitEventForCitizen(
+            CASE_TEST_AUTHORIZATION,
+            authTokenGenerator.generate(),
+            userId,
+            PRL_JURISDICTION,
+            PRL_CASE_TYPE,
+            TEST_CASE_REFERENCE,
+            true,
+            caseDataContent
+        )).thenReturn(caseDetail);
+
+        CaseDetails createCaseDetail = caseApiService.updateDssCaseJourney(
+            CASE_TEST_AUTHORIZATION,
+            EventEnum.UPDATE,
+            TEST_CASE_ID,
+            caseData,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION,
+            true
+        );
+
+        assertEquals(CASE_DATA_FGM_ID, createCaseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getId(), caseDetail.getId());
+        assertEquals(createCaseDetail.getCaseTypeId(), caseDetail.getCaseTypeId());
+        assertEquals(createCaseDetail.getData(), caseDetail.getData());
+        assertEquals(createCaseDetail.getData().get(TEST_CASE_REFERENCE), caseDataMap.get(TEST_CASE_REFERENCE));
+
     }
 }
