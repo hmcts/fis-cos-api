@@ -48,9 +48,11 @@ public class DocumentManagementService {
         }
     }
 
-    public DocumentResponse uploadDocumentForDssUpdate(String authorization, String caseTypeId, String jurisdiction, MultipartFile file) {
+    public DocumentResponse uploadDocumentForDssUpdate(String authorization, 
+            String caseTypeId, String jurisdiction, MultipartFile file) {
         try {
-            DocumentInfo document = caseDocumentApiService.uploadDocumentForDssUpdate(authorization, file, caseTypeId, jurisdiction);
+            DocumentInfo document = caseDocumentApiService.uploadDocumentForDssUpdate(authorization, file,
+                 caseTypeId, jurisdiction);
             log.info("Stored Doc Detail: " + document.toString());
             return DocumentResponse.builder().status("Success").document(document).build();
 
