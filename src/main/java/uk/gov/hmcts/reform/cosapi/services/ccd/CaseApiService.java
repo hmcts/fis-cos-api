@@ -171,9 +171,6 @@ public class CaseApiService {
                     eventId);
         }
 
-        // This has to be removed
-        log.info("Response of update event token: " + res.getToken());
-
         return nonNull(res) ? res.getToken() : null;
     }
 

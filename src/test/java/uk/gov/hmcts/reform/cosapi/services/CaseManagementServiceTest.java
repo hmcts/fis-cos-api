@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.cosapi.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +58,9 @@ import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 @SpringBootTest
 @TestPropertySource("classpath:application.yaml")
 @ActiveProfiles("test")
+@SuppressWarnings("PMD.ExcessiveImports")
 class CaseManagementServiceTest {
+    public static final String CITIZEN_PRL_UPDATE_DSS_APPLICATION = "citizen-prl-update-dss-application";
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final String TEST_USER = "TestUser";
     private static final String CITIZEN = "Citizen";
@@ -163,7 +164,7 @@ class CaseManagementServiceTest {
     void testFgmUpdateCaseData() throws Exception {
 
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
         fgmAppDetail.setEventIds(eventsConfig);
         when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
 
@@ -208,7 +209,7 @@ class CaseManagementServiceTest {
     @Test
     void testDssUpdateCaseData() {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
 
@@ -267,7 +268,7 @@ class CaseManagementServiceTest {
     @Test
     void testDssUpdateCaseDataWithUploadedDocument() {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
 
@@ -339,7 +340,7 @@ class CaseManagementServiceTest {
     @Test
     void testUpdateCaseFgmFailedWithCaseCreateUpdateException() throws Exception {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
         when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
@@ -454,7 +455,7 @@ class CaseManagementServiceTest {
     void testUpdateCaseFailedWithCaseCreateUpdateException() throws Exception {
 
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
 
@@ -482,9 +483,9 @@ class CaseManagementServiceTest {
             ArgumentMatchers.any(),
             ArgumentMatchers.any(),
             eq(false))).thenThrow(
-            new CaseCreateOrUpdateException(
+                new CaseCreateOrUpdateException(
                 DSS_CASE_UPDATE_FAILURE_MSG,
-                new RuntimeException()));
+                    new RuntimeException()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementService.updateDssCase(
