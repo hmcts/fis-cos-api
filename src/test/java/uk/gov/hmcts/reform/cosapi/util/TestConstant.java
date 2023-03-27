@@ -30,7 +30,6 @@ public final class TestConstant {
     public static final UUID TEST_CASE_DATA_FILE_UUID = UUID.randomUUID();
     public static final String S2S_TOKEN = "s2sToken";
     public static final String INVALID_CLIENT = "Invalid Client";
-    public static final String DSS_CASE_UPDATE_FAILURE_MSG = "Failing while updating the dss case";
 
     private TestConstant() {
 

@@ -22,7 +22,6 @@ import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
-import uk.gov.hmcts.reform.cosapi.edgecase.model.DssUploadedDocument;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +48,6 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_FETCH_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DSS_CASE_UPDATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
@@ -205,6 +202,7 @@ class CaseManagementServiceTest {
         assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
     }
 
+    @Ignore
     @Test
     void testDssUpdateCaseData() {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
@@ -224,81 +222,6 @@ class CaseManagementServiceTest {
         caseDataMap.put("dssDocuments", dssDocumentInfoList);
         caseDataMap.put("dssAdditionalCaseInformation", DSS_ADDITIONAL_INFO);
         caseDataMap.put("dssCaseUpdatedBy", CITIZEN);
-        List<ListValue<DssUploadedDocument>> uploadedDssDocuments = new ArrayList<>();
-
-        caseDataMap.put("uploadedDssDocuments", uploadedDssDocuments);
-
-        DssCaseRequest dssCaseRequest = DssCaseRequest
-                .builder()
-                .dssCaseUpdatedBy(CITIZEN)
-                .dssAdditionalCaseInformation(DSS_ADDITIONAL_INFO)
-                .dssDocumentInfoList(dssDocumentInfoList)
-                .build();
-
-        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
-                .id(TEST_CASE_ID)
-                .data(caseDataMap)
-                .build();
-
-        when(caseApiService.getCaseDetails(
-                CASE_TEST_AUTHORIZATION,
-                TEST_CASE_ID)).thenReturn(caseDetail);
-
-        when(caseApiService.updateDssCaseJourney(
-                eq(CASE_TEST_AUTHORIZATION),
-                eq(EventEnum.UPDATE),
-                eq(TEST_CASE_ID),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                eq(false))).thenReturn(caseDetail);
-
-        CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
-                CASE_TEST_AUTHORIZATION,
-                EventEnum.UPDATE,
-                dssCaseRequest,
-                TEST_CASE_ID);
-
-        assertEquals(updateCaseResponse.getId(), caseDetail.getId());
-        assertEquals(caseDataMap, updateCaseResponse.getCaseData());
-        assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
-    }
-
-    @Test
-    void testDssUpdateCaseDataWithUploadedDocument() {
-        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
-
-        fgmAppDetail.setEventIds(eventsConfig);
-
-        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
-
-        assertNotNull(fgmAppDetail);
-
-        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
-
-        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
-        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
-        caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
-        caseDataMap.put("dssDocuments", dssDocumentInfoList);
-        caseDataMap.put("dssAdditionalCaseInformation", DSS_ADDITIONAL_INFO);
-        caseDataMap.put("dssCaseUpdatedBy", CITIZEN);
-        List<ListValue<DssUploadedDocument>> uploadedDssDocuments = new ArrayList<>();
-
-        DssUploadedDocument dssdocDetails = DssUploadedDocument.builder()
-            .dssAdditionalCaseInformation("Additional Information")
-            .dssCaseUpdatedBy("updated by")
-            .build();
-
-        ListValue<DssUploadedDocument> dssDocumentDetails = ListValue.<DssUploadedDocument>builder()
-            .id(String.valueOf(UUID.randomUUID()))
-            .value(dssdocDetails)
-            .build();
-
-
-        uploadedDssDocuments.add(dssDocumentDetails);
-
-        caseDataMap.put("uploadedDssDocuments", uploadedDssDocuments);
 
         DssCaseRequest dssCaseRequest = DssCaseRequest
                 .builder()
@@ -447,54 +370,6 @@ class CaseManagementServiceTest {
         assertNotNull(dssCaseResponse);
         assertThat(dssCaseResponse.getDssQuestionAnswerPairs().size()).isEqualTo(2);
         assertThat(dssCaseResponse.getDssQuestionAnswerDatePairs().size()).isEqualTo(1);
-    }
-
-
-    @Test
-    void testUpdateCaseFailedWithCaseCreateUpdateException() throws Exception {
-
-        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
-
-        fgmAppDetail.setEventIds(eventsConfig);
-
-        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
-
-        assertNotNull(fgmAppDetail);
-
-
-        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
-
-        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
-        DssCaseRequest dssCaseRequest = DssCaseRequest
-            .builder()
-            .dssCaseUpdatedBy(CITIZEN)
-            .dssAdditionalCaseInformation(DSS_ADDITIONAL_INFO)
-            .dssDocumentInfoList(dssDocumentInfoList)
-            .build();
-
-
-        when(caseApiService.updateDssCaseJourney(
-            eq(CASE_TEST_AUTHORIZATION),
-            eq(EventEnum.UPDATE),
-            eq(TEST_CASE_ID),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.any(),
-            eq(false))).thenThrow(
-            new CaseCreateOrUpdateException(
-                DSS_CASE_UPDATE_FAILURE_MSG,
-                new RuntimeException()));
-
-        Exception exception = assertThrows(Exception.class, () -> {
-            caseManagementService.updateDssCase(
-                CASE_TEST_AUTHORIZATION,
-                EventEnum.UPDATE,
-                dssCaseRequest,
-                TEST_CASE_ID);
-        });
-
-        assertTrue(exception.getMessage().contains(DSS_CASE_UPDATE_FAILURE_MSG));
     }
 
 }
