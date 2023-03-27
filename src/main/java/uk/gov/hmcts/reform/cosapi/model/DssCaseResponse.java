@@ -16,4 +16,6 @@ public class DssCaseResponse {
     private String dssHeaderDetails;
     private List<DssQuestionAnswerPair> dssQuestionAnswerPairs;
     private List<DssQuestionAnswerDatePair> dssQuestionAnswerDatePairs;
+    private String caseTypeId;
+    private String jurisdiction;
 }

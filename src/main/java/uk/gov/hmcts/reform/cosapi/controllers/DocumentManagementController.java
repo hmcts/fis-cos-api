@@ -116,4 +116,25 @@ public class DocumentManagementController {
     private boolean isAuthorized(String s2sToken) {
         return authorisationService.authoriseService(s2sToken);
     }
+
+    @RequestMapping(
+        value = "/upload-for-dss-update",
+        method = RequestMethod.POST,
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ApiOperation("Call CDAM to upload document")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Uploaded Successfully"),
+        @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
+        @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
+        @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public ResponseEntity<?> uploadDocumentForDss(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+                                        @RequestParam("caseTypeId") String caseTypeId,
+                                        @RequestParam("jurisdiction") String jurisdiction,
+                                        @RequestParam("file") MultipartFile file) {
+
+        return ResponseEntity.ok(documentManagementService.uploadDocumentForDssUpdate(authorisation, caseTypeId, jurisdiction, file));
+    }
 }

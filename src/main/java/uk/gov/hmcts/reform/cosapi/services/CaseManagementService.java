@@ -144,7 +144,10 @@ public class CaseManagementService {
             return DssCaseResponse.builder().caseId(caseId)
                     .dssHeaderDetails((String) caseDetails.getData().get("dssHeaderDetails"))
                     .dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
-                    .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData())).build();
+                    .dssQuestionAnswerDatePairs(buildDssQuestionAnswerDatePairs(caseDetails.getData()))
+                    .caseTypeId(caseDetails.getCaseTypeId())
+                    .jurisdiction(caseDetails.getJurisdiction())
+                    .build();
         } catch (Exception e) {
             log.error("Error while fetching Dss Case Details" + e);
             throw new CaseCreateOrUpdateException("Failing while fetching the dss case details" + e.getMessage(), e);

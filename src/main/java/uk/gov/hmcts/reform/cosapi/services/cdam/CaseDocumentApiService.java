@@ -48,6 +48,31 @@ public class CaseDocumentApiService {
             .build();
     }
 
+    public DocumentInfo uploadDocumentForDssUpdate(String authorizationToken, MultipartFile file,
+                                       String caseTypeId, String jurisdiction) {
+
+        String serviceAuthToken = authTokenGenerator.generate();
+
+        UploadResponse uploadResponse = caseDocumentClient.uploadDocuments(
+            authorizationToken,
+            serviceAuthToken,
+            caseTypeId,
+            jurisdiction,
+            Arrays.asList(file)
+        );
+
+        Document uploadedDocument = uploadResponse.getDocuments().get(0);
+
+        String[] split = uploadedDocument.links.self.href.split("/");
+
+        return DocumentInfo.builder()
+            .url(uploadedDocument.links.self.href)
+            .binaryUrl(uploadedDocument.links.binary.href)
+            .fileName(uploadedDocument.originalDocumentName)
+            .documentId(split[split.length - 1])
+            .build();
+    }
+
     public void deleteDocument(String authorizationToken, String documentId) {
         caseDocumentClient.deleteDocument(
             authorizationToken,
