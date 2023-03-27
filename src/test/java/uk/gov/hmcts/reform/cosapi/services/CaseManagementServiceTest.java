@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.cosapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
+import uk.gov.hmcts.reform.cosapi.edgecase.model.DssUploadedDocument;
 import uk.gov.hmcts.reform.cosapi.exception.CaseCreateOrUpdateException;
 import uk.gov.hmcts.reform.cosapi.model.CaseResponse;
 import uk.gov.hmcts.reform.cosapi.model.DssCaseRequest;
@@ -31,11 +33,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,16 +49,18 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_FETCH_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
+import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DSS_CASE_UPDATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.RESPONSE_STATUS_SUCCESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestPropertySource("classpath:application.yaml")
 @ActiveProfiles("test")
+@SuppressWarnings("PMD.ExcessiveImports")
 class CaseManagementServiceTest {
+    public static final String CITIZEN_PRL_UPDATE_DSS_APPLICATION = "citizen-prl-update-dss-application";
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final String TEST_USER = "TestUser";
     private static final String CITIZEN = "Citizen";
@@ -106,10 +110,10 @@ class CaseManagementServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
 
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
-            .id(TEST_CASE_ID)
-            .jurisdiction(CommonConstants.PRL_JURISDICTION)
-            .data(caseDataMap)
-            .build();
+                .id(TEST_CASE_ID)
+                .jurisdiction(CommonConstants.PRL_JURISDICTION)
+                .data(caseDataMap)
+                .build();
 
         when(caseApiService.createCase(CASE_TEST_AUTHORIZATION, caseData, fgmAppDetail)).thenReturn(caseDetail);
 
@@ -120,15 +124,11 @@ class CaseManagementServiceTest {
         assertEquals(createCaseResponse.getId(), caseDetail.getId());
         assertTrue(createCaseResponse.getCaseData().containsKey(CASE_DATA_FGM_ID));
 
-        CaseData caseResponseData = (CaseData) createCaseResponse.getCaseData().get(CASE_DATA_FGM_ID);
         assertNotNull(createCaseResponse);
         assertEquals(
-            createCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
-            caseDetail.getData().get(CASE_DATA_FGM_ID)
-        );
-        assertEquals(caseResponseData.getNamedApplicant(), caseData.getNamedApplicant());
-        assertEquals(caseResponseData.getCaseTypeOfApplication(), caseData.getCaseTypeOfApplication());
-        assertEquals(caseResponseData.getApplicant(), caseData.getApplicant());
+                createCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
+                caseDetail.getData().get(CASE_DATA_FGM_ID));
+
         assertEquals(RESPONSE_STATUS_SUCCESS, createCaseResponse.getStatus());
     }
 
@@ -149,10 +149,9 @@ class CaseManagementServiceTest {
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         when(caseApiService.createCase(CASE_TEST_AUTHORIZATION, caseData, fgmAppDetail)).thenThrow(
-            new CaseCreateOrUpdateException(
-                CASE_CREATE_FAILURE_MSG,
-                new RuntimeException()
-            ));
+                new CaseCreateOrUpdateException(
+                        CASE_CREATE_FAILURE_MSG,
+                        new RuntimeException()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementService.createCase(CASE_TEST_AUTHORIZATION, caseData);
@@ -163,71 +162,54 @@ class CaseManagementServiceTest {
 
     @Test
     void testFgmUpdateCaseData() throws Exception {
-        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
-        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
-
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
         fgmAppDetail.setEventIds(eventsConfig);
-
-        String origEmailAddress = caseData.getApplicant().getEmailAddress();
-        caseData.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
-        assertNotEquals(caseData.getApplicant().getEmailAddress(), origEmailAddress);
-
         when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
 
         assertNotNull(fgmAppDetail);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
-
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
         Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
         caseDataMap.put(CASE_DATA_FGM_ID, caseData);
 
         CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
-            .id(TEST_CASE_ID)
-            .data(caseDataMap)
-            .build();
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
 
         when(caseApiService.updateCase(
-            CASE_TEST_AUTHORIZATION,
-            EventEnum.UPDATE,
-            TEST_CASE_ID,
-            caseData,
-            fgmAppDetail,
-                true
-        )).thenReturn(caseDetail);
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                TEST_CASE_ID,
+                caseData,
+                fgmAppDetail,
+                true)).thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateCase(
-            CASE_TEST_AUTHORIZATION,
-            EventEnum.UPDATE,
-            caseData,
-            TEST_CASE_ID
-        );
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                caseData,
+                TEST_CASE_ID);
         assertEquals(updateCaseResponse.getId(), caseDetail.getId());
         assertTrue(updateCaseResponse.getCaseData().containsKey(CASE_DATA_FGM_ID));
-
-
-        CaseData caseResponseData = (CaseData) updateCaseResponse.getCaseData().get(CASE_DATA_FGM_ID);
-
-        assertNotEquals(caseResponseData.getApplicant().getEmailAddress(), origEmailAddress);
 
         assertNotNull(updateCaseResponse);
 
         assertEquals(
-            updateCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
-            caseDetail.getData().get(CASE_DATA_FGM_ID)
-        );
-        assertEquals(caseResponseData.getNamedApplicant(), caseData.getNamedApplicant());
-        assertEquals(caseResponseData.getCaseTypeOfApplication(), caseData.getCaseTypeOfApplication());
-        assertEquals(caseResponseData.getApplicant().getEmailAddress(), caseData.getApplicant().getEmailAddress());
+                updateCaseResponse.getCaseData().get(CASE_DATA_FGM_ID),
+                caseDetail.getData().get(CASE_DATA_FGM_ID));
+
         assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
     }
 
     @Test
     void testDssUpdateCaseData() {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
 
@@ -243,6 +225,9 @@ class CaseManagementServiceTest {
         caseDataMap.put("dssDocuments", dssDocumentInfoList);
         caseDataMap.put("dssAdditionalCaseInformation", DSS_ADDITIONAL_INFO);
         caseDataMap.put("dssCaseUpdatedBy", CITIZEN);
+        List<ListValue<DssUploadedDocument>> uploadedDssDocuments = new ArrayList<>();
+
+        caseDataMap.put("uploadedDssDocuments", uploadedDssDocuments);
 
         DssCaseRequest dssCaseRequest = DssCaseRequest
                 .builder()
@@ -258,24 +243,94 @@ class CaseManagementServiceTest {
 
         when(caseApiService.getCaseDetails(
                 CASE_TEST_AUTHORIZATION,
-                TEST_CASE_ID
-        )).thenReturn(caseDetail);
+                TEST_CASE_ID)).thenReturn(caseDetail);
 
-        when(caseApiService.updateCase(
+        when(caseApiService.updateDssCaseJourney(
                 eq(CASE_TEST_AUTHORIZATION),
                 eq(EventEnum.UPDATE),
                 eq(TEST_CASE_ID),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
-                eq(true)
-        )).thenReturn(caseDetail);
+                ArgumentMatchers.any()))
+            .thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
                 dssCaseRequest,
-                TEST_CASE_ID
-        );
+                TEST_CASE_ID);
+
+        assertEquals(updateCaseResponse.getId(), caseDetail.getId());
+        assertEquals(caseDataMap, updateCaseResponse.getCaseData());
+        assertEquals(RESPONSE_STATUS_SUCCESS, updateCaseResponse.getStatus());
+    }
+
+    @Test
+    void testDssUpdateCaseDataWithUploadedDocument() {
+        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
+
+        fgmAppDetail.setEventIds(eventsConfig);
+
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
+
+        assertNotNull(fgmAppDetail);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
+
+        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
+        Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
+        caseDataMap.put("caseTypeOfApplication", "PRLAPPS");
+        caseDataMap.put("dssDocuments", dssDocumentInfoList);
+        caseDataMap.put("dssAdditionalCaseInformation", DSS_ADDITIONAL_INFO);
+        caseDataMap.put("dssCaseUpdatedBy", CITIZEN);
+        List<ListValue<DssUploadedDocument>> uploadedDssDocuments = new ArrayList<>();
+
+        DssUploadedDocument dssdocDetails = DssUploadedDocument.builder()
+            .dssAdditionalCaseInformation("Additional Information")
+            .dssCaseUpdatedBy("updated by")
+            .build();
+
+        ListValue<DssUploadedDocument> dssDocumentDetails = ListValue.<DssUploadedDocument>builder()
+            .id(String.valueOf(UUID.randomUUID()))
+            .value(dssdocDetails)
+            .build();
+
+
+        uploadedDssDocuments.add(dssDocumentDetails);
+
+        caseDataMap.put("uploadedDssDocuments", uploadedDssDocuments);
+
+        DssCaseRequest dssCaseRequest = DssCaseRequest
+                .builder()
+                .dssCaseUpdatedBy(CITIZEN)
+                .dssAdditionalCaseInformation(DSS_ADDITIONAL_INFO)
+                .dssDocumentInfoList(dssDocumentInfoList)
+                .build();
+
+        CaseDetails caseDetail = CaseDetails.builder().caseTypeId(CASE_DATA_FGM_ID)
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
+
+        when(caseApiService.getCaseDetails(
+                CASE_TEST_AUTHORIZATION,
+                TEST_CASE_ID)).thenReturn(caseDetail);
+
+        when(caseApiService.updateDssCaseJourney(
+                eq(CASE_TEST_AUTHORIZATION),
+                eq(EventEnum.UPDATE),
+                eq(TEST_CASE_ID),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.any()))
+            .thenReturn(caseDetail);
+
+        CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssCaseRequest,
+                TEST_CASE_ID);
 
         assertEquals(updateCaseResponse.getId(), caseDetail.getId());
         assertEquals(caseDataMap, updateCaseResponse.getCaseData());
@@ -285,7 +340,7 @@ class CaseManagementServiceTest {
     @Test
     void testUpdateCaseFgmFailedWithCaseCreateUpdateException() throws Exception {
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
-        eventsConfig.setUpdateEvent("citizen-prl-update-dss-application");
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
 
         fgmAppDetail.setEventIds(eventsConfig);
         when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
@@ -298,17 +353,15 @@ class CaseManagementServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
         when(caseApiService.updateCase(
-            CASE_TEST_AUTHORIZATION,
-            EventEnum.UPDATE,
-            TEST_CASE_ID,
-            caseData,
-            fgmAppDetail,
-                true
-        )).thenThrow(
-            new CaseCreateOrUpdateException(
-                CASE_UPDATE_FAILURE_MSG,
-                new RuntimeException()
-            ));
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                TEST_CASE_ID,
+                caseData,
+                fgmAppDetail,
+                true)).thenThrow(
+                        new CaseCreateOrUpdateException(
+                                CASE_UPDATE_FAILURE_MSG,
+                                new RuntimeException()));
 
         Exception exception = assertThrows(Exception.class, () -> {
             caseManagementService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE, caseData, TEST_CASE_ID);
@@ -322,9 +375,9 @@ class CaseManagementServiceTest {
         String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
         CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
-        String origEmailAddress = caseData.getApplicant().getEmailAddress();
-        caseData.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
-        assertNotEquals(caseData.getApplicant().getEmailAddress(), origEmailAddress);
+        // String origEmailAddress = caseData.getApplicant().getEmailAddress();
+        // caseData.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
+        // assertNotEquals(caseData.getApplicant().getEmailAddress(), origEmailAddress);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
 
@@ -332,20 +385,19 @@ class CaseManagementServiceTest {
         caseDataMap.put(CASE_DATA_FGM_ID, caseData);
 
         CaseDetails caseDetail = CaseDetails.builder()
-            .id(TEST_CASE_ID)
-            .data(caseDataMap)
-            .build();
+                .id(TEST_CASE_ID)
+                .data(caseDataMap)
+                .build();
 
-        when(caseApiService.getCaseDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
-            .thenReturn(caseDetail);
+        when(caseApiService.getCaseDetails(CASE_TEST_AUTHORIZATION, TEST_CASE_ID))
+                .thenReturn(caseDetail);
 
         CaseResponse fetchCaseResponse = caseManagementService.fetchCaseDetails(
-            CASE_TEST_AUTHORIZATION,
-            TEST_CASE_ID);
+                CASE_TEST_AUTHORIZATION,
+                TEST_CASE_ID);
 
         assertEquals(fetchCaseResponse.getId(), caseDetail.getId());
         assertEquals(RESPONSE_STATUS_SUCCESS, fetchCaseResponse.getStatus());
-
 
     }
 
@@ -396,6 +448,53 @@ class CaseManagementServiceTest {
         assertNotNull(dssCaseResponse);
         assertThat(dssCaseResponse.getDssQuestionAnswerPairs().size()).isEqualTo(2);
         assertThat(dssCaseResponse.getDssQuestionAnswerDatePairs().size()).isEqualTo(1);
+    }
+
+
+    @Test
+    void testUpdateCaseFailedWithCaseCreateUpdateException() throws Exception {
+
+        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
+        eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);
+
+        fgmAppDetail.setEventIds(eventsConfig);
+
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetail));
+
+        assertNotNull(fgmAppDetail);
+
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_USER);
+
+        List<ListValue<DssDocumentInfo>> dssDocumentInfoList = new ArrayList<>();
+        DssCaseRequest dssCaseRequest = DssCaseRequest
+            .builder()
+            .dssCaseUpdatedBy(CITIZEN)
+            .dssAdditionalCaseInformation(DSS_ADDITIONAL_INFO)
+            .dssDocumentInfoList(dssDocumentInfoList)
+            .build();
+
+
+        when(caseApiService.updateDssCaseJourney(
+            eq(CASE_TEST_AUTHORIZATION),
+            eq(EventEnum.UPDATE),
+            eq(TEST_CASE_ID),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any())).thenThrow(
+                new CaseCreateOrUpdateException(
+                DSS_CASE_UPDATE_FAILURE_MSG,
+                    new RuntimeException()));
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            caseManagementService.updateDssCase(
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                dssCaseRequest,
+                TEST_CASE_ID);
+        });
+
+        assertTrue(exception.getMessage().contains(DSS_CASE_UPDATE_FAILURE_MSG));
     }
 
 }

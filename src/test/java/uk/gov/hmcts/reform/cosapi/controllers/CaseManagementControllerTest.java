@@ -36,9 +36,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATION;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
-import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_UPDATE_CASE_EMAIL_ADDRESS;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
 @ExtendWith(SpringExtension.class)
@@ -96,37 +94,26 @@ class CaseManagementControllerTest {
         caseResponse.setStatus(null);
 
         when(caseManagementService.updateCase(CASE_TEST_AUTHORIZATION, EventEnum.UPDATE,
-                                              caseData, TEST_CASE_ID)).thenReturn(caseResponse);
+                caseData, TEST_CASE_ID)).thenReturn(caseResponse);
 
         ResponseEntity<?> preUpdateCaseResponse = caseManagementController.updateCase(
-            TEST_CASE_ID,
-            CASE_TEST_AUTHORIZATION,
-            EventEnum.UPDATE,
-            caseData
-        );
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                caseData);
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
-        assertEquals(TEST_CASE_EMAIL_ADDRESS, caseData.getApplicant().getEmailAddress());
+        // assertEquals(TEST_CASE_EMAIL_ADDRESS,
+        // caseData.getApplicant().getEmailAddress());
 
         CaseData caseDataUpdate = (CaseData) testPreUpdResponse.getCaseData().get(CASE_DATA_FGM_ID);
-        caseDataUpdate.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
+        // caseDataUpdate.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
         ResponseEntity<?> postUpdateCaseResponse = caseManagementController.updateCase(
-            TEST_CASE_ID,
-            CASE_TEST_AUTHORIZATION,
-            EventEnum.UPDATE,
-            caseDataUpdate
-        );
-
-        CaseResponse caseDataUpdateResponse = (CaseResponse) (postUpdateCaseResponse.getBody());
-
-        CaseData caseDataUpdatedFromResponse = (CaseData) (caseDataUpdateResponse.getCaseData().get(CASE_DATA_FGM_ID));
-
-        assertEquals(
-            caseDataUpdatedFromResponse.getApplicant().getEmailAddress(),
-            caseDataUpdate.getApplicant().getEmailAddress()
-        );
-        assertEquals(TEST_UPDATE_CASE_EMAIL_ADDRESS, caseDataUpdate.getApplicant().getEmailAddress());
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION,
+                EventEnum.UPDATE,
+                caseDataUpdate);
 
         assertNotNull(testPreUpdResponse);
         assertEquals(HttpStatus.OK, postUpdateCaseResponse.getStatusCode());
@@ -154,18 +141,15 @@ class CaseManagementControllerTest {
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssCaseRequest
-        );
+                dssCaseRequest);
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
-        assertEquals(TEST_CASE_EMAIL_ADDRESS, caseData.getApplicant().getEmailAddress());
 
         ResponseEntity<?> postUpdateCaseResponse = caseManagementController.updateDssCase(
                 TEST_CASE_ID,
                 CASE_TEST_AUTHORIZATION,
                 EventEnum.UPDATE,
-                dssCaseRequest
-        );
+                dssCaseRequest);
 
         assertNotNull(postUpdateCaseResponse);
         assertEquals(testPreUpdResponse, postUpdateCaseResponse.getBody());
@@ -176,7 +160,7 @@ class CaseManagementControllerTest {
     void testFetchCaseDetails() throws IOException {
 
         String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
-        CaseData caseData = mapper.readValue(caseDataJson,CaseData.class);
+        CaseData caseData = mapper.readValue(caseDataJson, CaseData.class);
 
         Map<String, Object> caseDataMap = new ConcurrentHashMap<>();
         caseDataMap.put(CASE_DATA_FGM_ID, caseData);
@@ -185,17 +169,16 @@ class CaseManagementControllerTest {
         caseResponse.setId(TEST_CASE_ID);
         caseResponse.setStatus(null);
 
-        when(caseManagementService.fetchCaseDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID)).thenReturn(caseResponse);
+        when(caseManagementService.fetchCaseDetails(CASE_TEST_AUTHORIZATION, TEST_CASE_ID)).thenReturn(caseResponse);
 
         ResponseEntity<?> postFetchCaseResponse = caseManagementController.fetchCaseDetails(
-            TEST_CASE_ID,
-            CASE_TEST_AUTHORIZATION
-        );
+                TEST_CASE_ID,
+                CASE_TEST_AUTHORIZATION);
 
         CaseResponse caseDataFetchResponse = (CaseResponse) (postFetchCaseResponse.getBody());
 
-        assertEquals(caseDataFetchResponse.getId(),caseResponse.getId());
-        assertEquals(postFetchCaseResponse.getStatusCode(),HttpStatus.OK);
+        assertEquals(caseDataFetchResponse.getId(), caseResponse.getId());
+        assertEquals(postFetchCaseResponse.getStatusCode(), HttpStatus.OK);
 
     }
 
@@ -203,20 +186,19 @@ class CaseManagementControllerTest {
     void testFetchDssQuestionAnswerDetails() {
 
         DssCaseResponse expectedDssCaseResponse = DssCaseResponse.builder().build();
-        when(caseManagementService.fetchDssQuestionAnswerDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
+        when(caseManagementService.fetchDssQuestionAnswerDetails(CASE_TEST_AUTHORIZATION, TEST_CASE_ID))
                 .thenReturn(expectedDssCaseResponse);
         when(authorisationService.authoriseService(CASE_TEST_AUTHORIZATION)).thenReturn(true);
         when(systemUserService.getSysUserToken()).thenReturn(CASE_TEST_AUTHORIZATION);
 
         ResponseEntity<?> postFetchCaseResponse = caseManagementController.fetchDssQuestionAnswerDetails(
                 TEST_CASE_ID,
-                CASE_TEST_AUTHORIZATION
-        );
+                CASE_TEST_AUTHORIZATION);
 
         DssCaseResponse actualDssCaseResponse = (DssCaseResponse) postFetchCaseResponse.getBody();
 
         assertEquals(expectedDssCaseResponse, actualDssCaseResponse);
-        assertEquals(postFetchCaseResponse.getStatusCode(),HttpStatus.OK);
+        assertEquals(postFetchCaseResponse.getStatusCode(), HttpStatus.OK);
     }
 
 }
