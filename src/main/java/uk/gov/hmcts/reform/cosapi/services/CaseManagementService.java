@@ -100,8 +100,7 @@ public class CaseManagementService {
 
             CaseData retrevieData = new ObjectMapper().convertValue(caseData, CaseData.class);
             if (retrevieData.getUploadedDssDocuments() != null) {
-                if (retrevieData.getUploadedDssDocuments().isEmpty()
-                        && retrevieData.getUploadedDssDocuments().size() == 0) {
+                if (retrevieData.getUploadedDssDocuments().isEmpty()) {
                     uploadeddocs.add(dssDocumentDetails);
 
                 } else {
@@ -114,8 +113,7 @@ public class CaseManagementService {
 
             CaseDetails caseDetails = caseApiService.updateDssCaseJourney(authorisation, event, caseId,
                     caseData,
-                    retrievedCaseDetails.getCaseTypeId(), retrievedCaseDetails.getJurisdiction(),
-                    false);
+                    retrievedCaseDetails.getCaseTypeId(), retrievedCaseDetails.getJurisdiction());
             return CaseResponse.builder().caseData(caseDetails.getData())
                     .id(caseDetails.getId()).status(SUCCESS).build();
         } catch (Exception e) {

@@ -251,8 +251,8 @@ class CaseManagementServiceTest {
                 eq(TEST_CASE_ID),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                eq(false))).thenReturn(caseDetail);
+                ArgumentMatchers.any()))
+            .thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
                 CASE_TEST_AUTHORIZATION,
@@ -323,8 +323,8 @@ class CaseManagementServiceTest {
                 eq(TEST_CASE_ID),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                eq(false))).thenReturn(caseDetail);
+                ArgumentMatchers.any()))
+            .thenReturn(caseDetail);
 
         CaseResponse updateCaseResponse = caseManagementService.updateDssCase(
                 CASE_TEST_AUTHORIZATION,
@@ -481,8 +481,7 @@ class CaseManagementServiceTest {
             eq(TEST_CASE_ID),
             ArgumentMatchers.any(),
             ArgumentMatchers.any(),
-            ArgumentMatchers.any(),
-            eq(false))).thenThrow(
+            ArgumentMatchers.any())).thenThrow(
                 new CaseCreateOrUpdateException(
                 DSS_CASE_UPDATE_FAILURE_MSG,
                     new RuntimeException()));
