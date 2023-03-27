@@ -114,7 +114,8 @@ public class DocumentManagementController {
         @RequestParam("jurisdiction") String jurisdiction,
         @RequestParam("file") MultipartFile file) {
         if (isAuthorized(s2sToken)) {
-            log.info("File Upload request received for CaseType - {}  and jurisdiction - {} ", caseTypeId, jurisdiction);
+            log.info("File Upload request received for CaseType - {} "
+            + " and jurisdiction - {} ", caseTypeId, jurisdiction);
             return ResponseEntity.ok(
                 documentManagementService.uploadDocumentForDssUpdate(systemUserService.getSysUserToken(),
                                                                      caseTypeId, jurisdiction, file
