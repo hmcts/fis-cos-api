@@ -35,22 +35,17 @@ public class DocumentManagementController {
     @Autowired
     AuthorisationService authorisationService;
 
-    @RequestMapping(
-        value = "/upload",
-        method = RequestMethod.POST,
-        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Call CDAM to upload document")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Uploaded Successfully"),
-        @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
-        @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
-        @ApiResponse(code = 500, message = "Internal Server Error")
+            @ApiResponse(code = 200, message = "Uploaded Successfully"),
+            @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
+            @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public ResponseEntity<?> uploadDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                        @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
-                                        @RequestParam("file") MultipartFile file) {
+            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
+            @RequestParam("file") MultipartFile file) {
 
         return ResponseEntity.ok(documentManagementService.uploadDocument(authorisation, caseTypeOfApplication, file));
     }
@@ -58,34 +53,29 @@ public class DocumentManagementController {
     @DeleteMapping("/{documentId}/delete")
     @ApiOperation("Call CDAM to delete document")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Deleted document successfully"),
-        @ApiResponse(code = 400, message = "Bad Request while deleting the document"),
-        @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
-        @ApiResponse(code = 404, message = "Document Not found"),
-        @ApiResponse(code = 500, message = "Internal Server Error")
+            @ApiResponse(code = 200, message = "Deleted document successfully"),
+            @ApiResponse(code = 400, message = "Bad Request while deleting the document"),
+            @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
+            @ApiResponse(code = 404, message = "Document Not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public ResponseEntity<?> deleteDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                        @PathVariable("documentId") String documentId) {
+            @PathVariable("documentId") String documentId) {
 
         return ResponseEntity.ok(documentManagementService.deleteDocument(authorisation, documentId));
     }
 
-    @RequestMapping(
-            value = "/dss/upload",
-            method = RequestMethod.POST,
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/dss/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Call CDAM to dss upload document")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Uploaded Successfully"),
-        @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
-        @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
-        @ApiResponse(code = 500, message = "Internal Server Error")
+            @ApiResponse(code = 200, message = "Uploaded Successfully"),
+            @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
+            @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public ResponseEntity<?> uploadDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
-                                            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
-                                            @RequestParam("file") MultipartFile file) {
+            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
+            @RequestParam("file") MultipartFile file) {
 
         if (isAuthorized(s2sToken)) {
             return ResponseEntity.ok(documentManagementService
@@ -98,13 +88,13 @@ public class DocumentManagementController {
     @DeleteMapping("/dss/{documentId}/delete")
     @ApiOperation("Call CDAM to dss delete document")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Deleted document successfully"),
-        @ApiResponse(code = 400, message = "Bad Request while deleting the document"),
-        @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
-        @ApiResponse(code = 404, message = "Document Not found")
+            @ApiResponse(code = 200, message = "Deleted document successfully"),
+            @ApiResponse(code = 400, message = "Bad Request while deleting the document"),
+            @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
+            @ApiResponse(code = 404, message = "Document Not found")
     })
     public ResponseEntity<?> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
-                                            @PathVariable("documentId") String documentId) {
+            @PathVariable("documentId") String documentId) {
         if (isAuthorized(s2sToken)) {
             return ResponseEntity.ok(documentManagementService
                     .deleteDocument(systemUserService.getSysUserToken(), documentId));
@@ -117,24 +107,20 @@ public class DocumentManagementController {
         return authorisationService.authoriseService(s2sToken);
     }
 
-    @RequestMapping(
-        value = "/upload-for-dss-update",
-        method = RequestMethod.POST,
-        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/upload-for-dss-update", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Call CDAM to upload document")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Uploaded Successfully"),
-        @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
-        @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
-        @ApiResponse(code = 500, message = "Internal Server Error")
+            @ApiResponse(code = 200, message = "Uploaded Successfully"),
+            @ApiResponse(code = 400, message = "Bad Request while uploading the document"),
+            @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public ResponseEntity<?> uploadDocumentForDss(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                        @RequestParam("caseTypeId") String caseTypeId,
-                                        @RequestParam("jurisdiction") String jurisdiction,
-                                        @RequestParam("file") MultipartFile file) {
+            @RequestParam("caseTypeId") String caseTypeId,
+            @RequestParam("jurisdiction") String jurisdiction,
+            @RequestParam("file") MultipartFile file) {
 
-        return ResponseEntity.ok(documentManagementService.uploadDocumentForDssUpdate(authorisation, caseTypeId, jurisdiction, file));
+        return ResponseEntity.ok(
+                documentManagementService.uploadDocumentForDssUpdate(authorisation, caseTypeId, jurisdiction, file));
     }
 }
