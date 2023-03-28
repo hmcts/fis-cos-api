@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
 @Slf4j
 public class DocumentManagementService {
 
+    public static final String SUCCESS = "Success";
     @Autowired
     CaseDocumentApiService caseDocumentApiService;
 
@@ -26,7 +27,7 @@ public class DocumentManagementService {
             DocumentInfo document = caseDocumentApiService.uploadDocument(authorization, file, AppsUtil
                 .getExactAppsDetails(appsConfig, caseTypeOfApplication));
             log.info("Stored Doc Detail: " + document.toString());
-            return DocumentResponse.builder().status("Success").document(document).build();
+            return DocumentResponse.builder().status(SUCCESS).document(document).build();
 
         } catch (Exception e) {
             log.error("Error while uploading document ." + e.getMessage());
@@ -39,7 +40,7 @@ public class DocumentManagementService {
         try {
             caseDocumentApiService.deleteDocument(authorization, documentId);
             log.info("document deleted successfully..");
-            return DocumentResponse.builder().status("Success").build();
+            return DocumentResponse.builder().status(SUCCESS).build();
 
         } catch (Exception e) {
             log.error("Error while deleting  document ." + e.getMessage());
@@ -48,13 +49,13 @@ public class DocumentManagementService {
         }
     }
 
-    public DocumentResponse uploadDocumentForDssUpdate(String authorization, 
+    public DocumentResponse uploadDocumentForDssUpdate(String authorization,
             String caseTypeId, String jurisdiction, MultipartFile file) {
         try {
             DocumentInfo document = caseDocumentApiService.uploadDocumentForDssUpdate(authorization, file,
                  caseTypeId, jurisdiction);
             log.info("Stored Doc Detail: " + document.toString());
-            return DocumentResponse.builder().status("Success").document(document).build();
+            return DocumentResponse.builder().status(SUCCESS).document(document).build();
 
         } catch (Exception e) {
             log.error("Error while uploading document ." + e.getMessage());

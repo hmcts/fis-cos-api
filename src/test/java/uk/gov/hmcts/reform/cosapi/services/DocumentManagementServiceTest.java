@@ -25,6 +25,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.cosapi.constants.CommonConstants.PRL_CASE_TYPE;
+import static uk.gov.hmcts.reform.cosapi.constants.CommonConstants.PRL_JURISDICTION;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FILE_FGM;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_URL;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.JSON_CONTENT_TYPE;
@@ -173,5 +175,75 @@ class DocumentManagementServiceTest {
             documentManagementService.deleteDocument(CASE_TEST_AUTHORIZATION, documentInfo.getDocumentId());
         });
         assertTrue(exception.getMessage().contains(DOCUMENT_DELETE_FAILURE_MSG));
+    }
+
+
+    @Test
+    void testUploadDocumentForDssUpdate() throws Exception {
+
+        DocumentInfo documentInfo = DocumentInfo.builder()
+            .documentId(CASE_DATA_FGM_ID)
+            .url(TEST_URL)
+            .fileName(CASE_DATA_FILE_FGM).build();
+
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            JSON_FILE_TYPE,
+            CASE_DATA_FILE_FGM,
+            JSON_CONTENT_TYPE,
+            caseDataJson.getBytes()
+        );
+
+        when(caseDocumentApiService.uploadDocumentForDssUpdate(
+            CASE_TEST_AUTHORIZATION,
+            multipartFile,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION
+        )).thenReturn(documentInfo);
+
+        DocumentResponse testUploadResponse = (DocumentResponse) documentManagementService.uploadDocumentForDssUpdate(
+            CASE_TEST_AUTHORIZATION,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION,
+            multipartFile
+        );
+
+
+        Assertions.assertNotNull(testUploadResponse);
+        Assertions.assertEquals(documentInfo.getDocumentId(), testUploadResponse.getDocument().getDocumentId());
+        Assertions.assertEquals(documentInfo.getFileName(), testUploadResponse.getDocument().getFileName());
+        Assertions.assertEquals(documentInfo.getUrl(), testUploadResponse.getDocument().getUrl());
+        Assertions.assertEquals(RESPONSE_STATUS_SUCCESS, testUploadResponse.getStatus());
+    }
+
+
+    @Test
+    void testUploadocumentFailedWithException() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            JSON_FILE_TYPE,
+            CASE_DATA_FILE_FGM,
+            JSON_CONTENT_TYPE,
+            caseDataJson.getBytes()
+        );
+
+        when(caseDocumentApiService.uploadDocument(
+            CASE_TEST_AUTHORIZATION,
+            multipartFile,
+            fgmAppDetail
+        )).thenThrow(
+            new DocumentUploadOrDeleteException(
+                DOCUMENT_UPLOAD_FAILURE_MSG,
+                new RuntimeException()
+            ));
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            documentManagementService.uploadDocumentForDssUpdate(CASE_TEST_AUTHORIZATION,
+                                                     PRL_CASE_TYPE,
+                                                     PRL_JURISDICTION,
+                                                     multipartFile);
+        });
     }
 }
