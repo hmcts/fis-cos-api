@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
-import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
@@ -64,8 +63,8 @@ class DocumentManagementServiceTest {
     @Test
     void testUploadFgmDocument() throws Exception {
         fgmAppDetail = new AppsConfig.AppsDetails();
-        fgmAppDetail.setCaseType(CommonConstants.PRL_CASE_TYPE);
-        fgmAppDetail.setJurisdiction(CommonConstants.PRL_JURISDICTION);
+        fgmAppDetail.setCaseType(PRL_CASE_TYPE);
+        fgmAppDetail.setJurisdiction(PRL_JURISDICTION);
         fgmAppDetail.setCaseTypeOfApplication(List.of(CASE_DATA_FGM_ID));
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
         eventsConfig.setCreateEvent("");
@@ -245,5 +244,7 @@ class DocumentManagementServiceTest {
                                                      PRL_JURISDICTION,
                                                      multipartFile);
         });
+
+        assertTrue(exception.getMessage().contains(DOCUMENT_UPLOAD_FAILURE_MSG));
     }
 }
