@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
@@ -108,7 +109,7 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> uploadDocumentForDssUpdateCase(
+    public ResponseEntity<DocumentResponse> uploadDocumentForDssUpdateCase(
         @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
         @RequestParam("caseTypeId") String caseTypeId,
         @RequestParam("jurisdiction") String jurisdiction,
