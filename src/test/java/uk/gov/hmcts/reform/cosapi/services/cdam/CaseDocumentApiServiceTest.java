@@ -152,4 +152,66 @@ class CaseDocumentApiServiceTest {
             permanent
         );
     }
+
+    @Test
+    void testUploadDocumentForDssUpdate() throws Exception {
+        String caseDataJson = loadJson(CASE_DATA_FILE_FGM);
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            JSON_FILE_TYPE,
+            CASE_DATA_FILE_FGM,
+            JSON_CONTENT_TYPE,
+            caseDataJson.getBytes()
+        );
+
+        List<MultipartFile> multipartFileLst = new ArrayList<>();
+
+        multipartFileLst.add(multipartFile);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_AUTHORIZATION_TOKEN);
+
+        Document.Links links = new Document.Links();
+        links.binary = new Document.Link();
+        links.self = new Document.Link();
+        links.binary.href = "binaryUrl";
+        links.self.href = "selfURL";
+
+        Document document = Document.builder()
+            .classification(Classification.RESTRICTED)
+            .originalDocumentName(CASE_DATA_FILE_FGM)
+            .hashToken("SomeToken")
+            .size(caseDataJson.getBytes().length)
+            .mimeType(JSON_CONTENT_TYPE)
+            .build();
+
+        document.links = links;
+
+        List<Document> documents = new ArrayList<>();
+        documents.add(document);
+
+        UploadResponse uploadResponse = new UploadResponse(documents);
+
+        when(caseDocumentClient.uploadDocuments(
+            CASE_TEST_AUTHORIZATION,
+            TEST_AUTHORIZATION_TOKEN,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION,
+            multipartFileLst
+        )).thenReturn(uploadResponse);
+
+        DocumentInfo testUploadResponse = caseDocumentApiService.uploadDocumentForDssUpdate(
+            CASE_TEST_AUTHORIZATION,
+            multipartFile,
+            PRL_CASE_TYPE,
+            PRL_JURISDICTION
+        );
+
+        DocumentInfo documentInfo = DocumentInfo.builder()
+            .documentId(CASE_DATA_FGM_ID)
+            .url(TEST_URL)
+            .fileName(CASE_DATA_FILE_FGM).build();
+
+        Assertions.assertEquals(documentInfo.getFileName(), testUploadResponse.getFileName());
+        Assertions.assertEquals(document.links.self.href, testUploadResponse.getUrl());
+    }
 }
