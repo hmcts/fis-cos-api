@@ -29,7 +29,7 @@ Create the image of the application by executing the following command:
   ./gradlew assemble
 ```
 
-Create docker image:
+Create docker image::
 
 ```bash
   docker-compose build
