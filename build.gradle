@@ -42,7 +42,7 @@ ext['elasticsearch.version'] = '7.17.0'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -194,7 +194,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = "0.8.5"
+  toolVersion = "0.8.8"
 }
 
 jacocoTestCoverageVerification {
@@ -221,7 +221,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/cosapi/edgecase/search/**',
   '**/uk/gov/hmcts/reform/cosapi/edgecase/task/**',
   '**/uk/gov/hmcts/reform/cosapi/model/PaymentStatus.java',
-  '**/uk/gov/hmcts/reform/fis/config/OpenAPIConfiguration.java'
+  '**/uk/gov/hmcts/reform/fis/config/OpenAPIConfiguration.java',
+  '**/uk/gov/hmcts/reform/cosapi/services/cdam/CaseDocumentApiService.java',
+  '**/uk/gov/hmcts/reform/cosapi/services/DocumentManagementService.java'
 ]
 
 sonarqube {
@@ -352,7 +354,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: versions.springdocOpenApiUI
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.comGithubHmctsJavaLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '5.1.9'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: versions.jacksonBom, ext: 'pom'

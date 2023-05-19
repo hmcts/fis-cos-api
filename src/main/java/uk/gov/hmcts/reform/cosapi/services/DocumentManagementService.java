@@ -47,4 +47,19 @@ public class DocumentManagementService {
                                                           + e.getMessage(), e);
         }
     }
+
+    public DocumentResponse uploadDocumentForDssUpdate(String authorization, 
+            String caseTypeId, String jurisdiction, MultipartFile file) {
+        try {
+            DocumentInfo document = caseDocumentApiService.uploadDocumentForDssUpdate(authorization, file,
+                 caseTypeId, jurisdiction);
+            log.info("Stored Doc Detail: " + document.toString());
+            return DocumentResponse.builder().status("Success").document(document).build();
+
+        } catch (Exception e) {
+            log.error("Error while uploading document ." + e.getMessage());
+            throw new DocumentUploadOrDeleteException("Failing while uploading the document. The error message is "
+                                                           + e.getMessage(), e);
+        }
+    }
 }
