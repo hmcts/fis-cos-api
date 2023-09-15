@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmcts/fis-cos-api.svg?branch=master)](https://travis-ci.org/hmcts/fis-cos-api)
 
-## Notes
+## Notes-dummytest
 
 Since Spring Boot 2.1 bean overriding is disabled. If you want to enable it you will need to set `spring.main.allow-bean-definition-overriding` to `true`.
 
