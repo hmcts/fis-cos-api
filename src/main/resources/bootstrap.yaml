@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    propertiesvolume:
+      enabled: true
+      prefixed: true
+      paths: /mnt/secrets/fis-kv
+      aliases:
+       idam-system-user-name: IDAM_SYSTEM_UPDATE_USERNAME
+       idam-system-user-password: IDAM_SYSTEM_UPDATE_PASSWORD
+       s2s-secret-fis-cos-api: S2S_SECRET
+       idam-ui-secret: OAUTH2_CLIENT_SECRET
