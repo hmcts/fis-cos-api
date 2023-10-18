@@ -180,6 +180,9 @@ public class CaseManagementService {
 
     @SuppressWarnings({ "unchecked" })
     private String retrieveCaseDataValue(String answerField, Map<String, Object> data) {
+        if (answerField == null) {
+            return null;
+        }
         String[] fieldList = answerField.split("[.]", 0);
         Map<String, Object> caseData = data;
         String value = null;
