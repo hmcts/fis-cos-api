@@ -141,6 +141,9 @@ public class CaseManagementService {
     public DssCaseResponse fetchDssQuestionAnswerDetails(String authorization, Long caseId) {
         try {
             CaseDetails caseDetails = caseApiService.getCaseDetails(authorization, caseId);
+            log.info("dssheader details {}", (String) caseDetails.getData().get("dssHeaderDetails"));
+            log.info("caseDetails.getCaseTypeId() ", caseDetails.getCaseTypeId());
+            log.info("caseDetails.getJurisdiction() ", caseDetails.getJurisdiction());
             return DssCaseResponse.builder().caseId(caseId)
                     .dssHeaderDetails((String) caseDetails.getData().get("dssHeaderDetails"))
                     .dssQuestionAnswerPairs(buildDssQuestionAnswerPairs(caseDetails.getData()))
@@ -155,6 +158,9 @@ public class CaseManagementService {
     }
 
     private List<DssQuestionAnswerDatePair> buildDssQuestionAnswerDatePairs(Map<String, Object> data) {
+        log.info("dssQuestion3 {}", data.get("dssQuestion3"));
+        log.info("dssAnswer3 {}", data.get("dssAnswer3"));
+        
         DssQuestionAnswerDatePair dssQuestionAnswerPair1 = DssQuestionAnswerDatePair
                 .builder()
                 .question((String) data.get("dssQuestion3"))
@@ -164,6 +170,11 @@ public class CaseManagementService {
     }
 
     private List<DssQuestionAnswerPair> buildDssQuestionAnswerPairs(Map<String, Object> data) {
+        log.info("dssQuestion 1 {}", data.get("dssQuestion1"));
+        log.info("dssAnswer1 {}", data.get("dssAnswer1"));
+        log.info("dssAnswer1 {}", data.get("dssQuestion2"));
+        log.info("dssAnswer1 {}", data.get("dssAnswer2"));
+
         DssQuestionAnswerPair dssQuestionAnswerPair1 = DssQuestionAnswerPair
                 .builder()
                 .question((String) data.get("dssQuestion1"))
