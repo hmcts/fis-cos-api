@@ -172,8 +172,8 @@ public class CaseManagementService {
     private List<DssQuestionAnswerPair> buildDssQuestionAnswerPairs(Map<String, Object> data) {
         log.info("dssQuestion 1 {}", data.get("dssQuestion1"));
         log.info("dssAnswer1 {}", data.get("dssAnswer1"));
-        log.info("dssAnswer1 {}", data.get("dssQuestion2"));
-        log.info("dssAnswer1 {}", data.get("dssAnswer2"));
+        log.info("dssQuestion2 {}", data.get("dssQuestion2"));
+        log.info("dssAnswer2 {}", data.get("dssAnswer2"));
 
         DssQuestionAnswerPair dssQuestionAnswerPair1 = DssQuestionAnswerPair
                 .builder()
