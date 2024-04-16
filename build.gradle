@@ -299,9 +299,6 @@ dependencyCheck {
   analyzers {
     // Disable scanning of .NET related binaries
     assemblyEnabled = false
-    retirejs {
-      enabled = false
-    }
   }
   skipConfigurations = [
     "checkstyle",
