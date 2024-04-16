@@ -257,12 +257,6 @@ dependencyManagement {
       entry 'guava'
     }
     dependencySet(
-      group: 'org.springframework',
-      version: '5.3.34'
-    ) {
-      entry 'spring-aspects'
-    }
-    dependencySet(
       group: 'ch.qos.logback',
       version: '1.2.13'
     ) {
