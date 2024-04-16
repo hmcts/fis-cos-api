@@ -385,10 +385,10 @@ dependencyManagement {
 
 dependencies {
   //implementation group: 'com.github.hmcts', name: 'ccd-config-generator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.springBoot
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: versions.springBoot
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: versions.springBoot
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: versions.springBoot
   //{
   //exclude  group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jsr310:2.13.2'
   //}
@@ -417,7 +417,7 @@ dependencies {
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.19'
+//  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.19'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: versions.springCloudStarterBootstrap
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -449,17 +449,17 @@ dependencies {
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
+  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot) {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
 
-  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
+  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot) {
     exclude(module: 'commons-logging')
     exclude(module: 'android-json')
   }
 
-  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-web') {
+  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.springBoot) {
     exclude(module: 'commons-logging')
     exclude(module: 'android-json')
   }
