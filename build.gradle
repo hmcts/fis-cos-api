@@ -256,19 +256,7 @@ dependencyManagement {
     dependencySet(group: 'com.google.guava', version: '33.1.0-jre') {
       entry 'guava'
     }
-    dependencySet(
-      group: 'org.springframework',
-      version: '6.1.6'
-    ) {
-      entry 'spring-beans'
-      entry 'spring-core'
-      entry 'spring-aop'
-      entry 'spring-context'
-      entry 'spring-webflux'
-      entry 'spring-webmvc'
-      entry 'spring-web'
-      entry 'spring-aspects'
-    }
+
     dependencySet(
       group: 'ch.qos.logback',
       version: '1.2.13'
