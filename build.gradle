@@ -260,13 +260,6 @@ dependencyManagement {
       group: 'org.springframework',
       version: '5.3.34'
     ) {
-//      entry 'spring-beans'
-//      entry 'spring-core'
-//      entry 'spring-aop'
-//      entry 'spring-context'
-//      entry 'spring-webflux'
-//      entry 'spring-webmvc'
-//      entry 'spring-web'
       entry 'spring-aspects'
     }
     dependencySet(
@@ -417,7 +410,6 @@ dependencies {
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
-//  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.19'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: versions.springCloudStarterBootstrap
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
