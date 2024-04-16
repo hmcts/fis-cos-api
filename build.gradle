@@ -253,12 +253,12 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     // CVE-2018-10237 - Unbounded memory allocation
-    dependencySet(group: 'com.google.guava', version: '31.1-jre') {
+    dependencySet(group: 'com.google.guava', version: '33.1.0-jre') {
       entry 'guava'
     }
     dependencySet(
       group: 'org.springframework',
-      version: '5.3.34'
+      version: '6.1.6'
     ) {
       entry 'spring-beans'
       entry 'spring-core'
@@ -282,12 +282,6 @@ dependencyManagement {
     ) {
       entry 'bcprov-jdk18on'
     }
-//    dependencySet(
-//      group: 'org.apache.commons',
-//      version: '2.10.1'
-//    ) {
-//      entry 'commons-configuration'
-//    }
     dependencySet(
       group: 'org.springframework.security',
       version: '6.2.3'
@@ -300,25 +294,12 @@ dependencyManagement {
     ) {
       entry 'jose4j'
     }
-//    There is no fixed version for joda-time:joda-time.
 //    dependencySet(
-//      group: 'joda-time',
-//      version: '2.12.7'
+//      group: 'commons-configuration',
+//      version: '1.10'
 //    ) {
-//      entry 'joda-time'
+//      entry 'commons-configuration'
 //    }
-      dependencySet(
-       group: 'com.google.guava',
-       version: '33.1.0-jre'
-    ) {
-       entry 'guava'
-    }
-    dependencySet(
-      group: 'commons-configuration',
-      version: '1.10'
-    ) {
-      entry 'commons-configuration'
-    }
   }
 }
 
@@ -411,6 +392,7 @@ dependencies {
   //{
   //exclude  group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jsr310:2.13.2'
   //}
+
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: versions.springBoot
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: versions.springfoxSwagger
