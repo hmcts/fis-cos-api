@@ -271,7 +271,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'org.springframework.security',
-      version: '6.2.3'
+      version: '6.2.4'
     ) {
       entry 'spring-security-crypto'
     }
