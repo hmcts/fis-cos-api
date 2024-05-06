@@ -330,7 +330,7 @@ def versions = [
   springdocOpenApiUI: '1.6.6',
   comGithubHmctsJavaLogging: '6.0.1',
   jackson: '2.17.0',
-  jacksonBom: '2.17.0',
+  jacksonBom: '2.17.1',
   reformsJavaLogging: '5.1.7',
   lombok            : '1.18.32',
   junit             : '5.8.2',
