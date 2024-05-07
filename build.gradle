@@ -328,7 +328,7 @@ def versions = [
   s2sClient         : '4.0.0',
   springCloudStarterBootstrap : '3.1.8',
   springdocOpenApiUI: '1.6.6',
-  comGithubHmctsJavaLogging: '6.0.1',
+  comGithubHmctsJavaLogging: '6.1.4',
   jackson: '2.17.1',
   jacksonBom: '2.17.1',
   reformsJavaLogging: '5.1.7',
