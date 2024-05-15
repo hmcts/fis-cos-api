@@ -320,7 +320,7 @@ repositories {
 }
 
 ext {
-  log4JVersion = "2.17.0"
+  log4JVersion = "2.23.1"
 }
 
 def versions = [
