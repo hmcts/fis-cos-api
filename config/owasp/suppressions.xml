@@ -1,22 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-
-  <suppress>
-    <notes>spring-*</notes>
-    <!--spring-web-->
-    <cve>CVE-2016-1000027</cve>
-    <cve>CVE-2024-22243</cve>
-    <cve>CVE-2024-22262</cve>
-    <!--  groovy-json, jackson-core, json, json-path-->
-    <cve>CVE-2022-45688</cve>
-    <cve>CVE-2023-5072</cve>
-  </suppress>
-  <suppress>
-    <notes>Miscellaneous</notes>
-    <!-- joda-time-->
-    <cve>CVE-2024-23080</cve>
-    <!--commons-configuration-->
-    <cve>CVE-2024-29131</cve>
-    <cve>CVE-2024-29133</cve>
-  </suppress>
 </suppressions>
