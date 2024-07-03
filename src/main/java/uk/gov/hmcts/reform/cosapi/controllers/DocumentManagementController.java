@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
@@ -51,9 +52,10 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> uploadDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
-                                            @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<DocumentResponse> uploadDocument(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+        @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
+        @RequestParam("file") MultipartFile file) {
 
         return ResponseEntity.ok(documentManagementService.uploadDocument(authorisation, caseTypeOfApplication, file));
     }
@@ -67,8 +69,9 @@ public class DocumentManagementController {
         @ApiResponse(code = 404, message = "Document Not found"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> deleteDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                            @PathVariable("documentId") String documentId) {
+    public ResponseEntity<DocumentResponse> deleteDocument(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+        @PathVariable("documentId") String documentId) {
 
         return ResponseEntity.ok(documentManagementService.deleteDocument(authorisation, documentId));
     }
@@ -81,7 +84,7 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
         @ApiResponse(code = 404, message = "Document Not found")
     })
-    public ResponseEntity<?> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
+    public ResponseEntity<DocumentResponse> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
                                                @PathVariable("documentId") String documentId) {
         if (isAuthorized(s2sToken)) {
             return ResponseEntity.ok(documentManagementService
@@ -108,7 +111,7 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> uploadDocumentForDssUpdateCase(
+    public ResponseEntity<DocumentResponse> uploadDocumentForDssUpdateCase(
         @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
         @RequestParam("caseTypeId") String caseTypeId,
         @RequestParam("jurisdiction") String jurisdiction,
