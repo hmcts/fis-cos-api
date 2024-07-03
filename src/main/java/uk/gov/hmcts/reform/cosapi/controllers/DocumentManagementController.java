@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.cosapi.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +29,14 @@ import static uk.gov.hmcts.reform.cosapi.controllers.CaseManagementController.SE
 @RestController
 @RequestMapping("/doc/dss-orhestration")
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DocumentManagementController {
 
-    @Autowired
-    DocumentManagementService documentManagementService;
+    private final DocumentManagementService documentManagementService;
 
-    @Autowired
-    SystemUserService systemUserService;
+    private final SystemUserService systemUserService;
 
-    @Autowired
-    AuthorisationService authorisationService;
+    private final AuthorisationService authorisationService;
 
     @RequestMapping(
         value = "/upload",

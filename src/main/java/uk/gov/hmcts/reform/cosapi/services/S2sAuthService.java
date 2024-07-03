@@ -1,18 +1,18 @@
 package uk.gov.hmcts.reform.cosapi.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class S2sAuthService {
 
-    @Autowired
-    private AuthTokenValidator authTokenValidator;
+    private final AuthTokenValidator authTokenValidator;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     public void tokenValidator(String token) {
         authTokenValidator.validate(token);
