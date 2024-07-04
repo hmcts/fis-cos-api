@@ -392,7 +392,7 @@ class CaseManagementServiceTest {
     }
 
     @Test
-    void testFetchCaseDetailsWithException() throws Exception {
+    void testFetchCaseDetailsWithException() {
 
         when(caseApiService.getCaseDetails(CASE_TEST_AUTHORIZATION,TEST_CASE_ID))
             .thenThrow(new CaseCreateOrUpdateException(
@@ -408,7 +408,7 @@ class CaseManagementServiceTest {
     }
 
     @Test
-    void testFetchDssQuestionAnswerDetails() throws Exception {
+    void testFetchDssQuestionAnswerDetails() {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_USER);
 
@@ -436,13 +436,13 @@ class CaseManagementServiceTest {
                 TEST_CASE_ID);
 
         assertNotNull(dssCaseResponse);
-        assertThat(dssCaseResponse.getDssQuestionAnswerPairs().size()).isEqualTo(2);
-        assertThat(dssCaseResponse.getDssQuestionAnswerDatePairs().size()).isEqualTo(1);
+        assertThat(dssCaseResponse.getDssQuestionAnswerPairs()).hasSize(2);
+        assertThat(dssCaseResponse.getDssQuestionAnswerDatePairs()).hasSize(1);
     }
 
 
     @Test
-    void testUpdateCaseFailedWithCaseCreateUpdateException() throws Exception {
+    void testUpdateCaseFailedWithCaseCreateUpdateException() {
 
         AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
         eventsConfig.setUpdateEvent(CITIZEN_PRL_UPDATE_DSS_APPLICATION);

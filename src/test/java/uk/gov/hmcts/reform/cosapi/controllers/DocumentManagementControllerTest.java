@@ -101,7 +101,7 @@ class DocumentManagementControllerTest {
     }
 
     @Test
-    void testDeleteFgmDocumentControllerFailedWithException() throws Exception {
+    void testDeleteFgmDocumentControllerFailedWithException() {
         DocumentInfo documentInfo = DocumentInfo.builder()
             .documentId(CASE_DATA_FGM_ID)
             .url(TEST_URL)

@@ -39,7 +39,7 @@ class DocumentUploadOrDeleteExceptionTest {
     }
 
     @Test
-    void testDeleteDocumentUploadOrDeleteException() throws Exception {
+    void testDeleteDocumentUploadOrDeleteException() {
         documentInfo = DocumentInfo.builder()
             .documentId(CASE_DATA_FGM_ID)
             .url(TEST_URL)
@@ -58,7 +58,7 @@ class DocumentUploadOrDeleteExceptionTest {
     }
 
     @Test
-    void testUpdateDocumentUploadOrDeleteException() throws Exception {
+    void testUpdateDocumentUploadOrDeleteException() {
         documentInfo = DocumentInfo.builder()
             .documentId(CASE_DATA_FGM_ID)
             .url(TEST_URL)

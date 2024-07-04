@@ -70,7 +70,7 @@ class SubmitCaseEventTest {
     }
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
 
         when(addSystemUpdateRole.addIfConfiguredForEnvironment(anyList()))
             .thenReturn(List.of(CITIZEN));
