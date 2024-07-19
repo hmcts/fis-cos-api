@@ -2,16 +2,13 @@ package uk.gov.hmcts.reform.cosapi.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
 import uk.gov.hmcts.reform.cosapi.model.DocumentInfo;
 import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
@@ -36,10 +33,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.DOCUMENT_DELETE_FAILU
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@TestPropertySource("classpath:application.yaml")
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 class DocumentManagementControllerTest {
 
     private static final String CASE_TYPE_ID = "A58";
@@ -107,7 +101,7 @@ class DocumentManagementControllerTest {
     }
 
     @Test
-    void testDeleteFgmDocumentControllerFailedWithException() throws Exception {
+    void testDeleteFgmDocumentControllerFailedWithException() {
         DocumentInfo documentInfo = DocumentInfo.builder()
             .documentId(CASE_DATA_FGM_ID)
             .url(TEST_URL)
