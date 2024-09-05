@@ -325,13 +325,13 @@ ext {
 
 def versions = [
   springfoxSwagger  : '3.0.0',
-  s2sClient         : '4.0.0',
+  s2sClient         : '4.1.2',
   springCloudStarterBootstrap : '3.1.8',
   springdocOpenApiUI: '1.8.0',
-  comGithubHmctsJavaLogging: '6.1.5',
+  //comGithubHmctsJavaLogging: '6.1.5',
   jackson: '2.17.1',
   jacksonBom: '2.17.1',
-  reformsJavaLogging: '5.1.7',
+  reformsJavaLogging: '6.1.6',
   lombok            : '1.18.32',
   junit             : '5.10.2',
   junitPlatform     : '1.10.2',
@@ -379,15 +379,16 @@ dependencies {
   implementation group: 'io.springfox', name: 'springfox-spring-webflux', version: versions.springfoxSwagger
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.19.2-RELEASE'
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformsJavaLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformsJavaLogging
+  //implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
   implementation group: 'com.github.hmcts', name:'ccd-case-document-am-client', version: versions.ccdCaseDocumentAmClient
-  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: versions.springdocOpenApiUI
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.comGithubHmctsJavaLogging
+  //implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.comGithubHmctsJavaLogging
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: versions.jacksonBom, ext: 'pom'
@@ -397,7 +398,8 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: versions.springCloudStarterBootstrap
-  implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+  //implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.23'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '8.13.4'
@@ -419,7 +421,7 @@ dependencies {
 
   // CVE-2023-5072
   implementation group: 'org.json', name: 'json', version: '20240303'
-
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version:'7.4'
   implementation 'org.projectlombok:lombok:1.18.32'
   compileOnly "org.projectlombok:lombok:1.18.32"
   annotationProcessor "org.projectlombok:lombok:1.18.32"
@@ -466,8 +468,10 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
-  functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+  //functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
+  //functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
 
   smokeTestCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
 
