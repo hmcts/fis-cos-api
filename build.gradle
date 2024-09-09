@@ -326,7 +326,7 @@ ext {
 def versions = [
   springfoxSwagger  : '3.0.0',
   s2sClient         : '4.1.2',
-  springCloudStarterBootstrap : '3.1.8',
+  springCloudStarterBootstrap : '3.1.9',
   springdocOpenApiUI: '1.8.0',
   //comGithubHmctsJavaLogging: '6.1.5',
   jackson: '2.17.1',
@@ -451,7 +451,7 @@ dependencies {
 
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.0'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.26.0'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.10'
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
