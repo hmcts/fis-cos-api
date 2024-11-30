@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.services.ccd;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,14 @@ import static uk.gov.hmcts.reform.cosapi.constants.CommonConstants.DSS_UPDATE_CA
 @Service
 @Slf4j
 @SuppressWarnings("PMD")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CaseApiService {
 
-    @Autowired
-    CoreCaseDataApi coreCaseDataApi;
+    private final CoreCaseDataApi coreCaseDataApi;
 
-    @Autowired
-    AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    SystemUserService systemUserService;
+    private final SystemUserService systemUserService;
 
     public CaseDetails createCase(String authorization, CaseData caseData,
             AppsConfig.AppsDetails appsDetails) {

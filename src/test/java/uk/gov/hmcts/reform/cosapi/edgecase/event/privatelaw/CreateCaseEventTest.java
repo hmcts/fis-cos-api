@@ -4,14 +4,11 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
@@ -38,10 +35,7 @@ import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.createCaseDataConfi
 import static uk.gov.hmcts.reform.cosapi.util.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_DATA_FGM_ID;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@TestPropertySource("classpath:application.yaml")
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 class CreateCaseEventTest {
 
     @InjectMocks

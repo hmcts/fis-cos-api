@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -20,11 +16,14 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
+import uk.gov.hmcts.reform.cosapi.constants.CommonConstants;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
 import uk.gov.hmcts.reform.cosapi.util.AppsUtil;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,10 +39,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATI
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@TestPropertySource("classpath:application.yaml")
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("PMD")
 class CaseApiServiceTest {
     public static final String CASEWORKER_UPDATE_DSS_APPLICATION = "caseworker-update-dss-application";
@@ -63,7 +59,7 @@ class CaseApiServiceTest {
     @Mock
     StartEventResponse eventRes;
 
-    @Autowired
+    @Mock
     AppsConfig appsConfig;
 
     @Mock
@@ -73,8 +69,14 @@ class CaseApiServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        fgmAppDetails = appsConfig.getApps().stream().filter(eachApps -> eachApps.getCaseTypeOfApplication().contains(
-            CASE_DATA_FGM_ID)).findAny().orElse(null);
+        fgmAppDetails = new AppsConfig.AppsDetails();
+        fgmAppDetails.setCaseType(CommonConstants.PRL_CASE_TYPE);
+        fgmAppDetails.setJurisdiction(CommonConstants.PRL_JURISDICTION);
+        fgmAppDetails.setCaseTypeOfApplication(List.of(CASE_DATA_FGM_ID));
+        AppsConfig.EventsConfig eventsConfig = new AppsConfig.EventsConfig();
+        eventsConfig.setSubmitEvent("citizen-prl-submit-dss-application");
+
+        fgmAppDetails.setEventIds(eventsConfig);
 
     }
 
@@ -91,6 +93,8 @@ class CaseApiServiceTest {
             .data(caseDataMap)
             .jurisdiction(PRL_JURISDICTION)
             .build();
+
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetails));
 
         eventRes = StartEventResponse.builder()
             .eventId(AppsUtil.getExactAppsDetailsByCaseType(appsConfig, PRL_CASE_TYPE).getEventIds().getSubmitEvent())
@@ -154,6 +158,8 @@ class CaseApiServiceTest {
             .build();
 
         String userId = TEST_USER;
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetails));
+
         eventRes = StartEventResponse.builder()
             .eventId(String.valueOf(Event.builder().id(AppsUtil.getExactAppsDetailsByCaseType(
                 appsConfig,
@@ -271,6 +277,7 @@ class CaseApiServiceTest {
                 .data(caseDataMap)
                 .jurisdiction(PRL_JURISDICTION)
                 .build();
+        when(appsConfig.getApps()).thenReturn(Arrays.asList(fgmAppDetails));
 
         String userId = TEST_USER;
         eventRes = StartEventResponse.builder()

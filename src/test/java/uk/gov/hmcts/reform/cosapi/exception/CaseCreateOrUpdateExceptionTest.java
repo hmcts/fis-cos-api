@@ -4,13 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.cosapi.controllers.CaseManagementController;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 import uk.gov.hmcts.reform.cosapi.services.CaseManagementService;
@@ -24,9 +22,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_CREATE_FAILURE_M
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_UPDATE_FAILURE_MSG;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 class CaseCreateOrUpdateExceptionTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 

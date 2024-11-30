@@ -1,10 +1,11 @@
 package uk.gov.hmcts.reform.cosapi.util;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.reform.cosapi.common.config.AppsConfig;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class AppsUtil {
 
@@ -31,7 +32,7 @@ public class AppsUtil {
             .findFirst().orElse(null);
     }
 
-    public static AppsConfig.AppsDetails getDssExactAppsDetails(AppsConfig appsConfig, CaseData caseData) {
+    public static AppsConfig.AppsDetails getDssExactAppsDetails(AppsConfig appsConfig) {
         return appsConfig.getApps().stream()
                 .filter(eachApps -> eachApps.getCaseTypeOfApplication().contains("RELADOP"))
                 .findFirst().orElse(null);
