@@ -331,7 +331,7 @@ def versions = [
   //comGithubHmctsJavaLogging: '6.1.5',
   jackson: '2.17.1',
   jacksonBom: '2.17.2',
-  reformsJavaLogging: '6.1.6',
+  reformsJavaLogging: '6.1.7',
   lombok            : '1.18.36',
   junit             : '5.10.2',
   junitPlatform     : '1.10.2',
