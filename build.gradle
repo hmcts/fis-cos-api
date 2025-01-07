@@ -265,7 +265,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'org.bouncycastle',
-      version: '1.78.1'
+      version: '1.79'
     ) {
       entry 'bcprov-jdk18on'
     }
