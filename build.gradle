@@ -333,8 +333,8 @@ def versions = [
   jacksonBom: '2.18.2',
   reformsJavaLogging: '6.1.7',
   lombok            : '1.18.36',
-  junit             : '5.10.2',
-  junitPlatform     : '1.10.2',
+  junit             : '5.11.4',
+  junitPlatform     : '1.11.4',
   awaitility        : '1.7.0',
   springBoot        : '2.7.18',
   serenityCoreVersion: '3.0.2',
@@ -429,7 +429,7 @@ dependencies {
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
-  testImplementation(platform('org.junit:junit-bom:5.10.2'))
+  testImplementation(platform('org.junit:junit-bom:5.11.4'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot) {
@@ -482,7 +482,7 @@ dependencies {
   smokeTestCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junitJupiter
 
   smokeTestImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junitJupiter
-  smokeTestRuntime "org.junit.platform:junit-platform-commons:1.10.2"
+  smokeTestRuntime "org.junit.platform:junit-platform-commons:1.11.4"
 
   smokeTestCompile(group: 'org.yaml', name: 'snakeyaml', version: '2.3') {
     force = true
@@ -510,13 +510,13 @@ dependencies {
 
   contractTestCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: versions.httpComponents
 
-  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.10.2"
+  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.11.4"
 
 
-  contractTestCompile("org.junit.jupiter:junit-jupiter-api:5.10.2")
-  contractTestRuntime("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
-  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.10.2')
+  contractTestCompile("org.junit.jupiter:junit-jupiter-api:5.11.4")
+  contractTestRuntime("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.11.4')
 
   contractTestCompile sourceSets.main.runtimeClasspath
   contractTestCompile sourceSets.test.runtimeClasspath
