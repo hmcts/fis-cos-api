@@ -385,7 +385,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name:'ccd-case-document-am-client', version: versions.ccdCaseDocumentAmClient
   //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.5-SPRING2'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: versions.springdocOpenApiUI
 
   //implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.comGithubHmctsJavaLogging
