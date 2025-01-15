@@ -337,7 +337,7 @@ def versions = [
   junitPlatform     : '1.11.4',
   awaitility        : '1.7.0',
   springBoot        : '2.7.18',
-  serenityCoreVersion: '3.0.2',
+  serenityCoreVersion: '3.9.8',
   ccdCaseDocumentAmClient      : '1.59',
   pact                         : '4.1.7',
   guava                        : '30.1.1-jre',
