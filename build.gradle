@@ -339,7 +339,7 @@ def versions = [
   springBoot        : '2.7.18',
   serenityCoreVersion: '3.0.2',
   ccdCaseDocumentAmClient      : '1.59',
-  pact                         : '4.1.7',
+  pact                         : '4.6.17',
   guava                        : '30.1.1-jre',
   httpComponents         :'4.5.14'
 ]
