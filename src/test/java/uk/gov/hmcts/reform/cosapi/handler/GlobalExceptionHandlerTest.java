@@ -135,7 +135,6 @@ class GlobalExceptionHandlerTest {
     @Test
     void handleFeignExceptionServiceUnavailableExceptionThroughExceptionHandler() {
 
-        final byte[] emptyBody = {};
         Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );
@@ -157,7 +156,6 @@ class GlobalExceptionHandlerTest {
     @Test
     void handleFeignExceptionUnauthorizedExceptionThroughExceptionHandler() {
 
-        final byte[] emptyBody = {};
         Request request = Request.create(Request.HttpMethod.GET, TEST_URL,
                                          new HashMap<>(), null, new RequestTemplate()
         );

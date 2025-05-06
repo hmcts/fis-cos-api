@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.cosapi.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.cosapi.exception.DocumentUploadOrDeleteException;
+import uk.gov.hmcts.reform.cosapi.model.DocumentResponse;
 import uk.gov.hmcts.reform.cosapi.services.AuthorisationService;
 import uk.gov.hmcts.reform.cosapi.services.DocumentManagementService;
 import uk.gov.hmcts.reform.cosapi.services.SystemUserService;
@@ -27,20 +29,17 @@ import static uk.gov.hmcts.reform.cosapi.controllers.CaseManagementController.SE
 @RestController
 @RequestMapping("/doc/dss-orhestration")
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DocumentManagementController {
 
-    @Autowired
-    DocumentManagementService documentManagementService;
+    private final DocumentManagementService documentManagementService;
 
-    @Autowired
-    SystemUserService systemUserService;
+    private final SystemUserService systemUserService;
 
-    @Autowired
-    AuthorisationService authorisationService;
+    private final AuthorisationService authorisationService;
 
-    @RequestMapping(
+    @PostMapping(
         value = "/upload",
-        method = RequestMethod.POST,
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -51,9 +50,10 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> uploadDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                            @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
-                                            @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<DocumentResponse> uploadDocument(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+        @RequestParam("caseTypeOfApplication") String caseTypeOfApplication,
+        @RequestParam("file") MultipartFile file) {
 
         return ResponseEntity.ok(documentManagementService.uploadDocument(authorisation, caseTypeOfApplication, file));
     }
@@ -67,8 +67,9 @@ public class DocumentManagementController {
         @ApiResponse(code = 404, message = "Document Not found"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> deleteDocument(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
-                                            @PathVariable("documentId") String documentId) {
+    public ResponseEntity<DocumentResponse> deleteDocument(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+        @PathVariable("documentId") String documentId) {
 
         return ResponseEntity.ok(documentManagementService.deleteDocument(authorisation, documentId));
     }
@@ -81,7 +82,7 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authorisation token is missing or invalid"),
         @ApiResponse(code = 404, message = "Document Not found")
     })
-    public ResponseEntity<?> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
+    public ResponseEntity<DocumentResponse> deleteDssDocument(@RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
                                                @PathVariable("documentId") String documentId) {
         if (isAuthorized(s2sToken)) {
             return ResponseEntity.ok(documentManagementService
@@ -95,9 +96,8 @@ public class DocumentManagementController {
         return authorisationService.authoriseService(s2sToken);
     }
 
-    @RequestMapping(
+    @PostMapping(
         value = "/upload-for-dss-update",
-        method = RequestMethod.POST,
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -108,7 +108,7 @@ public class DocumentManagementController {
         @ApiResponse(code = 401, message = "Provided Authroization token is missing or invalid"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public ResponseEntity<?> uploadDocumentForDssUpdateCase(
+    public ResponseEntity<DocumentResponse> uploadDocumentForDssUpdateCase(
         @RequestHeader(SERVICE_AUTHORISATION) String s2sToken,
         @RequestParam("caseTypeId") String caseTypeId,
         @RequestParam("jurisdiction") String jurisdiction,

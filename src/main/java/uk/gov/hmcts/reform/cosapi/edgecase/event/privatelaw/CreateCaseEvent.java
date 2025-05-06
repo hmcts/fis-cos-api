@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.edgecase.event.privatelaw;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,12 @@ import static uk.gov.hmcts.reform.cosapi.edgecase.model.access.Permissions.CREAT
 
 @Component
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CreateCaseEvent implements CCDConfig<CaseData, State, UserRole>  {
 
-    @Autowired
-    private AddSystemUpdateRole addSystemUpdateRole;
+    private final AddSystemUpdateRole addSystemUpdateRole;
 
-    @Autowired
-    AppsConfig appsConfig;
+    private final AppsConfig appsConfig;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

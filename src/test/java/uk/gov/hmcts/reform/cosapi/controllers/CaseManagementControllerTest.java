@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.reform.cosapi.edgecase.event.EventEnum;
 import uk.gov.hmcts.reform.cosapi.edgecase.model.CaseData;
@@ -39,9 +37,7 @@ import static uk.gov.hmcts.reform.cosapi.util.TestConstant.CASE_TEST_AUTHORIZATI
 import static uk.gov.hmcts.reform.cosapi.util.TestConstant.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.cosapi.util.TestFileUtil.loadJson;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 class CaseManagementControllerTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -103,11 +99,8 @@ class CaseManagementControllerTest {
                 caseData);
 
         CaseResponse testPreUpdResponse = (CaseResponse) preUpdateCaseResponse.getBody();
-        // assertEquals(TEST_CASE_EMAIL_ADDRESS,
-        // caseData.getApplicant().getEmailAddress());
 
         CaseData caseDataUpdate = (CaseData) testPreUpdResponse.getCaseData().get(CASE_DATA_FGM_ID);
-        // caseDataUpdate.getApplicant().setEmailAddress(TEST_UPDATE_CASE_EMAIL_ADDRESS);
 
         ResponseEntity<?> postUpdateCaseResponse = caseManagementController.updateCase(
                 TEST_CASE_ID,
@@ -178,7 +171,7 @@ class CaseManagementControllerTest {
         CaseResponse caseDataFetchResponse = (CaseResponse) (postFetchCaseResponse.getBody());
 
         assertEquals(caseDataFetchResponse.getId(), caseResponse.getId());
-        assertEquals(postFetchCaseResponse.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, postFetchCaseResponse.getStatusCode());
 
     }
 
@@ -198,7 +191,7 @@ class CaseManagementControllerTest {
         DssCaseResponse actualDssCaseResponse = (DssCaseResponse) postFetchCaseResponse.getBody();
 
         assertEquals(expectedDssCaseResponse, actualDssCaseResponse);
-        assertEquals(postFetchCaseResponse.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK,postFetchCaseResponse.getStatusCode());
     }
 
 }

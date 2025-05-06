@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InvalidResourceExceptionTest {
     @Test
-    void testInvalidResourceExceptionThrownForNonExistentFile() throws Exception {
+    void testInvalidResourceExceptionThrownForNonExistentFile() {
         String createCaseDataFileNotExist = "FGMCaseDataNotExist.json";
 
         Exception exception = assertThrows(Exception.class, () -> {
