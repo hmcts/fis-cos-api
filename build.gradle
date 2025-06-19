@@ -258,7 +258,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'ch.qos.logback',
-      version: '1.2.13'
+      version: '1.5.18'
     ) {
       entry 'logback-core'
       entry 'logback-classic'
