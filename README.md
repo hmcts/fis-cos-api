@@ -1,5 +1,7 @@
 ## fis-cos-api
 
+## PLEASE NOTE : THIS IS NOT TO BE USED ##
+
 [![Build Status](https://travis-ci.org/hmcts/fis-cos-api.svg?branch=master)](https://travis-ci.org/hmcts/fis-cos-api)
 
 ## Notes-dummytest
