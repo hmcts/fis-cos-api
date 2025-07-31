@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.cosapi.idam;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import static uk.gov.hmcts.reform.cosapi.common.config.ControllerConstants.BEARER_PREFIX;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class IdamService {
 
     @Value("${idam.systemupdate.username}")
@@ -19,8 +21,7 @@ public class IdamService {
     @Value("${idam.systemupdate.password}")
     private String systemUpdatePassword;
 
-    @Autowired
-    private IdamClient idamClient;
+    private final IdamClient idamClient;
 
     public User retrieveUser(String authorisation) {
         final String bearerToken = getBearerToken(authorisation);
